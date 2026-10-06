@@ -584,6 +584,7 @@ name = "beet_eval"
 version = "0.1.0"
 dependencies = [
  "beet",
+ "serde",
 ]
 
 [[package]]

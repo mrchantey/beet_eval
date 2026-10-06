@@ -29,9 +29,16 @@ beet = { path = "../worktrees/beet/eval/beet", default-features = false, feature
 	"json",
 	"router",
 ] }
+# the derives behind every row and typed document: their expansions name the
+# `serde` crate directly, which the facade's re-exported traits do not provide
+serde = { version = "1", features = ["derive"] }
 
 [dev-dependencies]
-beet = { path = "../worktrees/beet/eval/beet", default-features = false, features = ["testing"] }
+# `fs` for the tests that pin how a table lays out on disk
+beet = { path = "../worktrees/beet/eval/beet", default-features = false, features = [
+	"testing",
+	"fs",
+] }
 
 # the beet harness main is `beet::test_main!()` in `lib.rs`
 [lib]
