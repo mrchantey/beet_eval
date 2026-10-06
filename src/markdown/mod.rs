@@ -1,8 +1,9 @@
-//! The first subject: markdown documents under a workspace's documents
-//! directory. A document package's [`DocumentTemplate`] says which documents
-//! exist and what their sections are; this is what any one of them looks
-//! like, so a reader, a grader and a renderer can rely on it. The documents
-//! stay markdown, being prose for people.
+//! The first subject: the documents under a workspace's documents directory,
+//! each a markdown page, being prose for people. A document package's
+//! [`Outline`] says which documents exist and what their sections are; this is
+//! what any one of them looks like, so a reader, a grader and a renderer can
+//! rely on it. Read, a page is a [`MarkdownPage`], and its frontmatter is
+//! beet's [`PageMeta`](beet::prelude::PageMeta).
 //!
 //! # One file or a directory
 //!
@@ -33,9 +34,10 @@
 //! from somewhere.
 //! ```
 //!
-//! 1. **Frontmatter**: [`DocumentMeta`], `created`, `updated` and `authors`,
-//!    nothing else. `updated` moves on every substantive edit, and is what a
-//!    reader checks before trusting a figure.
+//! 1. **Frontmatter**: `created`, `updated` and `authors`, the
+//!    [`MarkdownPage::META_KEYS`] of beet's `PageMeta`, and nothing else, since
+//!    the title and the summary are the body's. `updated` moves on every
+//!    substantive edit, and is what a reader checks before trusting a figure.
 //! 2. **Title**: the level one heading is the document's name. For the index it
 //!    is the subject's name, with the tagline as the emphasised line beneath
 //!    it, `*like this*`. The index is the source of truth for both, and the
@@ -43,7 +45,7 @@
 //! 3. **Summary**: one paragraph before the first heading, the document's
 //!    conclusions, so the index can carry them and a reader in a hurry needs
 //!    nothing else.
-//! 4. **Sections**: `##` headings in the order the template fixes, every one
+//! 4. **Sections**: `##` headings in the order the outline fixes, every one
 //!    present even when its body is one sentence saying why it does not apply.
 //!    A [`Section`] is an anchor, and anchors do not move. `###` is free below.
 //! 5. **Sources**: a section may end with a `Sources:` line naming where its
@@ -78,17 +80,17 @@
 //!
 //! A name is defined once across the documents, in the document that owns the
 //! fact, and every other document links to it rather than copying it. The
-//! first row is the header and the columns are the template's, each a
+//! first row is the header and the columns are the outline's, each a
 //! [`Column`] that may be typed `num`, `month` (`2026-10`) or `date`
 //! (`2026-10-02`). An item that does not apply is a 0 with the reason in the
-//! prose; money is whole dollars unless the template says otherwise.
+//! prose; money is whole dollars unless the outline says otherwise.
 //!
 //! # Addressing
 //!
 //! A place in the documents is an [`Address`](crate::prelude::Address),
-//! `document` or
-//! `document#section`, the section half being [`Section::slug`] of its
-//! heading: `legal#risk-register`, `finance#owners-finances`. An eval's
+//! `document` or `document#section`, the section half being
+//! [`Section::slug`] of its heading: `legal#risk-register`,
+//! `finance#owners-finances`. An eval's
 //! anchor, a block's home, a claim's block and a grade's evidence are
 //! addresses, and promotion keeps every one stable.
 //!
@@ -104,17 +106,15 @@
 //! # Checks
 //!
 //! The kinds deciding a document's shape are routes under `check/`, their
-//! params in [`checks`]; a template generates the evals restating it, and a
+//! params in [`checks`]; an outline generates the evals restating it, and a
 //! package writes the rest as rows.
 pub mod checks;
 mod data_block;
-mod document;
-mod frontmatter;
+mod outline;
+mod page;
 mod section;
-mod template;
 pub use checks::*;
 pub use data_block::*;
-pub use document::*;
-pub use frontmatter::*;
+pub use outline::*;
+pub use page::*;
 pub use section::*;
-pub use template::*;

@@ -5,7 +5,7 @@ use beet::prelude::*;
 /// choice was made from. `eval/next` computes it from the same run as
 /// [`Results`], in this order:
 ///
-/// 1. [`Scaffold`](NextVerb::Scaffold) when no document of the template exists.
+/// 1. [`Scaffold`](NextVerb::Scaffold) when no document of the outline exists.
 /// 2. [`Write`](NextVerb::Write) the first missing document, then the document
 ///    failing the most shape checks: shape before substance.
 /// 3. [`Grade`](NextVerb::Grade) every document written with no asks open but
@@ -25,7 +25,7 @@ pub struct NextStep {
 	pub targets: Vec<SmolStr>,
 	/// Why this unit and not another, one paragraph.
 	pub why: String,
-	/// Every document of the template, in its order.
+	/// Every document of the outline, in its order.
 	pub documents: Vec<DocumentRow>,
 	/// Every rubric of every package.
 	pub rubrics: Vec<RubricRow>,
@@ -36,7 +36,7 @@ pub struct NextStep {
 	Debug, Clone, Copy, PartialEq, Eq, Reflect, Serialize, Deserialize,
 )]
 pub enum NextVerb {
-	/// `eval/new` lays out the documents from the template, every body an ask.
+	/// `eval/new` lays out the documents from the outline, every body an ask.
 	Scaffold,
 	/// The clerk writes a document from the sources and the owner's answers.
 	Write,
@@ -53,7 +53,7 @@ pub enum NextVerb {
 /// One document as the triage weighs it.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct DocumentRow {
-	/// The document's name in the template.
+	/// The document's name in the outline.
 	pub document: SmolStr,
 	/// Whether it exists, as a file or a directory with an index.
 	pub present: bool,

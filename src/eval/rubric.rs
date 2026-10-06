@@ -39,8 +39,8 @@ impl TableStoreRow for Rubric {
 }
 
 /// One heading of a form, carrying the form's own label exactly so a rubric
-/// address is a template address, with what the reader looks for under it and
-/// the headings nested beneath it.
+/// address is an address on the form, with what the reader looks for under it
+/// and the headings nested beneath it.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct RubricSection {
 	/// The address prefix of the heading's structural lines, unique in the

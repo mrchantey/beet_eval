@@ -3,7 +3,7 @@ use crate::text_type::text_type;
 use beet::prelude::*;
 
 /// What a builder writes for one form: the operations that turn a copy of the
-/// reader's template into the filled form, applied in order by `eval/build`.
+/// reader's blank form into the filled one, applied in order by `eval/build`.
 /// Kept at `dist/<package>/<rubric>.fill.json` beside the form it fills.
 #[derive(Debug, Default, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct FillSpec {
@@ -64,7 +64,7 @@ pub enum FillOp {
 }
 
 text_type!(
-	/// A cell of a form, as the template's cells dump names it: a Word table
+	/// A cell of a form, as the blank form's cells dump names it: a Word table
 	/// cell `t<table>r<row>c<cell>` counted from 1 in document order, ie
 	/// `t3r2c1`, or a workbook cell `<sheet>!<column><row>`, ie `Start
 	/// Here!D3`.

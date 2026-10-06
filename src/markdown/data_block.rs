@@ -35,7 +35,7 @@ pub enum BlockFormat {
 }
 
 /// One column of a block's schema, as a document package's
-/// [`DocumentTemplate`](crate::prelude::DocumentTemplate) fixes it. Its flat
+/// [`Outline`](crate::prelude::Outline) fixes it. Its flat
 /// spelling, `name` or `name:kind`, is what a check's params and a reader
 /// carry.
 #[derive(Debug, Clone, PartialEq, Eq, Reflect, Serialize, Deserialize)]

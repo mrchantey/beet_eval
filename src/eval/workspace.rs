@@ -20,7 +20,7 @@ use beet::prelude::*;
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct Workspace {
 	/// The documents under evaluation, laid out by the document package's
-	/// template.
+	/// outline.
 	pub docs: RelPath,
 	/// What runs write and keep: the grades, the last [`Results`], the
 	/// projections.

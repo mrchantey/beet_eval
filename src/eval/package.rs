@@ -16,7 +16,7 @@ use std::collections::BTreeMap;
 /// |---|---|---|
 /// | `package.json` | every | this manifest |
 /// | `README.md` | every | what the package is and provides, for a person |
-/// | `template.json` | document | the [`DocumentTemplate`] |
+/// | `outline.json` | document | the [`Outline`] |
 /// | `evals/<id>` | any | [`Eval`] rows |
 /// | `rubrics/<id>` | any | [`Rubric`] rows |
 /// | `render/<rubric>` | reader | [`RenderSpec`] rows |
@@ -47,8 +47,8 @@ pub struct PackageManifest {
 	/// angle brackets, ie `mc:<topic>/<slug>`; a reference to the literature is
 	/// a `ref:<slug>` entry naming the work and the idea taken from it.
 	pub sources: BTreeMap<SourceTag, String>,
-	/// A document package's template, ie `template.json`.
-	pub template: Option<RelPath>,
+	/// A document package's outline, ie `outline.json`.
+	pub outline: Option<RelPath>,
 }
 
 impl PackageManifest {
@@ -72,7 +72,7 @@ impl PackageManifest {
 	Debug, Clone, Copy, PartialEq, Eq, Reflect, Serialize, Deserialize,
 )]
 pub enum PackageKind {
-	/// Says what the documentation is: the [`DocumentTemplate`] naming the
+	/// Says what the documentation is: the [`Outline`] naming the
 	/// documents and their sections, the evals every document is graded
 	/// against, the owner rubric, and the coach's actions. One per workspace.
 	Document,

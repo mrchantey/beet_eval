@@ -8,7 +8,7 @@ pub struct RenderSpec {
 	pub rubric: SmolStr,
 	/// The reader's own blank form inside the package, a Word file or a
 	/// workbook, never written to.
-	pub template: RelPath,
+	pub form: RelPath,
 	/// The filled copy's file name under `dist/<package>/`, ie
 	/// `01-business-plan.docx`.
 	pub output: SmolStr,

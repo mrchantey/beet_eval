@@ -3,8 +3,8 @@
 //!
 //! A build has a deterministic half, the projection and the filling, and a
 //! judged half, the writing of each cell in the form's voice; the structural
-//! lines of the form's rubric verify the result. Nothing is written into a
-//! package's template: a build copies it to `dist/<package>/` and fills the
+//! lines of the form's rubric verify the result. Nothing is written into the
+//! reader's blank form: a build copies it to `dist/<package>/` and fills the
 //! copy, and the build directory is rebuilt at will and never kept.
 //!
 //! # The steps
@@ -14,9 +14,9 @@
 //!    rubric, the evals it cites, where each is anchored, what is written
 //!    there, and the heading's structural lines. The rubric read through the
 //!    anchors is the mapping, and there is no other.
-//! 2. The builder writes the [`FillSpec`] from the brief and the template's
+//! 2. The builder writes the [`FillSpec`] from the brief and the blank form's
 //!    cells dump.
-//! 3. `eval/build <package>/<rubric>` copies the template the [`RenderSpec`]
+//! 3. `eval/build <package>/<rubric>` copies the blank form the [`RenderSpec`]
 //!    names to `dist/<package>/<output>`, applies the fill spec, and dumps the
 //!    result's cells.
 //! 4. The builder reads the dump against the rubric's structural lines one by
@@ -32,7 +32,7 @@
 //! A [`CellRef`] names what the cells dump of a form prints: every table cell
 //! of a Word file as `t<table>r<row>c<cell> | text`, every unlocked cell of a
 //! workbook as `<sheet>!<A1> | value`. The dump is regenerated from the
-//! template whenever a builder needs it and never stored, so it cannot drift
+//! blank form whenever a builder needs it and never stored, so it cannot drift
 //! from the file it describes.
 //!
 //! # The fill spec

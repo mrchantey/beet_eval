@@ -13,10 +13,10 @@
 //!   workspaces are stores with a
 //!   [`PackageManifest`](prelude::PackageManifest) or a
 //!   [`Workspace`](prelude::Workspace) manifest.
-//! - [`document`]: the first subject, markdown documents with frontmatter,
-//!   sections, csv data blocks and asks, laid out by a document package's
-//!   [`DocumentTemplate`](prelude::DocumentTemplate), and the params of the
-//!   check kinds that decide their shape.
+//! - [`markdown`]: the first subject, documents as markdown pages with
+//!   frontmatter, sections, csv data blocks and asks, laid out by a document
+//!   package's [`Outline`](prelude::Outline), and the params of the check
+//!   kinds that decide their shape.
 //! - [`form`]: the renderer, a reader package's
 //!   [`RenderSpec`](prelude::RenderSpec) and the
 //!   [`FillSpec`](prelude::FillSpec) a builder writes against it.
@@ -28,18 +28,18 @@
 beet::test_main!();
 
 pub mod coach;
-pub mod document;
 pub mod eval;
 pub mod form;
+pub mod markdown;
 mod plugin;
 mod text_type;
 
 /// Exports the most commonly used items.
 pub mod prelude {
 	pub use crate::coach::*;
-	pub use crate::document::*;
 	pub use crate::eval::*;
 	pub use crate::form::*;
+	pub use crate::markdown::*;
 	pub use crate::plugin::*;
 }
 
@@ -62,9 +62,7 @@ mod test {
 				"PackageManifest" => {
 					stored_form::<PackageManifest>(name, &json).await
 				}
-				"DocumentTemplate" => {
-					stored_form::<DocumentTemplate>(name, &json).await
-				}
+				"Outline" => stored_form::<Outline>(name, &json).await,
 				"Eval" => stored_form::<Eval>(name, &json).await,
 				"Rubric" => stored_form::<Rubric>(name, &json).await,
 				"RenderSpec" => stored_form::<RenderSpec>(name, &json).await,
@@ -86,11 +84,11 @@ mod test {
 		shown.xpect_eq(vec![
 			"Claim",
 			"CoachAction",
-			"DocumentTemplate",
 			"Eval",
 			"FillSpec",
 			"Grade",
 			"NextStep",
+			"Outline",
 			"PackageManifest",
 			"RenderSpec",
 			"Results",

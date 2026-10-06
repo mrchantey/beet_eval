@@ -16,12 +16,12 @@
 //! | `block` | [`BlockCheckParams`] | the named `csv` block is defined once, under its section, with exactly these columns, each typed cell of its type |
 //!
 //! A document package's
-//! [`DocumentTemplate`](crate::prelude::DocumentTemplate) generates the
+//! [`Outline`](crate::prelude::Outline) generates the
 //! `document`, `sections` and `block` evals of its documents and blocks and
 //! the `frontmatter` and `summary` evals over the set; the package writes the
-//! rest as rows. When a template is present, `eval/check` also refuses an
+//! rest as rows. When an outline is present, `eval/check` also refuses an
 //! anchor, a block's section or an `agrees` section naming a document or a
-//! section the template does not declare, so the template's sections stay the
+//! section the outline does not declare, so the outline's sections stay the
 //! one list of addresses.
 mod agrees;
 mod asks;

@@ -9,7 +9,7 @@ just cli --help
 just test
 ```
 
-This page is the one source for the words. The law lives in the module docs, which cite it: `eval` for evals, rubrics, grades and results, `document` for the documents and their checks, `form` for building a form, `coach` for the claims register and the coach's actions.
+This page is the one source for the words. The law lives in the module docs, which cite it: `eval` for evals, rubrics, grades and results, `markdown` for the documents, each a markdown page, and their checks, `form` for building a form, `coach` for the claims register and the coach's actions.
 
 ## Glossary
 
@@ -30,13 +30,13 @@ This page is the one source for the words. The law lives in the module docs, whi
 | next step | `NextStep`, `NextVerb`, `DocumentRow`, `RubricRow` | The next unit of work, why, and the tables the choice was made from. |
 | package | `PackageManifest`, `PackageKind` | A directory in a store with a manifest. A **document** package says what the documents are, a **reader** package holds what one outside reader needs, a **workspace** package is the subject's own. |
 | workspace | `Workspace`, `PackageSource` | A store holding `docs/`, `results/` and a manifest naming its packages. |
-| template | `DocumentTemplate`, `DocumentSpec`, `SectionSpec`, `BlockSpec`, `HistoryEntry` | A document package's list of the documents, their sections and the data blocks they carry. It generates the evals that restate it. |
-| document | `MarkdownDocument`, `Section`, `DocumentMeta` | One markdown file under `docs/`, or a directory promoted from one: frontmatter, title, tagline, summary and `##` sections. |
+| outline | `Outline`, `DocumentSpec`, `SectionSpec`, `BlockSpec`, `HistoryEntry` | A document package's list of the documents, their sections and the data blocks they carry. It generates the evals that restate it. |
+| document | `MarkdownPage`, `Section` | One of the subject's documents, a markdown page under `docs/` or a directory promoted from one: frontmatter, title, tagline, summary and `##` sections. Its frontmatter is beet's `PageMeta`, carrying `created`, `updated` and `authors`. |
 | data block | `DataBlock`, `BlockFormat`, `Column`, `ColumnKind` | A fenced `csv` or `json` block named in its info string, defined once across the documents. |
 | ask | `Ask`, `AskKind` | An open question to the owner, inline as `TODO(ask ...)`: a **fact** a source could answer, offered with a default, or a **decision** only the owner can make, challenged by the coach instead. |
 | check params | `DocumentCheckParams`, `FrontmatterCheckParams`, `H1CheckParams`, `TaglineCheckParams`, `SummaryCheckParams`, `AgreesCheckParams`, `TitlePart`, `AsksCheckParams`, `SectionsCheckParams`, `BlockCheckParams` | The params of the document check kinds, one per route. |
-| render spec | `RenderSpec` | How a reader package renders one form: the reader's own template, the output's name, and the form's quirks. |
-| fill spec | `FillSpec`, `FillOp`, `CellRef` | What a builder writes for one form: the operations that fill a copy of the template, by cell. |
+| render spec | `RenderSpec` | How a reader package renders one form: the reader's own blank form, the output's name, and the form's quirks. |
+| fill spec | `FillSpec`, `FillOp`, `CellRef` | What a builder writes for one form: the operations that fill a copy of the blank form, by cell. |
 | claim | `Claim`, `Stakes`, `ClaimStatus` | A row of the workspace package's claims register: something the plan rests on that might be false, with its evidence 0 to 3, its stakes, its test and its status. |
 | action | `CoachAction` | One of the coach's moves, a row of a document package's actions table: the ask, when to stop pushing, the red flags, and a bad and a good exchange. |
 | clerk, grader, builder, coach | | The four agent roles, below. |
@@ -49,7 +49,7 @@ A package and a workspace are stores, addressed by uri and never assumed to be o
 <package>/
   package.json          PackageManifest
   README.md             what the package is and provides, for a person
-  template.json         DocumentTemplate, a document package's
+  outline.json          Outline, a document package's
   evals/<id>            Eval rows
   rubrics/<id>          Rubric rows
   render/<rubric>       RenderSpec rows, a reader package's
@@ -78,18 +78,18 @@ A table is one blob per row at `<table>/<key>`, the key being the row's id verba
   "builds_on": [],
   "kind": "Document",
   "name": "acme_biz",
+  "outline": "outline.json",
   "sources": {
-    "acme:template": "This package's own template.json.",
+    "acme:outline": "This package's own outline.json.",
     "mc:<topic>/<slug>": "A masterclass recording, by topic and slug.",
     "ref:sba": "US Small Business Administration, Write your business plan: the traditional outline the documents follow."
-  },
-  "template": "template.json"
+  }
 }
 ```
 
-`template.json`, a document package's template. It generates, in the `structure` namespace, `<document>-present` and `<document>-sections` for each document, `<block>-block` for each block, and `frontmatter-complete` and `summaries-present` over the set.
+`outline.json`, a document package's outline. It generates, in the `structure` namespace, `<document>-present` and `<document>-sections` for each document, `<block>-block` for each block, and `frontmatter-complete` and `summaries-present` over the set.
 
-```json DocumentTemplate
+```json Outline
 {
   "blocks": [
     {
@@ -114,7 +114,7 @@ A table is one blob per row at `<table>/<key>`, the key being the row's id verba
   "history": [
     { "change": "First draft.", "date": "2026-10-02" }
   ],
-  "source": "acme:template"
+  "source": "acme:outline"
 }
 ```
 
@@ -153,7 +153,7 @@ A table is one blob per row at `<table>/<key>`, the key being the row's id verba
     }
   },
   "note": null,
-  "sources": ["acme:template"],
+  "sources": ["acme:outline"],
   "statement": "The tagline beneath the index's title appears under the brand document's name and tagline section, which owns it."
 }
 ```
@@ -174,9 +174,9 @@ A table is one blob per row at `<table>/<key>`, the key being the row's id verba
       "label": "whole",
       "prose": "The form as uploaded.",
       "sections": [],
-      "sent_back_when": ["A red instruction sentence is left in. [template]"],
+      "sent_back_when": ["A red instruction sentence is left in. [form]"],
       "structural": [
-        { "sources": ["template"], "text": "Every red instruction sentence is deleted." }
+        { "sources": ["form"], "text": "Every red instruction sentence is deleted." }
       ],
       "title": "Whole document"
     },
@@ -195,7 +195,7 @@ A table is one blob per row at `<table>/<key>`, the key being the row's id verba
       "title": "1.2 Business Description"
     }
   ],
-  "sources": ["the form's template", "the trainer's guide"]
+  "sources": ["the blank form", "the trainer's guide"]
 }
 ```
 
@@ -203,10 +203,10 @@ A table is one blob per row at `<table>/<key>`, the key being the row's id verba
 
 ```json RenderSpec
 {
+  "form": "assets/forms/01-business-plan.docx",
   "notes": "Tick the applicable boxes with Check by label, delete every red instruction sentence, and write in the third person.",
   "output": "01-business-plan.docx",
-  "rubric": "01-business-plan",
-  "template": "assets/forms/01-business-plan.docx"
+  "rubric": "01-business-plan"
 }
 ```
 
@@ -351,15 +351,15 @@ What `eval/next` answers.
 
 Each is a route of `beet-eval`, its flags on a params type so `--help` documents them, resolving the workspace through the store its entry declares.
 
-- `eval/check [--unused]`: every table's format, global ids, citations and anchors against the template; `--unused` lists the evals no rubric cites.
+- `eval/check [--unused]`: every table's format, global ids, citations and anchors against the outline; `--unused` lists the evals no rubric cites.
 - `eval/results [--format=md]`: runs every check, merges the grades, reads every rubric, writes `results/summary.json`.
 - `eval/next`: the next step, with the document and rubric tables behind it.
 - `eval/blocks [<name> | --all]`: lists the data blocks, prints one, or prints them all as JSON.
 - `eval/worksheet [<document>]`: every judged eval anchored in each document, with its statement and level lines.
 - `eval/project <package>/<rubric>`: the brief for one form, each heading's evals, the text at their anchors and its structural lines.
-- `eval/new <name> <author>`: scaffolds `docs/` from the template, every body an ask; refuses a non-empty `docs/`.
+- `eval/new <name> <author>`: scaffolds `docs/` from the outline, every body an ask; refuses a non-empty `docs/`.
 - `eval/grade`: writes one grade, refused unless the level is one the eval admits and the evidence is verbatim from its anchor.
-- `eval/build <package>/<rubric>`: copies the form's template into `dist/`, applies the fill spec, dumps the result's cells.
+- `eval/build <package>/<rubric>`: copies the reader's blank form into `dist/`, applies the fill spec, dumps the result's cells.
 - `check/<kind>`: one document check kind, called by `eval/results` for every checked eval and directly for one.
 
 ## The roles

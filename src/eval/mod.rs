@@ -29,7 +29,7 @@
 //! packages may not both define one; `eval/check` refuses it. A document
 //! package names an eval's namespace after the document its anchor lies in,
 //! and keeps `structure` for the checks on the shape of the set, part of which
-//! its [`DocumentTemplate`](crate::prelude::DocumentTemplate) generates.
+//! its [`Outline`](crate::prelude::Outline) generates.
 //!
 //! An id is permanent: to change what an eval means, add a new one, delete the
 //! old and fix every rubric that cited it. A move between namespaces when a
@@ -85,7 +85,7 @@
 //! [`Reflect`](beet::prelude::Reflect) type behind its `ParamsPartial`, against
 //! which `eval/check` validates every [`CheckRef`]. A new kind is a new route,
 //! nothing else. The document kinds are listed in the
-//! [`document`](crate::document) module.
+//! [`document`](crate::markdown) module.
 //!
 //! ## Rubrics
 //!
