@@ -1,0 +1,56 @@
+[package]
+name = "beet_eval"
+version = "0.1.0"
+edition = "2024"
+description = "Evaluates a subject against packages of evals and rubrics: checks, grades, results and the next unit of work, with markdown documents as the first subject and Office forms as the renderer"
+
+[features]
+default = []
+# This repo's own beet binary: `BeetPlugins` + `EvalPlugin` + `LaunchPlugin`,
+# so `main.bsx` resolves the types defined here. Off by default so a library
+# consumer never links the runner; the `[[bin]]` below requires it, which is
+# what makes a flagless `cargo run` fail with cargo's own guidance. `launch` is
+# the entry loader (`router` + `template_serde`), the rest its `--help` render.
+cli = [
+	"beet/template_serde",
+	"beet/serde_plain",
+	"beet/markdown",
+	"beet/style",
+	"beet/template",
+]
+
+[dependencies]
+# The `eval` worktree of beet, where this repo's upstream work happens, the
+# facade rather than the individual crates so `#[action]`/`#[template]`
+# expansions (which emit `beet::` paths) resolve.
+beet = { path = "../worktrees/beet/eval/beet", default-features = false, features = [
+	"std",
+	"serde",
+	"json",
+	"router",
+] }
+
+[dev-dependencies]
+beet = { path = "../worktrees/beet/eval/beet", default-features = false, features = ["testing"] }
+
+# the beet harness main is `beet::test_main!()` in `lib.rs`
+[lib]
+harness = false
+
+# 💡 Binary
+
+[[bin]]
+name = "beet-eval"
+path = "src/main.rs"
+required-features = ["cli"]
+
+# profiles mirror beet's: fast test builds, lightly optimized dev, optimized deps
+[profile.test]
+opt-level = 0
+
+[profile.dev]
+opt-level = 1
+split-debuginfo = "unpacked"
+
+[profile.dev.package."*"]
+opt-level = 3
