@@ -1,9 +1,9 @@
 //! The first subject: the documents under a workspace's documents directory,
-//! each a markdown page, being prose for people. A document package's
+//! each a markdown file, being prose for people. A document package's
 //! [`Outline`] says which documents exist and what their sections are; this is
 //! what any one of them looks like, so a reader, a grader and a renderer can
-//! rely on it. Read, a page is a [`MarkdownPage`], and its frontmatter is
-//! beet's [`PageMeta`](beet::prelude::PageMeta).
+//! rely on it. Read, a document is a [`MarkdownDocument`], and its frontmatter
+//! is beet's [`PageMeta`](beet::prelude::PageMeta).
 //!
 //! # One file or a directory
 //!
@@ -35,7 +35,7 @@
 //! ```
 //!
 //! 1. **Frontmatter**: `created`, `updated` and `authors`, the
-//!    [`MarkdownPage::META_KEYS`] of beet's `PageMeta`, and nothing else, since
+//!    [`MarkdownDocument::META_KEYS`] of beet's `PageMeta`, and nothing else, since
 //!    the title and the summary are the body's. `updated` moves on every
 //!    substantive edit, and is what a reader checks before trusting a figure.
 //! 2. **Title**: the level one heading is the document's name. For the index it
@@ -110,11 +110,11 @@
 //! package writes the rest as rows.
 pub mod checks;
 mod data_block;
+mod document;
 mod outline;
-mod page;
 mod section;
 pub use checks::*;
 pub use data_block::*;
+pub use document::*;
 pub use outline::*;
-pub use page::*;
 pub use section::*;

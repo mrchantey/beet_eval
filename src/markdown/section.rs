@@ -1,7 +1,7 @@
 use beet::prelude::*;
 
 /// A `##` section of a
-/// [`MarkdownPage`](crate::prelude::MarkdownPage): an anchor that does
+/// [`MarkdownDocument`](crate::prelude::MarkdownDocument): an anchor that does
 /// not move, present even when its body says why it does not apply.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct Section {

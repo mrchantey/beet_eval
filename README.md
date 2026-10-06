@@ -9,7 +9,7 @@ just cli --help
 just test
 ```
 
-This page is the one source for the words. The law lives in the module docs, which cite it: `eval` for evals, rubrics, grades and results, `markdown` for the documents, each a markdown page, and their checks, `form` for building a form, `coach` for the claims register and the coach's actions.
+This page is the one source for the words. The law lives in the module docs, which cite it: `eval` for evals, rubrics, grades and results, `markdown` for the documents, each a markdown file, and their checks, `form` for building a form, `coach` for the claims register and the coach's actions.
 
 ## Glossary
 
@@ -31,7 +31,7 @@ This page is the one source for the words. The law lives in the module docs, whi
 | package | `PackageManifest`, `PackageKind` | A directory in a store with a manifest. A **document** package says what the documents are, a **reader** package holds what one outside reader needs, a **workspace** package is the subject's own. |
 | workspace | `Workspace`, `PackageSource` | A store holding `docs/`, `results/` and a manifest naming its packages. |
 | outline | `Outline`, `DocumentSpec`, `SectionSpec`, `BlockSpec`, `HistoryEntry` | A document package's list of the documents, their sections and the data blocks they carry. It generates the evals that restate it. |
-| document | `MarkdownPage`, `Section` | One of the subject's documents, a markdown page under `docs/` or a directory promoted from one: frontmatter, title, tagline, summary and `##` sections. Its frontmatter is beet's `PageMeta`, carrying `created`, `updated` and `authors`. |
+| document | `MarkdownDocument`, `Section` | One of the subject's documents, a markdown file under `docs/` or a directory promoted from one: frontmatter, title, tagline, summary and `##` sections. Its frontmatter is beet's `PageMeta`, carrying `created`, `updated` and `authors`. |
 | data block | `DataBlock`, `BlockFormat`, `Column`, `ColumnKind` | A fenced `csv` or `json` block named in its info string, defined once across the documents. |
 | ask | `Ask`, `AskKind` | An open question to the owner, inline as `TODO(ask ...)`: a **fact** a source could answer, offered with a default, or a **decision** only the owner can make, challenged by the coach instead. |
 | check params | `DocumentCheckParams`, `FrontmatterCheckParams`, `H1CheckParams`, `TaglineCheckParams`, `SummaryCheckParams`, `AgreesCheckParams`, `TitlePart`, `AsksCheckParams`, `SectionsCheckParams`, `BlockCheckParams` | The params of the document check kinds, one per route. |

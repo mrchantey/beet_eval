@@ -98,7 +98,9 @@ impl Outline {
 				 its frontmatter."
 					.into(),
 				CheckRef::new("frontmatter", FrontmatterCheckParams {
-					keys: MarkdownPage::META_KEYS.map(SmolStr::new).to_vec(),
+					keys: MarkdownDocument::META_KEYS
+						.map(SmolStr::new)
+						.to_vec(),
 					documents: names.clone(),
 				}),
 			),

@@ -13,7 +13,7 @@
 //!   workspaces are stores with a
 //!   [`PackageManifest`](prelude::PackageManifest) or a
 //!   [`Workspace`](prelude::Workspace) manifest.
-//! - [`markdown`]: the first subject, documents as markdown pages with
+//! - [`markdown`]: the first subject, documents as markdown files with
 //!   frontmatter, sections, csv data blocks and asks, laid out by a document
 //!   package's [`Outline`](prelude::Outline), and the params of the check
 //!   kinds that decide their shape.

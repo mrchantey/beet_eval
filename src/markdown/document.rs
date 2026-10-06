@@ -1,13 +1,13 @@
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// One markdown page under the workspace's documents directory as the reader
+/// One markdown document under the workspace's documents directory as the reader
 /// parses it: its frontmatter, head, sections, data blocks and asks, with the
-/// pages it was promoted into beneath it. The [`markdown`](crate::markdown)
+/// documents it was promoted into beneath it. The [`markdown`](crate::markdown)
 /// module docs are its law.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
-pub struct MarkdownPage {
-	/// The page's address without a section, ie `market`, or
+pub struct MarkdownDocument {
+	/// The document's address without a section, ie `market`, or
 	/// `market/customers` for a promoted child.
 	pub name: SmolStr,
 	/// The file it was read from, relative to the documents directory, ie
@@ -27,13 +27,13 @@ pub struct MarkdownPage {
 	pub blocks: Vec<DataBlock>,
 	/// Every ask in the file, in order.
 	pub asks: Vec<Ask>,
-	/// The pages promoted out of this one's sections, read through it.
-	pub children: Vec<MarkdownPage>,
+	/// The documents promoted out of this one's sections, read through it.
+	pub children: Vec<MarkdownDocument>,
 }
 
-impl MarkdownPage {
-	/// The [`PageMeta`] keys every page's frontmatter carries, in the order a
-	/// page writes them.
+impl MarkdownDocument {
+	/// The [`PageMeta`] keys every document's frontmatter carries, in the order
+	/// a document writes them.
 	pub const META_KEYS: [&str; 3] = ["created", "updated", "authors"];
 
 	/// The section whose slug is `slug`.
