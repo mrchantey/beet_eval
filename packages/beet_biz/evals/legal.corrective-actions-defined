@@ -1,0 +1,22 @@
+{
+  "anchor": "legal#compliance-checks",
+  "id": "legal.corrective-actions-defined",
+  "levels": {
+    "Custom": {
+      "l0": "nothing is said about what happens when a check finds a failure.",
+      "l1": "a corrective action is named but generic (fix it, be more careful) or nothing says the failure is recorded.",
+      "l2": "several corrective actions are defined (review the plan more often, record the failure in the plan, bring in external support, meet the obligation by a date) with the outcome recorded and followed up.",
+      "l3": "each action names who does it and by when, past non-compliances are logged with what changed, and the plan shows the change."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C2.2 transcript 01:12:19",
+    "C2.2 transcript 01:09:31",
+    "C2.2 transcript 01:08:02",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:45:58",
+    "demo"
+  ],
+  "statement": "A non-compliance found by a check leads to defined corrective actions and is recorded so that it is not repeated."
+}

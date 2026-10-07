@@ -1,0 +1,29 @@
+{
+  "anchor": "team#advisers",
+  "id": "team.advice-sought",
+  "levels": {
+    "Custom": {
+      "l0": "no source of advice is named, or the question is answered as not applicable.",
+      "l1": "a source of information is named for each area, a website, the programme or a trainer, or NA where none is used, or an adviser type is given with no name and no procedure, an accountant, someone.",
+      "l2": "a named professional or organisation for each area, the coach, an accountant, a mentor or an owner with years in business, with what it costs, a written zero where free, and the steps by which advice is sought, from identifying the area needing support, finding and contacting the right professional, to documenting the advice and updating the plan.",
+      "l3": "advice has been taken from each, what each was asked and what it changed in the plan is recorded, and the adviser for each area is already named with their contact and cost."
+    }
+  },
+  "note": "The recap lets the legal row of the reflection form read NA where no solicitor is used but names Lawpath and business.gov.au as free sources that answer it better, while the money matters form never accepts NA for financial advice, the procedure asked for being the one the owner would follow if the need arose; the business coach is the minimum against business guidance, and the coach email's response naming each point raised and what will change is level 3.",
+  "sources": [
+    "template",
+    "C1.1B slides",
+    "C2.2 slides",
+    "C2.2 transcript 01:14:07",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:54:12",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:10:27",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:11:30",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:30:25",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:48:10",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 02:13:19",
+    "mc:ai-for-the-emerging-entrepreneur/legal-repercussions-of-using-ai",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The owner knows where specialist advice comes from for each area of the business, legal, financial and taxation, marketing, compliance and business guidance, what it costs and how it is obtained, and records what advice taken changed."
+}

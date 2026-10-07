@@ -23,6 +23,84 @@ pub struct DataBlock {
 	pub text: String,
 }
 
+impl DataBlock {
+	/// A block read from its fence: a `csv` body split into its header and
+	/// rows, every non-blank line one row.
+	pub fn new(
+		name: SmolStr,
+		format: BlockFormat,
+		line: u32,
+		section: Option<SmolStr>,
+		text: String,
+	) -> Self {
+		let mut rows = match format {
+			BlockFormat::Csv => text
+				.split('\n')
+				.filter(|line| !line.trim().is_empty())
+				.map(Self::csv_line)
+				.collect::<Vec<_>>(),
+			BlockFormat::Json => Vec::new(),
+		};
+		let header = match rows.is_empty() {
+			true => Vec::new(),
+			false => rows.remove(0),
+		};
+		Self {
+			name,
+			format,
+			line,
+			section,
+			header,
+			rows,
+			text,
+		}
+	}
+
+	/// A fence's info string as a named block, `csv <name>` or `json <name>`,
+	/// the name lowercase letters, digits and hyphens.
+	pub fn parse_info(info: &str) -> Option<(BlockFormat, SmolStr)> {
+		let mut words = info.split_whitespace();
+		let format = match words.next()? {
+			"csv" => BlockFormat::Csv,
+			"json" => BlockFormat::Json,
+			_ => return None,
+		};
+		let name = words.next()?;
+		let valid = name.starts_with(|char: char| {
+			char.is_ascii_lowercase() || char.is_ascii_digit()
+		}) && name.chars().all(|char| {
+			char.is_ascii_lowercase() || char.is_ascii_digit() || char == '-'
+		});
+		(valid && words.next().is_none()).then(|| (format, SmolStr::new(name)))
+	}
+
+	/// One csv line's cells, trimmed: double quotes group a cell and a doubled
+	/// quote inside one is a quote.
+	pub fn csv_line(line: &str) -> Vec<String> {
+		let mut cells = Vec::new();
+		let mut cell = String::new();
+		let mut quoted = false;
+		let mut chars = line.chars().peekable();
+		while let Some(char) = chars.next() {
+			match (quoted, char) {
+				(true, '"') if chars.peek() == Some(&'"') => {
+					cell.push('"');
+					chars.next();
+				}
+				(true, '"') => quoted = false,
+				(true, char) => cell.push(char),
+				(false, '"') => quoted = true,
+				(false, ',') => {
+					cells.push(std::mem::take(&mut cell).trim().to_string())
+				}
+				(false, char) => cell.push(char),
+			}
+		}
+		cells.push(cell.trim().to_string());
+		cells
+	}
+}
+
 /// The two formats a data block may take.
 #[derive(
 	Debug, Clone, Copy, PartialEq, Eq, Reflect, Serialize, Deserialize,
@@ -32,6 +110,16 @@ pub enum BlockFormat {
 	Csv,
 	/// Nested data.
 	Json,
+}
+
+impl BlockFormat {
+	/// The format as an info string writes it, ie `csv`.
+	pub fn word(&self) -> &'static str {
+		match self {
+			Self::Csv => "csv",
+			Self::Json => "json",
+		}
+	}
 }
 
 /// One column of a block's schema, as a document package's
@@ -111,6 +199,39 @@ impl ColumnKind {
 			Self::Num => "num",
 			Self::Month => "month",
 			Self::Date => "date",
+		}
+	}
+
+	/// Whether `cell` is of this kind: any text, a `-?digits` number with an
+	/// optional fraction, a `2026-10` month or a `2026-10-02` date.
+	pub fn admits(&self, cell: &str) -> bool {
+		let digits = |part: &str, count: usize| {
+			part.len() == count
+				&& part.chars().all(|char| char.is_ascii_digit())
+		};
+		match self {
+			Self::Text => true,
+			Self::Num => {
+				let unsigned = cell.strip_prefix('-').unwrap_or(cell);
+				let (whole, fraction) =
+					unsigned.split_once('.').unwrap_or((unsigned, "0"));
+				!whole.is_empty()
+					&& !fraction.is_empty()
+					&& whole
+						.chars()
+						.chain(fraction.chars())
+						.all(|char| char.is_ascii_digit())
+			}
+			Self::Month => cell.split_once('-').is_some_and(|(year, month)| {
+				digits(year, 4) && digits(month, 2)
+			}),
+			Self::Date => {
+				let parts = cell.split('-').collect::<Vec<_>>();
+				parts.len() == 3
+					&& digits(parts[0], 4)
+					&& digits(parts[1], 2)
+					&& digits(parts[2], 2)
+			}
 		}
 	}
 

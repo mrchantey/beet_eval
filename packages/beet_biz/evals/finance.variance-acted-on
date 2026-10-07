@@ -1,0 +1,23 @@
+{
+  "anchor": "finance#management",
+  "id": "finance.variance-acted-on",
+  "levels": {
+    "Custom": {
+      "l0": "no cause and no action is given.",
+      "l1": "the causes or actions could be said of any business, or do not touch the income or expenses behind the result.",
+      "l2": "several causes or actions are given, each tied to the income or expense line that produced the result.",
+      "l3": "each action carries an owner, a date and the figure it is expected to move, and the next period's review reports whether it did."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C1.3 transcript 00:07:49",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 02:09:14",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 02:09:46",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and chat 02:14:13",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 02:24:56",
+    "inferred"
+  ],
+  "statement": "The causes of a period's variance from forecast are identified and, where the result falls short, corrective actions are chosen."
+}

@@ -1,0 +1,19 @@
+{
+  "anchor": "market#customer-journey",
+  "id": "market.referrals-sought",
+  "levels": {
+    "Custom": {
+      "l0": "no referral ask.",
+      "l1": "word of mouth is relied on without a step that asks for it.",
+      "l2": "a concrete way of asking for referrals, such as a follow-up email or a referral offer, at a stated point after purchase.",
+      "l3": "a referral program with an incentive and a net promoter score that measures who is likely to refer."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:14:02",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:20:29"
+  ],
+  "statement": "Satisfied customers are asked for referrals through a planned step."
+}

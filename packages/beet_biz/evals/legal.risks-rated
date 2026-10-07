@@ -1,0 +1,27 @@
+{
+  "anchor": "legal#risk-register",
+  "id": "legal.risks-rated",
+  "levels": {
+    "Custom": {
+      "l0": "no ratings, or no way of ordering risks is given.",
+      "l1": "ratings use an ad hoc scale such as low, medium and high, disagree between the register and the matrix, or the priority does not follow from the rating.",
+      "l2": "every risk has a likelihood and an impact on the one scale, the same rating wherever it is recorded, a priority that follows from the two, and the order in which the business's own risks are dealt with stated.",
+      "l3": "the impact categories are defined in the business's own terms, what catastrophic and major mean for it, the register is ordered by severity and revisited as ratings change, and each rating is justified from data, experience or industry benchmarks."
+    }
+  },
+  "note": "The SRI matrix has no impact definitions and never did, and the trainer's are catastrophic for business closure, jail time or a loss the business cannot carry, and major for serious financial damage short of closing it; the register's likelihood must use the matrix's own five labels, Almost Certain to Rare, never low, medium or high, and each risk's number must sit in that row of the matrix; the compliance plan applies the same likelihood by impact matrix to the compliance risks.",
+  "sources": [
+    "template red",
+    "template",
+    "B3.3 transcript 00:07:53, 00:09:08, 00:13:34, 00:15:57",
+    "B3.3 slides",
+    "B1.2 transcript 00:49:38",
+    "C2.2 transcript 01:04:20",
+    "C2.2 slides",
+    "mc:finance/growing-your-small-business 00:40:48",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:34:22",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Each risk is rated for likelihood and impact on one defined scale and prioritised for treatment in line with its rating, so the most critical are dealt with first."
+}

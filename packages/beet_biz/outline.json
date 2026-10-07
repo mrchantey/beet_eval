@@ -1,0 +1,629 @@
+{
+  "blocks": [
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "line"
+        },
+        {
+          "kind": "Text",
+          "name": "unit"
+        },
+        {
+          "kind": "Num",
+          "name": "price_ex_gst"
+        },
+        {
+          "kind": "Text",
+          "name": "gst"
+        },
+        {
+          "kind": "Num",
+          "name": "direct_cost"
+        },
+        {
+          "kind": "Num",
+          "name": "hours_per_unit"
+        }
+      ],
+      "lives_in": "product#pricing",
+      "name": "price-list"
+    },
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "resource"
+        },
+        {
+          "kind": "Text",
+          "name": "supplier"
+        },
+        {
+          "kind": "Text",
+          "name": "alternative"
+        },
+        {
+          "kind": "Num",
+          "name": "price"
+        },
+        {
+          "kind": "Text",
+          "name": "terms"
+        },
+        {
+          "kind": "Date",
+          "name": "quote_date"
+        }
+      ],
+      "lives_in": "product#resources-and-suppliers",
+      "name": "suppliers"
+    },
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "step"
+        },
+        {
+          "kind": "Text",
+          "name": "owner"
+        },
+        {
+          "kind": "Date",
+          "name": "start"
+        },
+        {
+          "kind": "Date",
+          "name": "end"
+        },
+        {
+          "kind": "Text",
+          "name": "status"
+        }
+      ],
+      "lives_in": "product#action-plan",
+      "name": "action-plan"
+    },
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "name"
+        },
+        {
+          "kind": "Text",
+          "name": "strengths"
+        },
+        {
+          "kind": "Text",
+          "name": "weaknesses"
+        },
+        {
+          "kind": "Text",
+          "name": "comparison"
+        }
+      ],
+      "lives_in": "market#competitors",
+      "name": "competitors"
+    },
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "activity"
+        },
+        {
+          "kind": "Text",
+          "name": "channel"
+        },
+        {
+          "kind": "Month",
+          "name": "month"
+        },
+        {
+          "kind": "Num",
+          "name": "cost"
+        },
+        {
+          "kind": "Text",
+          "name": "owner"
+        },
+        {
+          "kind": "Text",
+          "name": "measure"
+        }
+      ],
+      "lives_in": "market#promotion",
+      "name": "activity-calendar"
+    },
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "class"
+        },
+        {
+          "kind": "Text",
+          "name": "insurer"
+        },
+        {
+          "kind": "Text",
+          "name": "cover"
+        },
+        {
+          "kind": "Num",
+          "name": "premium"
+        },
+        {
+          "kind": "Date",
+          "name": "start"
+        },
+        {
+          "kind": "Date",
+          "name": "renewal"
+        }
+      ],
+      "lives_in": "legal#insurance",
+      "name": "insurance"
+    },
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "risk"
+        },
+        {
+          "kind": "Text",
+          "name": "likelihood"
+        },
+        {
+          "kind": "Text",
+          "name": "consequence"
+        },
+        {
+          "kind": "Text",
+          "name": "rating"
+        },
+        {
+          "kind": "Text",
+          "name": "treatment"
+        },
+        {
+          "kind": "Text",
+          "name": "owner"
+        }
+      ],
+      "lives_in": "legal#risk-register",
+      "name": "risk-register"
+    },
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "obligation"
+        },
+        {
+          "kind": "Text",
+          "name": "authority"
+        },
+        {
+          "kind": "Text",
+          "name": "due"
+        },
+        {
+          "kind": "Text",
+          "name": "owner"
+        },
+        {
+          "kind": "Text",
+          "name": "check"
+        },
+        {
+          "kind": "Text",
+          "name": "corrective_action"
+        }
+      ],
+      "lives_in": "legal#obligations-register",
+      "name": "obligations"
+    },
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "source"
+        },
+        {
+          "kind": "Num",
+          "name": "amount"
+        },
+        {
+          "kind": "Text",
+          "name": "cost"
+        },
+        {
+          "kind": "Text",
+          "name": "step"
+        }
+      ],
+      "lives_in": "finance#funding",
+      "name": "funding"
+    },
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "item"
+        },
+        {
+          "kind": "Text",
+          "name": "owned"
+        },
+        {
+          "kind": "Num",
+          "name": "value"
+        },
+        {
+          "kind": "Text",
+          "name": "supplier"
+        }
+      ],
+      "lives_in": "finance#startup-costs",
+      "name": "startup-costs"
+    },
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "expense"
+        },
+        {
+          "kind": "Num",
+          "name": "monthly"
+        },
+        {
+          "kind": "Month",
+          "name": "starts"
+        }
+      ],
+      "lives_in": "finance#costs",
+      "name": "expenses"
+    },
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "line"
+        },
+        {
+          "kind": "Month",
+          "name": "month"
+        },
+        {
+          "kind": "Num",
+          "name": "units"
+        }
+      ],
+      "lives_in": "finance#sales-projection",
+      "name": "sales-projection"
+    },
+    {
+      "columns": [
+        {
+          "kind": "Text",
+          "name": "item"
+        },
+        {
+          "kind": "Num",
+          "name": "monthly_year_one"
+        },
+        {
+          "kind": "Num",
+          "name": "monthly_year_two"
+        }
+      ],
+      "lives_in": "finance#owners-finances",
+      "name": "personal-budget"
+    }
+  ],
+  "documents": [
+    {
+      "name": "index",
+      "sections": [
+        {
+          "heading": "Mission",
+          "holds": "why the business exists, in one or two sentences a stranger can repeat."
+        },
+        {
+          "heading": "Canvas",
+          "holds": "the nine blocks of the business model canvas as bullet points, each pointing into the document that holds the detail."
+        },
+        {
+          "heading": "Goals",
+          "holds": "the business goals for the end of year one, each with its measure. The owner's personal goals live in team."
+        },
+        {
+          "heading": "Documents",
+          "holds": "the map, one line per document in reading order."
+        }
+      ],
+      "summary": "The business on a page. Its title is the business's name with the tagline beneath it, and its summary paragraph is the pitch: who it serves, what it sells and why them, in words that survive being read aloud in a minute."
+    },
+    {
+      "name": "product",
+      "sections": [
+        {
+          "heading": "Idea",
+          "holds": "where it came from, why it will work, and the alternatives it was preferred to."
+        },
+        {
+          "heading": "Value proposition",
+          "holds": "why a customer buys here rather than elsewhere, problem first, then the offer and its benefit."
+        },
+        {
+          "heading": "Products and services",
+          "holds": "each line, who buys it, the add-on that lifts the sale, and which lines earn most of the income."
+        },
+        {
+          "heading": "Pricing",
+          "holds": "the strategy and its justification, the unit economics of each line; the `price-list` block."
+        },
+        {
+          "heading": "Terms of sale",
+          "holds": "credit, warranties and refunds."
+        },
+        {
+          "heading": "Place and hours",
+          "holds": "where the business operates from, when it trades and how it is reached."
+        },
+        {
+          "heading": "Partners and activities",
+          "holds": "who the business depends on and what it must do week to week."
+        },
+        {
+          "heading": "Resources and suppliers",
+          "holds": "what it needs to operate, where each comes from and the alternatives weighed, how buying is done, the quotes held, upkeep and usage; the `suppliers` block."
+        },
+        {
+          "heading": "Action plan",
+          "holds": "the dated, owned steps to launch and through year one; the `action-plan` block."
+        },
+        {
+          "heading": "Travel",
+          "holds": "business travel, its purpose and cost, or that there is none."
+        },
+        {
+          "heading": "Developments",
+          "holds": "what happened that the plan did not foresee, and what changed as a result."
+        }
+      ],
+      "summary": "What the business sells and how it delivers it."
+    },
+    {
+      "name": "market",
+      "sections": [
+        {
+          "heading": "Research",
+          "holds": "what the research drew on, the market's size and direction, the price points customers accept, whether suppliers can be relied on, and the ethical, cultural or environmental considerations that bear on trading."
+        },
+        {
+          "heading": "Customers",
+          "holds": "the primary customer profiled as a person or an organisation, the need the business meets for them, and the secondary market or the reason there is none."
+        },
+        {
+          "heading": "Discovery",
+          "holds": "what potential customers were asked, what they said, and what changed because of it."
+        },
+        {
+          "heading": "Competitors",
+          "holds": "named rivals and substitutes with strengths, weaknesses and the comparison; the `competitors` block."
+        },
+        {
+          "heading": "SWOT",
+          "holds": "strengths, weaknesses, opportunities and threats, each specific to this business."
+        },
+        {
+          "heading": "Competitive advantage",
+          "holds": "what the business does that its competitors do not, in the customer's terms."
+        },
+        {
+          "heading": "Objectives",
+          "holds": "the marketing objective and the targets it is measured by."
+        },
+        {
+          "heading": "Channels",
+          "holds": "the marketing channels and the one that leads, how each is worked, and the sales channels and payment options customers buy through."
+        },
+        {
+          "heading": "Customer journey",
+          "holds": "how a customer is acquired, kept, grown and asked for referrals, from first hearing of the business onward."
+        },
+        {
+          "heading": "Promotion",
+          "holds": "the activities, their budget and who runs them; the `activity-calendar` block."
+        },
+        {
+          "heading": "Review",
+          "holds": "how channels are monitored, how often results are reviewed, what was measured and what was done about it."
+        }
+      ],
+      "summary": "Who buys, who else sells, and how customers are found and kept."
+    },
+    {
+      "name": "brand",
+      "sections": [
+        {
+          "heading": "Name and tagline",
+          "holds": "the registered name, the trading name where it differs, the tagline and what it compresses, and the clearance of the name."
+        },
+        {
+          "heading": "Positioning",
+          "holds": "the one thing the business is for, for whom, against what alternative."
+        },
+        {
+          "heading": "Archetypes",
+          "holds": "the primary and secondary archetype, and what each licenses and forbids in tone."
+        },
+        {
+          "heading": "Voice",
+          "holds": "how the business speaks, with examples of on and off."
+        },
+        {
+          "heading": "Identity",
+          "holds": "logo, colour, type and mascot, each choice traced to the positioning."
+        },
+        {
+          "heading": "Assets",
+          "holds": "where the brand appears and the rule that keeps it consistent."
+        }
+      ],
+      "summary": "How the business presents itself."
+    },
+    {
+      "name": "legal",
+      "sections": [
+        {
+          "heading": "Structure",
+          "holds": "the legal structure chosen and what follows from it for banking, liability and tax."
+        },
+        {
+          "heading": "Registrations",
+          "holds": "ABN, business name, GST position and tax registrations, each with its number and date or the step that obtains it."
+        },
+        {
+          "heading": "Licences and codes",
+          "holds": "the licences, permits, qualifications, memberships and codes of practice the business trades under, and the rights attached to what it buys and sells."
+        },
+        {
+          "heading": "Insurance",
+          "holds": "each class held or quoted, with insurer, cover, premium and renewal; the `insurance` block."
+        },
+        {
+          "heading": "Work health and safety",
+          "holds": "the framework that applies and how it is met wherever the business works."
+        },
+        {
+          "heading": "Risk register",
+          "holds": "the risks, rated and treated, and the procedure that keeps the register alive; the `risk-register` block."
+        },
+        {
+          "heading": "Employing people",
+          "holds": "the obligations that start with the first wage, or that there are none yet."
+        },
+        {
+          "heading": "Rights and contracts",
+          "holds": "the contracts the business signs and the matters that need a lawyer."
+        },
+        {
+          "heading": "Conduct",
+          "holds": "what the business will not do or sell, and the standards its content keeps."
+        },
+        {
+          "heading": "Obligations register",
+          "holds": "every obligation with its authority, due date and owner; the `obligations` block."
+        },
+        {
+          "heading": "Compliance checks",
+          "holds": "how compliance is checked, how often, and what happens when a check fails."
+        },
+        {
+          "heading": "Records",
+          "holds": "what is kept, for how long, where, how it is backed up and how it is disposed of."
+        }
+      ],
+      "summary": "The law the business trades under and how it keeps to it."
+    },
+    {
+      "name": "finance",
+      "sections": [
+        {
+          "heading": "Funding",
+          "holds": "whether finance beyond the owner's means is needed and by what process that was decided, then every source with its amount, cost and the step that obtains it; the `funding` block."
+        },
+        {
+          "heading": "Startup costs",
+          "holds": "every asset owned and every purchase or lease needed to open, valued, with its supplier, and totalled; the `startup-costs` block."
+        },
+        {
+          "heading": "Costs",
+          "holds": "the major costs and every expense in the month it falls; the `expenses` block."
+        },
+        {
+          "heading": "Sales projection",
+          "holds": "two years by month and by line, built from capacity and seasonality, starting when trading starts; the `sales-projection` block."
+        },
+        {
+          "heading": "Owner's finances",
+          "holds": "the owner's balance sheet and household budget for both years, kept apart from the business, and when any outside income ends; the `personal-budget` block."
+        },
+        {
+          "heading": "Cash flow",
+          "holds": "the forecast for both years and the working capital that keeps every month at or above zero."
+        },
+        {
+          "heading": "Profit and loss",
+          "holds": "both years, with net profit set against what the owner needs and against everything taken out below it."
+        },
+        {
+          "heading": "Break even",
+          "holds": "the sales that cover costs in each year and the margin above them."
+        },
+        {
+          "heading": "Management",
+          "holds": "the terms the owner works in, how actuals are reviewed against the plan and the plan revised, tax provisioning, working capital, debt collection, reporting and the tools used."
+        }
+      ],
+      "summary": "The numbers, and the words around them."
+    },
+    {
+      "name": "team",
+      "sections": [
+        {
+          "heading": "People",
+          "holds": "who is in the business and what each does; for a sole trader, the owner."
+        },
+        {
+          "heading": "Motivation",
+          "holds": "why the owner is doing this."
+        },
+        {
+          "heading": "Goals",
+          "holds": "what the owner expects the business to do for them by the end of year one, with a measure."
+        },
+        {
+          "heading": "Commitment",
+          "holds": "the hours a week and the resources committed, and that they are enough for the plan."
+        },
+        {
+          "heading": "Strengths",
+          "holds": "what the owner brings and how each strength is used."
+        },
+        {
+          "heading": "Risks",
+          "holds": "the personal factors that could stop the owner, and what is done about each."
+        },
+        {
+          "heading": "Advisers",
+          "holds": "where legal, financial, marketing and compliance advice comes from, what it costs and what it changed."
+        }
+      ],
+      "summary": "Who is behind the business."
+    }
+  ],
+  "history": [
+    {
+      "change": "first draft. Seven documents, thirteen data blocks, sections fixed from the 126 criteria of the library.",
+      "date": "2026-10-02"
+    },
+    {
+      "change": "the generic anatomy moved to `../beet_doceval/documents.md`; name clearance added to the brand document's first section.",
+      "date": "2026-10-02"
+    },
+    {
+      "change": "the data block columns typed, and enforced by `evals/structure.md`.",
+      "date": "2026-10-02"
+    }
+  ],
+  "source": "biz:outline"
+}

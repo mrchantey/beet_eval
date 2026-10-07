@@ -1,28 +1,37 @@
-//! The document check kinds, each a route under `check/` whose params type is
-//! here. A document is named without its extension, `brand` for `brand.md` or
-//! `brand/index.md` under the workspace's documents directory, so promotion
-//! never breaks a check.
+//! The document check kinds, each a route under `check/`: its action here
+//! beside its params type, and `<CheckRoutes/>` mounting them all. A route
+//! reads its params, reads the documents through the workspace store above
+//! it, and answers a [`CheckVerdict`](crate::prelude::CheckVerdict) as JSON;
+//! `eval/results` calls the route for every checked eval through the route
+//! tree, and a person may call one directly, ie `check/sections
+//! --document=brand --headings=Voice`. A document is named without its
+//! extension, `brand` for `brand.md` or `brand/index.md` under the documents
+//! directory, so promotion never breaks a check.
 //!
-//! | Kind | Params | Passes when |
+//! | Route | Params | Passes when |
 //! |---|---|---|
-//! | `document` | [`DocumentCheckParams`] | the document exists as a file or a directory with an index |
-//! | `frontmatter` | [`FrontmatterCheckParams`] | every document resolves and its frontmatter carries every key with a value |
-//! | `h1` | [`H1CheckParams`] | the first non-blank line after the frontmatter is a level one heading |
-//! | `tagline` | [`TaglineCheckParams`] | one emphasised line stands alone beneath the title |
-//! | `summary` | [`SummaryCheckParams`] | every document has a paragraph between its title, or tagline, and its first `##` |
-//! | `agrees` | [`AgreesCheckParams`] | the document's title or tagline appears verbatim in the section that owns it, or both carry the same open ask |
-//! | `asks` | [`AsksCheckParams`] | no ask is open anywhere under the documents directory |
-//! | `sections` | [`SectionsCheckParams`] | the document's `##` headings are exactly these, in order |
-//! | `block` | [`BlockCheckParams`] | the named `csv` block is defined once, under its section, with exactly these columns, each typed cell of its type |
+//! | [`DocumentCheck`] | [`DocumentCheckParams`] | the document exists as a file or a directory with an index |
+//! | [`FrontmatterCheck`] | [`FrontmatterCheckParams`] | every document resolves and its frontmatter carries every key with a value |
+//! | [`H1Check`] | [`H1CheckParams`] | the first block after the frontmatter is a level one heading |
+//! | [`TaglineCheck`] | [`TaglineCheckParams`] | one emphasised line stands alone beneath the title |
+//! | [`SummaryCheck`] | [`SummaryCheckParams`] | every document has a paragraph between its title, or tagline, and its first `##` |
+//! | [`AgreesCheck`] | [`AgreesCheckParams`] | the document's title or tagline appears verbatim in the section that owns it, or both are still open asks |
+//! | [`AsksCheck`] | [`AsksCheckParams`] | no ask is open anywhere under the documents directory |
+//! | [`SectionsCheck`] | [`SectionsCheckParams`] | the document's `##` headings are exactly these, in order |
+//! | [`BlockCheck`] | [`BlockCheckParams`] | the named `csv` block is defined once, under its section, with exactly these columns, each typed cell of its type |
+//!
+//! A verdict lays a failure at the documents whose shape it concerns, which
+//! the triage counts as shape failures; an open ask is laid at none, since
+//! the triage counts asks on their own.
 //!
 //! A document package's
 //! [`Outline`](crate::prelude::Outline) generates the
 //! `document`, `sections` and `block` evals of its documents and blocks and
 //! the `frontmatter` and `summary` evals over the set; the package writes the
-//! rest as rows. When an outline is present, `eval/check` also refuses an
-//! anchor, a block's section or an `agrees` section naming a document or a
-//! section the outline does not declare, so the outline's sections stay the
-//! one list of addresses.
+//! rest as rows. `eval/check` validates every eval's params against its
+//! route's `ParamsPartial`, and refuses an anchor, a block's home or a check's
+//! section naming a document or a section the outline does not declare, so
+//! the outline's sections stay the one list of addresses.
 mod agrees;
 mod asks;
 mod block;
@@ -41,3 +50,48 @@ pub use h1::*;
 pub use sections::*;
 pub use summary::*;
 pub use tagline::*;
+
+use crate::prelude::*;
+use beet::exports::bevy::reflect::Typed;
+use beet::prelude::*;
+
+/// `<CheckRoutes/>`: every document check kind as a child route, authored
+/// under the `check` route the engine calls them by.
+///
+/// ```bsx
+/// <Route path="check"><CheckRoutes/></Route>
+/// ```
+#[template]
+pub fn CheckRoutes() -> impl Bundle {
+	children![
+		DocumentCheck,
+		FrontmatterCheck,
+		H1Check,
+		TaglineCheck,
+		SummaryCheck,
+		AgreesCheck,
+		AsksCheck,
+		SectionsCheck,
+		BlockCheck,
+	]
+}
+
+impl DocumentSet {
+	/// Answers a check route's request: its params read, the workspace's
+	/// documents read through the store above the route, and the verdict
+	/// `decide` reaches answered as JSON.
+	pub async fn answer_check<P: FromReflect + Typed>(
+		cx: &ActionContext<Request>,
+		decide: fn(&P, &DocumentSet) -> CheckVerdict,
+	) -> Result<Response> {
+		let params = cx.input.parse_params::<P>()?;
+		let store = LoadedWorkspace::store_of(&cx.caller).await?;
+		let manifest = Workspace::read(&store).await?;
+		let documents = DocumentSet::load(
+			&store.with_subdir(manifest.docs.clone()),
+			manifest.docs,
+		)
+		.await?;
+		Response::ok_json(&decide(&params, &documents))
+	}
+}

@@ -1,0 +1,22 @@
+{
+  "anchor": "legal#risk-register",
+  "id": "legal.risks-treated",
+  "levels": {
+    "Custom": {
+      "l0": "no treatments are given.",
+      "l1": "some risks have no treatment, or a treatment is generic, or it covers only reduction or only contingency.",
+      "l2": "every risk has both a specific measure that reduces its likelihood and a contingency for when it occurs.",
+      "l3": "each treatment names its owner, its cost or resources and its review date, and the residual risk after treatment is judged."
+    }
+  },
+  "note": "The guide's bold floor is one strategy per risk, but this intake's trainer marks against both halves, so a cell with a single reduction measure and no contingency meets the guide and not him; the SRI form wants the treatments as two or three bullet points per risk rather than sentences.",
+  "sources": [
+    "guide bold",
+    "B3.3 slides",
+    "B3.3 transcript 00:06:51",
+    "B1.2 transcript 00:49:38",
+    "mc:digital/cyber-and-data-security",
+    "demo"
+  ],
+  "statement": "Every identified risk has a treatment: a measure that reduces its likelihood and a contingency for when it occurs anyway."
+}

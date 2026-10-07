@@ -1,0 +1,10 @@
+{
+  "anchor": "product#idea",
+  "id": "product.origin",
+  "levels": "Generic",
+  "note": null,
+  "sources": [
+    "inferred"
+  ],
+  "statement": "Where the idea came from is told: the experience or the demand that produced it."
+}

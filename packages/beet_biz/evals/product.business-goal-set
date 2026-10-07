@@ -1,0 +1,25 @@
+{
+  "anchor": "index#goals",
+  "id": "product.business-goal-set",
+  "levels": {
+    "Custom": {
+      "l0": "no business goal.",
+      "l1": "a goal without a measure or a date, such as growing the business or being successful.",
+      "l2": "a specific goal set at the end of year one with a number or a named milestone that can be checked then.",
+      "l3": "several goals, each with its measure, the revenue or client goal reconciled to the year one profit and loss, and the actions that reach each one named."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template red",
+    "guide bold",
+    "template",
+    "guide",
+    "A1.3 transcript 00:33:03",
+    "A1.3 transcript 00:40:04",
+    "A1.3 transcript 00:41:05",
+    "A4.3 transcript 00:16:42",
+    "demo"
+  ],
+  "statement": "The business has a goal for the end of its first year that carries a measure by which it can be checked."
+}

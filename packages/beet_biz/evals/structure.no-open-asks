@@ -1,0 +1,17 @@
+{
+  "anchor": null,
+  "id": "structure.no-open-asks",
+  "levels": {
+    "Binary": {
+      "check": {
+        "params": {},
+        "route": "asks"
+      }
+    }
+  },
+  "note": null,
+  "sources": [
+    "biz:outline"
+  ],
+  "statement": "No `TODO(ask)` remains anywhere under the documents directory."
+}

@@ -1,0 +1,19 @@
+{
+  "anchor": "product#developments",
+  "id": "product.unforeseen-developments-recorded",
+  "levels": {
+    "Custom": {
+      "l0": "none recorded, or a statement that nothing unexpected happened.",
+      "l1": "developments are listed but the response is missing or restates the problem.",
+      "l2": "several developments, each with the action taken, or for a business not yet trading the action that would be taken, to mitigate it or take advantage of it.",
+      "l3": "at least one development is tied to a measured result or a figure in the plan and the plan is changed in writing because of it, with the change dated."
+    }
+  },
+  "note": "A development may be positive or negative and the set need not include one of each; the return on investment form asks for them beside the marketing results, but a development may be a supplier, a competitor or a cost as readily as a channel.",
+  "sources": [
+    "template",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Developments the plans did not foresee, positive or negative, are recorded with the response taken to each."
+}

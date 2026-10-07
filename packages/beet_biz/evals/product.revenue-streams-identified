@@ -1,0 +1,25 @@
+{
+  "anchor": "product#products-and-services",
+  "id": "product.revenue-streams-identified",
+  "levels": {
+    "Custom": {
+      "l0": "no revenue stream is named.",
+      "l1": "sales or fees with no stream or product distinguished, a product or service the business sells missing, or a personal income such as the owner's wage or income support listed as a stream.",
+      "l2": "every product and service the business sells appears as a stream of business income, sales, fees, subscriptions, rent or interest, with which are expected to carry most of the sales and how the customer pays for them, and contracted work doing what the business sells counted among them.",
+      "l3": "each stream carries its expected share of year one revenue and its margin with the reasoning behind the split, the long tail grouped, and the upsell streams around the core offer, a consultation, an installation, a preview, identified."
+    }
+  },
+  "note": "Wages earned doing the same work the business sells, occasionally and short term, count as business income under the programme's salary income clause only when the engagement is written into the plan as a business customer, so it belongs in this list; unrelated employment is external income and does not.",
+  "sources": [
+    "guide bold",
+    "template",
+    "B3.2 slides",
+    "B3.2 transcript 00:46:44",
+    "C3.2 transcript 00:51:04",
+    "C3.2 transcript 00:52:44",
+    "mc:finance/growing-your-small-business 00:04:51",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Every product or service the business will sell is a named revenue stream, and each stream is income the business itself earns."
+}

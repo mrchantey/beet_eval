@@ -1,0 +1,27 @@
+{
+  "anchor": "product#terms-of-sale",
+  "id": "product.refund-terms-stated",
+  "levels": {
+    "Custom": {
+      "l0": "nothing is stated, or the terms say there are no refunds or no exchanges, which is unlawful.",
+      "l1": "the terms defer wholly to the Australian Consumer Law with nothing of the business's own, or do not fit what it sells.",
+      "l2": "the terms are written for what the business sells, faults, returns and condition for goods, cancellation, rework and non-delivery for a service, give repair, replacement or refund where a guarantee is not met, and state any change of mind return as the business's own promise.",
+      "l3": "the policy answers what can be returned, what exchanged, what is final sale, the time limit, the condition, the remedy and how to start a return, and is benchmarked against competitors' policies and their customers' complaints."
+    }
+  },
+  "note": "\"The business will follow the provisions of the Australian Consumer Law\" is accepted by the SRI assessor as the bare minimum and sits at level 1 here, so an SRI rubric that accepts it cites this criterion at 1, while the same rubric's demand for terms fit for what is sold is level 2 and the two are not reconciled in the sources; \"no refunds\" or \"no exchanges\" anywhere sends the plan back; the template's red sentence and the guide's bold ask for one sentence, the B3.1 trainer for half to a full page, and the page is level 3.",
+  "sources": [
+    "template red",
+    "guide bold",
+    "guide",
+    "B3.1 transcript 00:17:20, 00:41:11, 00:41:56, 00:46:59",
+    "B3.1 slides",
+    "B3.1",
+    "B3.3 transcript 00:38:20, 00:39:27, 00:40:32",
+    "B3.3 slides",
+    "mc:finance/growing-your-small-business 00:46:54, 00:48:00",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The business's refund and exchange terms are stated, are lawful under the consumer guarantees, and are written for what it actually sells."
+}

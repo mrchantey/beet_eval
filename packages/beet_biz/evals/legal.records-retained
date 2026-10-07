@@ -1,0 +1,25 @@
+{
+  "anchor": "legal#records",
+  "id": "legal.records-retained",
+  "levels": {
+    "Custom": {
+      "l0": "no retention period is stated.",
+      "l1": "a period is stated without reference to the structure, or does not match it.",
+      "l2": "the period matches the structure, five years for a sole trader or partnership and seven for a company, with the reason, and applies to the records the business keeps.",
+      "l3": "the period is given per class of record (tax, employment, corporate) with the date it runs from and how expiry is tracked."
+    }
+  },
+  "note": "The 2022 masterclass says seven years flat, while the current class, the recap and the deck give the split by structure, and the current class wins because it is the trainer who marks; the B2.1 trainer recommends seven for a sole trader who ever intends a company.",
+  "sources": [
+    "template red",
+    "guide bold",
+    "template",
+    "B2.1 transcript 00:49:57",
+    "C2.2 transcript 01:07:14",
+    "C2.2 slides",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:40:40",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Records are kept for the period the law requires of the business's structure."
+}

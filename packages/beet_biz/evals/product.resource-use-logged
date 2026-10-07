@@ -1,0 +1,27 @@
+{
+  "anchor": "product#resources-and-suppliers",
+  "id": "product.resource-use-logged",
+  "levels": {
+    "Custom": {
+      "l0": "no resource use is tracked.",
+      "l1": "a log is mentioned without saying which resources or what is recorded, or it tracks something whose use does not change (an unlimited service).",
+      "l2": "each resource that depletes, costs on use or is a legal record is logged with a quantity (kilometres, dollars, units, hours), its purpose and any maintenance note, and the record kept is named (a logbook, a schedule).",
+      "l3": "the log is kept in a form the tax office accepts, reviewed on a cycle to catch over or under use, and its totals feed the accounts."
+    }
+  },
+  "note": "A business not yet trading writes the logbook it will keep; hypothetical entries and estimated quantities are accepted anywhere the business has not yet done the thing.",
+  "sources": [
+    "template red",
+    "template",
+    "C2.1 transcript 00:34:00",
+    "C2.1 transcript 00:29:53",
+    "C2.1 transcript 00:41:33",
+    "C2.1 transcript 00:42:34",
+    "C2.1 transcript 00:32:59",
+    "C2.1 chat 00:34:19",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:56:17",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:01:18",
+    "demo"
+  ],
+  "statement": "The use of resources that deplete, cost as they are used or must be recorded for tax or legal reasons is monitored through a kept record of quantity, date and purpose."
+}

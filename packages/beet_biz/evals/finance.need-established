@@ -1,0 +1,20 @@
+{
+  "anchor": "finance#funding",
+  "id": "finance.need-established",
+  "levels": {
+    "Custom": {
+      "l0": "the question is not addressed.",
+      "l1": "a bare yes or no is given, or steps are listed without a conclusion.",
+      "l2": "the steps taken are stated, preparing the financial plan, checking the early months for a shortfall and reading the first-year sales and profit, and they lead to a conclusion that names which kind of source would meet the need.",
+      "l3": "the shortfall is quantified by month and amount, and the conclusion is tested against a lower sales case."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:25:10",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:27:13",
+    "inferred"
+  ],
+  "statement": "Whether the business needs finance beyond the owner's own means is established by a stated process from the financial plan."
+}

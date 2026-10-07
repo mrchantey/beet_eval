@@ -1,0 +1,25 @@
+{
+  "anchor": "legal#structure",
+  "id": "legal.structure-consequences-stated",
+  "levels": {
+    "Custom": {
+      "l0": "none stated.",
+      "l1": "some consequences are stated, or one is wrong for the structure, or they carry no reason.",
+      "l2": "whether a separate bank account is kept, whether liability for debts is limited or unlimited, and how the structure's profit is taxed, the rate, the tax free threshold and instalments, are each correct for the structure and reasoned.",
+      "l3": "the consequences are put into effect and quantified, the account named, the record keeping system chosen and the tax on the projected profit estimated."
+    }
+  },
+  "note": "For a sole trader no separate bank account is required but one is strongly recommended, so an answer of no still says a business account is kept, liability is unlimited, and profit is taxed at individual marginal rates in the owner's own return with the $18,200 tax free threshold; the record retention period the structure sets is judged by legal.records-retained.",
+  "sources": [
+    "template red",
+    "guide bold",
+    "template",
+    "B2.1 transcript 00:49:57, 00:51:38, 00:52:21",
+    "B2.1 slides",
+    "C3.3 slides",
+    "mc:finance/growing-your-small-business 00:44:50",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The consequences the chosen structure carries for banking, liability for debts and tax are each stated correctly for that structure with the reason."
+}

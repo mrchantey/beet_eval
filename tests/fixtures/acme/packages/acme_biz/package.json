@@ -1,0 +1,10 @@
+{
+  "builds_on": [],
+  "kind": "Document",
+  "name": "acme_biz",
+  "outline": "outline.json",
+  "sources": {
+    "acme:outline": "This package's own outline.json.",
+    "ref:sba": "US Small Business Administration, Write your business plan: the traditional outline the documents follow."
+  }
+}

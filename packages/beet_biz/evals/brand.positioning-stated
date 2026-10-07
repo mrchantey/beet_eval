@@ -1,0 +1,19 @@
+{
+  "anchor": "brand#positioning",
+  "id": "brand.positioning-stated",
+  "levels": {
+    "Custom": {
+      "l0": "no positioning, or a list of everything the business does.",
+      "l1": "a positioning that names the offer but not the customer or the alternative, or one any rival could say of itself.",
+      "l2": "one sentence naming the customer, the alternative they would otherwise choose and the single reason to choose this business, consistent with the value proposition in product.",
+      "l3": "the sentence has been tested on customers or prospects who can say it back, and the archetypes, voice and identity below each trace to it."
+    }
+  },
+  "note": "`product.value-proposition-stated` is the customer's reason to buy; the positioning is the same claim compressed to the place the business holds against alternatives, and the two must not disagree.",
+  "sources": [
+    "ref:ries-trout-1981",
+    "ref:neumeier-2006",
+    "mc:marketing/brand-build-scale"
+  ],
+  "statement": "The business states what it alone is for, for whom and against which alternative, in one sentence no competitor could claim."
+}

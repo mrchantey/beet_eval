@@ -1,0 +1,26 @@
+{
+  "anchor": "team#goals",
+  "id": "team.personal-goal-set",
+  "levels": {
+    "Custom": {
+      "l0": "no personal goal or expectation.",
+      "l1": "an expectation or a wish without a measure or a date.",
+      "l2": "a specific goal at the end of year one with a number or a named milestone, such as an income drawn from the business or a qualification gained.",
+      "l3": "the goal reads back from the business goal and the year one net profit, so the owner's income expectation is one the financial plan supports."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template red",
+    "guide bold",
+    "template",
+    "guide",
+    "A1.3 transcript 00:33:03",
+    "A1.3 transcript 00:40:04",
+    "A1.3 transcript 00:41:05",
+    "A4.3 transcript 00:16:42",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:58:11",
+    "demo"
+  ],
+  "statement": "The owner states what they expect the business to do for them as a personal goal for the end of its first year that carries a measure by which it can be checked."
+}

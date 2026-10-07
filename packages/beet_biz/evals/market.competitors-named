@@ -1,0 +1,34 @@
+{
+  "anchor": "market#competitors",
+  "id": "market.competitors-named",
+  "levels": {
+    "Custom": {
+      "l0": "no competitor is named, only categories of competitor, or a claim of no competition.",
+      "l1": "competitors are named with what customers like about them and what they are not the best at, but the offering and price are missing or the comparison could be said of any rival.",
+      "l2": "several real, named competitors, each with the offering that overlaps the business's own, its price or its pricing strategy where prices are not public, its strengths and its weaknesses.",
+      "l3": "includes indirect competitors, substitutes and the customer doing nothing, and each entry is evidenced from a quote, a visit, reviews or customers rather than asserted."
+    }
+  },
+  "note": "A business with no direct competitor lists the indirect ones, the alternatives its customer buys instead; neither the guide nor the recap accepts \"no competition\".",
+  "sources": [
+    "template red",
+    "guide bold",
+    "template",
+    "A2.3 transcript 00:02:26",
+    "A2.3 transcript 00:17:03",
+    "A2.3 transcript 00:27:41",
+    "A2.3 transcript 00:50:44",
+    "A2.3 transcript 00:51:29",
+    "A2.3",
+    "A4.3 transcript 00:34:22",
+    "A4.3 transcript 00:37:33",
+    "A4.3 transcript 00:38:34",
+    "mc:finance/growing-your-small-business 00:17:21",
+    "mc:finance/growing-your-small-business 00:18:24",
+    "mc:finance/growing-your-small-business 00:19:27",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:29:56",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:30:59",
+    "demo"
+  ],
+  "statement": "Named competitors are analysed for what they offer, their price, their strengths and their weaknesses, and how this business compares."
+}

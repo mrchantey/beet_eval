@@ -22,6 +22,8 @@
 //!   [`FillSpec`](prelude::FillSpec) a builder writes against it.
 //! - [`coach`]: the workspace package's claims register and the document
 //!   package's coach actions.
+//! - [`routes`]: the verbs, each a route of `beet-eval`, mounted by
+//!   `<EvalRoutes/>` beside the check kinds' `<CheckRoutes/>`.
 // the harness main for `cargo test --lib`; cfg gated so a plain build does not
 // need the facade's `testing` feature
 #[cfg(test)]
@@ -30,8 +32,10 @@ beet::test_main!();
 pub mod coach;
 pub mod eval;
 pub mod form;
+pub mod json_ext;
 pub mod markdown;
 mod plugin;
+pub mod routes;
 mod text_type;
 
 /// Exports the most commonly used items.
@@ -39,8 +43,10 @@ pub mod prelude {
 	pub use crate::coach::*;
 	pub use crate::eval::*;
 	pub use crate::form::*;
+	pub use crate::json_ext;
 	pub use crate::markdown::*;
 	pub use crate::plugin::*;
+	pub use crate::routes::*;
 }
 
 

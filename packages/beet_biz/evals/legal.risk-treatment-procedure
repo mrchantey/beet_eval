@@ -1,0 +1,21 @@
+{
+  "anchor": "legal#risk-register",
+  "id": "legal.risk-treatment-procedure",
+  "levels": {
+    "Custom": {
+      "l0": "no procedure.",
+      "l1": "steps are listed but restate the treatment rather than how it is put in place, or are not a sequence.",
+      "l2": "an ordered procedure names who owns the treatment, what is done, how resources are allocated and communicated, and when it is reviewed, and says how the process was produced.",
+      "l3": "the review interval is set by risk level, the register as a whole has a review date and a stated home, and the procedure is kept as a standing document rather than a plan answer."
+    }
+  },
+  "note": "One risk suffices, since the B1.2 trainer settled on \"pick one risk because fundamentally the procedure will be exactly the same\"; the recap's seven step example is assign an owner, create the plan, allocate resources, communicate it, schedule a review, monitor and track, document and report.",
+  "sources": [
+    "template",
+    "B1.2 transcript 00:59:55",
+    "B1.2 chat 00:59:08",
+    "B3.3 transcript 00:10:12, 00:11:13",
+    "demo"
+  ],
+  "statement": "The procedure for putting a risk treatment into effect is set out step by step: who owns it, what is done, and when it is reviewed."
+}

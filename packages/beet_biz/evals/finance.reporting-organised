@@ -1,0 +1,21 @@
+{
+  "anchor": "finance#management",
+  "id": "finance.reporting-organised",
+  "levels": {
+    "Custom": {
+      "l0": "nothing is set.",
+      "l1": "the readers, preparers or channels are generic lists that could be any business's, or a channel is named with no reader.",
+      "l2": "the readers of this business's reports are named with what each needs, the preparer is named, the channel each report travels by is named, and the procedure for preparing reports is written down or taught.",
+      "l3": "each report has a reader, a frequency and a format, and the preparation procedure exists as a document the business could hand to a bookkeeper."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C1.2 slides",
+    "C1.2 transcript 01:28:16",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:59:43",
+    "inferred"
+  ],
+  "statement": "Who reads the business's financial reports, who prepares them and how each reaches its reader are set."
+}

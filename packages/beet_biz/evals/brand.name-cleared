@@ -1,0 +1,19 @@
+{
+  "anchor": "brand#name-and-tagline",
+  "id": "brand.name-cleared",
+  "levels": {
+    "Custom": {
+      "l0": "no search was made.",
+      "l1": "the name is registered or intended but no trade mark search was made, or its result is not recorded.",
+      "l2": "both searches made and dated with their results, the domain and social handles checked, and the decision to apply for a trade mark or not with its reason.",
+      "l3": "a trade mark is applied for or registered in the right classes, or the reasoned decision not to is reviewed on a date, and the name is checked for meaning in each market the business will enter."
+    }
+  },
+  "note": "The registration numbers themselves are `legal.registrations-recorded`; this eval is the clearance before the name is used and the trade mark decision after.",
+  "sources": [
+    "mc:legal/trademarks-protecting-your-business",
+    "mc:legal/intellectual-propoerty-protecting-your-brand",
+    "ref:ip-australia"
+  ],
+  "statement": "The business name is cleared for use, searched against the business names register and the trade marks register with the results and the decision on a trade mark recorded."
+}

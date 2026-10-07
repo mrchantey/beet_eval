@@ -1,0 +1,19 @@
+{
+  "anchor": "market#promotion",
+  "id": "market.activity-calendar",
+  "levels": {
+    "Custom": {
+      "l0": "no schedule, or a single line such as post regularly.",
+      "l1": "one activity repeated across the days, or only one of the three cadences filled.",
+      "l2": "each working day carries its own activity with the content varied across the days, the week carries its activities, and the month carries its review.",
+      "l3": "the calendar carries every channel including the offline and in-person legs, such as a networking day each week and a referral follow-up each month, and each entry has its owner."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C3.1 transcript 01:11:47",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:21:35"
+  ],
+  "statement": "Marketing activities are scheduled as a calendar of daily, weekly and monthly actions."
+}

@@ -1,0 +1,21 @@
+{
+  "anchor": "product#resources-and-suppliers",
+  "id": "product.resources-identified",
+  "levels": {
+    "Custom": {
+      "l0": "no resource is named, or only categories (equipment, software).",
+      "l1": "resources are named without their purpose, or with a purpose that could belong to any business.",
+      "l2": "each resource is named with its purpose and function in this business and the benefits sought and challenges to avoid.",
+      "l3": "the set is complete against the startup actions and costs, each resource is tied to the activity it serves, and what is already held is separated from what must be acquired."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template red",
+    "template",
+    "C2.1 transcript 00:12:52",
+    "C2.1 transcript 00:13:53",
+    "demo"
+  ],
+  "statement": "The resources the business needs are identified, each with its purpose and what the business wants from it and wants to avoid."
+}

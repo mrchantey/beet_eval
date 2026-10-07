@@ -1,0 +1,24 @@
+{
+  "anchor": "product#resources-and-suppliers",
+  "id": "product.supplier-options-compared",
+  "levels": {
+    "Custom": {
+      "l0": "no supplier is named, or one supplier with no alternative.",
+      "l1": "alternatives are named but not compared, or compared on one factor only, or ranked without a basis.",
+      "l2": "at least two suppliers per resource, each scored on the same factors with cost as a figure, and ranked in order of preference.",
+      "l3": "the incumbent supplier is compared against alternatives, the scores come from quotes or trials rather than assumption, and the ranking states its reason."
+    }
+  },
+  "note": "A supplier the business already uses may be one of the options, since the comparison is the point; the ranking is an order of preference, not the final decision, which finance.startup-costs-listed records.",
+  "sources": [
+    "template red",
+    "template",
+    "C2.1 transcript 00:18:11",
+    "C2.1 transcript 00:19:12",
+    "C2.1 transcript 00:25:40",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:05:12",
+    "C2.1 chat 00:29:13",
+    "demo"
+  ],
+  "statement": "Each resource is compared across more than one supplier on reliability, quantity, cost, service and support and ease of access, and the options ranked."
+}

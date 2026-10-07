@@ -1,0 +1,22 @@
+{
+  "anchor": "finance#management",
+  "id": "finance.working-capital-cycle-analysed",
+  "levels": {
+    "Custom": {
+      "l0": "it is not addressed, or the working capital formula, current assets less current liabilities, is given in its place.",
+      "l1": "the cycle is described in prose without its formula, or the formula is wrong.",
+      "l2": "the cycle is stated as inventory days plus receivable days less payable days, or an equivalent expression in days.",
+      "l3": "each day count is quantified from this business's stock, credit terms and supplier terms, with what a shorter cycle would do to its cash."
+    }
+  },
+  "note": null,
+  "sources": [
+    "C1.2 slides",
+    "C1.2 transcript 00:10:31",
+    "C1.2 transcript 01:15:11",
+    "C1.2 transcript 01:16:13",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:58:13",
+    "inferred"
+  ],
+  "statement": "The working capital cycle, the days between paying for inputs and being paid for what is sold, is analysed for this business."
+}

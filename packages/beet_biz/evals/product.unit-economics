@@ -1,0 +1,25 @@
+{
+  "anchor": "product#pricing",
+  "id": "product.unit-economics",
+  "levels": {
+    "Custom": {
+      "l0": "no price or no cost is given for a line that has one, or a line sells at or below its direct cost.",
+      "l1": "prices are given but costs are missing or guessed, include the owner's own time or an employee's wage, or leave a consumable unspread to a per-unit figure, or every line is positive but the margin is thin and unexplained.",
+      "l2": "every line has its price, its direct cost, materials, consumables spread across the jobs they serve and contracted labour per job, a pure service honestly at a written zero, and a margin the owner can state and defend.",
+      "l3": "each cost is quoted from a named supplier with the spread of consumables shown, and the price and margin are compared with the trade's norms, the competitors' prices, what customers said they would pay and the owner's hourly return."
+    }
+  },
+  "note": "The owner's own time is not a direct cost, it is already in the selling price, and a wage is an overhead; a service with no out-of-pocket cost carries a written zero rather than a blank.",
+  "sources": [
+    "template",
+    "template comment",
+    "guide",
+    "B4.3 chat 00:16:28",
+    "mc:finance/financial-plan-catch-up-session 00:08:27",
+    "mc:finance/growing-your-small-business 01:00:30",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:13:44",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:15:48",
+    "inferred"
+  ],
+  "statement": "Each product or service carries its selling price, the direct cost of supplying one unit and the margin between them, and every line sells for more than it costs."
+}

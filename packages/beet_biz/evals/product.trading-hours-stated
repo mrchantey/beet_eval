@@ -1,0 +1,24 @@
+{
+  "anchor": "product#place-and-hours",
+  "id": "product.trading-hours-stated",
+  "levels": {
+    "Custom": {
+      "l0": "no hours are given, or only \"any time a customer wants\" or \"24/7\" with nobody available around the clock.",
+      "l1": "hours are given but incomplete, without opening and closing times or without the days off, or they are the hours a website takes orders rather than the hours the owner will respond.",
+      "l2": "the days open, the opening and closing times and the days closed are all stated, and they are the hours the owner is contactable and will respond.",
+      "l3": "the hours are justified from when the target customers want to engage, the hours competitors keep and the gap they leave, when customer traffic flows and the owner's own limits, and reconciled with the owner's committed time."
+    }
+  },
+  "note": "A wholly online, home based business is not a not-applicable case: it states the days and hours the owner is reachable and the days off; \"none\" is not an answer for the days closed, while weekends, public holidays or a named weekday is.",
+  "sources": [
+    "template",
+    "guide",
+    "A4.2 transcript 00:02:24, 00:06:54",
+    "A4.2 slides",
+    "mc:finance/growing-your-small-business 00:32:33",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:41:49",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The days and hours the business is open to customers and the days it is closed are stated, and they are the hours someone will actually answer."
+}

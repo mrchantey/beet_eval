@@ -1,0 +1,24 @@
+{
+  "anchor": "finance#sales-projection",
+  "id": "finance.sales-built-from-capacity",
+  "levels": {
+    "Custom": {
+      "l0": "one figure repeated across the year, or no projection.",
+      "l1": "the figures vary, but neither the ceiling nor the ramp is reasoned from capacity, or a service carries no hours per unit.",
+      "l2": "every service, or product with a service component, carries the hours one unit takes, month twelve sits within about three quarters of the owner's available hours where a unit takes time, and the months before it rise from a low start toward it.",
+      "l3": "capacity is stated in hours per week, the utilisation rate is justified, and each month's step is tied to how customers are expected to arrive."
+    }
+  },
+  "note": "The trainers' ceiling is 172 hours a month, eight hours a day, five days a week, 4.3 weeks a month, backed off to 65 or 75 per cent; a pure product carries no time per unit, is not marked down for it and is bounded by stock or channel instead, and a first month of zero sales is discouraged.",
+  "sources": [
+    "template comment",
+    "guide",
+    "B4.3 transcript 00:13:36",
+    "B4.3 transcript 00:15:39",
+    "C1.1 transcript 00:07:49",
+    "mc:finance/growing-your-small-business 01:00:30",
+    "mc:finance/growing-your-small-business 01:01:31",
+    "mc:finance/growing-your-small-business 01:02:34"
+  ],
+  "statement": "The sales projection is built down from the owner's productive capacity, the hours one unit takes known for every service, its twelfth month within about three quarters of the hours available and the months before it tapered to a start the business can actually reach."
+}

@@ -1,0 +1,27 @@
+{
+  "anchor": "product#place-and-hours",
+  "id": "product.location-stated",
+  "levels": {
+    "Custom": {
+      "l0": "no location, or a suburb, a region or \"online\" only.",
+      "l1": "the mode of operation, home based, commercial premises, a vehicle, markets or online, is named without the address, or a street address is given that is not where the business operates.",
+      "l2": "the actual street address the business operates from, the home address for a home-based, mobile, online or market business and the premises' address where a shop or factory is rented, with why the mode suits the customers and what it costs.",
+      "l3": "the location is justified against alternatives, with its cost, its zoning, council permission, lease or home business rules in hand, and its distance from customers and suppliers stated."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template red",
+    "template",
+    "guide",
+    "A1.3 transcript 00:00:02",
+    "A1.3 transcript 00:01:13",
+    "A1.3 transcript 00:17:50",
+    "A1.3 transcript 00:39:11",
+    "mc:finance/growing-your-small-business 00:05:56",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:12:41",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The business's location is given as the actual address it operates from."
+}

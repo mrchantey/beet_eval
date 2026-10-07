@@ -1,0 +1,23 @@
+{
+  "anchor": "index",
+  "id": "product.business-described",
+  "levels": {
+    "Custom": {
+      "l0": "no description, or only a name, a trade or an industry.",
+      "l1": "what the business does is stated, but not for whom or what is sold, or in words that fit any business in its trade.",
+      "l2": "what the business is, what it does, what it sells and who it serves, stated plainly and specifically to this business, so a stranger follows it in a sentence or two.",
+      "l3": "one line naming the customer, the offer and what is unique about it, which doubles as a minute's pitch that also says how customers will hear of it, and has been tested on someone outside the business who could say back what it sells."
+    }
+  },
+  "note": "The interview's first question is this description spoken as an elevator pitch, and the recap warns that students lead with why they are starting rather than what they sell.",
+  "sources": [
+    "template",
+    "guide",
+    "A1.3 transcript 00:05:26",
+    "A1.3 transcript 00:12:56",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:07:05",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:35:37",
+    "demo"
+  ],
+  "statement": "The business is described plainly in a sentence or two: what it is, what it does, what it sells and who it serves."
+}

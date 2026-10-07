@@ -1,0 +1,21 @@
+{
+  "anchor": "product#resources-and-suppliers",
+  "id": "product.resource-upkeep-known",
+  "levels": {
+    "Custom": {
+      "l0": "neither maintenance nor warranty is recorded.",
+      "l1": "recorded for some resources only, or as a generic as required with no fee, service or term.",
+      "l2": "each resource has its maintenance named (the fee, service, update or upkeep, or none) and its warranty term or conditions, or none.",
+      "l3": "maintenance is scheduled with dates and cost, warranty expiry is tracked against the purchase date, and both feed the cash flow."
+    }
+  },
+  "note": "A subscription or monthly fee counts as maintenance, because without it the product or service stops working.",
+  "sources": [
+    "template",
+    "C2.1 transcript 00:22:32",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:48:55",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:49:59",
+    "demo"
+  ],
+  "statement": "For each resource acquired, the maintenance that keeps it working and the warranty that covers it are known."
+}

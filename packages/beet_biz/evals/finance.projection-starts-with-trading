@@ -1,0 +1,16 @@
+{
+  "anchor": "finance#sales-projection",
+  "id": "finance.projection-starts-with-trading",
+  "levels": {
+    "Binary": {
+      "check": null
+    }
+  },
+  "note": "Under Self-Employment Assistance that month is the one coaching is expected to begin, which the coach gives; the day within it is not marked.",
+  "sources": [
+    "template",
+    "C1.1 transcript 00:04:29",
+    "mc:finance/financial-plan-catch-up-session 00:02:08"
+  ],
+  "statement": "The projections start in the month the business begins trading under the plan, not a financial year, a calendar year or the month the business first traded."
+}

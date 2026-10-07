@@ -1,0 +1,22 @@
+{
+  "anchor": "index#canvas",
+  "id": "product.canvas-complete",
+  "levels": {
+    "Custom": {
+      "l0": "no canvas, or a block is empty or holds only its prompt.",
+      "l1": "every block holds something, but as a line that could belong to any business or as prose too dense to re-read.",
+      "l2": "every block holds points specific to this business, short enough to read at a glance.",
+      "l3": "bullet points throughout, carrying the figures the plan later establishes, and revised after the plan was written rather than drafted once and left."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "A1.2 transcript 00:12:31",
+    "A1.2 transcript 00:39:51",
+    "mc:finance/growing-your-small-business 00:01:42",
+    "mc:finance/growing-your-small-business 00:02:47",
+    "demo"
+  ],
+  "statement": "The business model canvas is filled in every one of its nine blocks with points specific to this business."
+}

@@ -1,0 +1,20 @@
+{
+  "anchor": "market#promotion",
+  "id": "market.responsibility-assigned",
+  "levels": {
+    "Custom": {
+      "l0": "nobody is named as responsible.",
+      "l1": "a role or a category is named, such as an agency or a family member, with no measure of their performance.",
+      "l2": "a named person or supplier for each channel, and key performance indicators for anyone other than the owner.",
+      "l3": "each deliverer has hours or a budget, the indicators carry figures and dates, and the owner's review of them is scheduled."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C3.1 transcript 00:17:58",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:05:53",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:17:20"
+  ],
+  "statement": "Responsibility for delivering the marketing is assigned to a named person, with the performance indicators anyone other than the owner is held to."
+}

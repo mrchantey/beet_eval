@@ -1,0 +1,22 @@
+{
+  "anchor": "legal#compliance-checks",
+  "id": "legal.responsibility-assigned",
+  "levels": {
+    "Custom": {
+      "l0": "nobody is named as responsible.",
+      "l1": "responsibility is stated as the owner or a role, with nothing on how anyone else in the business would know.",
+      "l2": "a person or role is named, per area where responsibility is split, with how staff are told (induction, training, meetings, a manual or the plan itself), stated for when the business employs even if it does not yet.",
+      "l3": "responsibilities are written into role descriptions and the induction, a deputy covers absence, and the compliance plan is kept where staff can reach it."
+    }
+  },
+  "note": "A business with no employees still says how it would tell staff who is responsible; not applicable is not an accepted answer.",
+  "sources": [
+    "template",
+    "C2.2 transcript 01:06:35",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:37:32",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:38:37",
+    "demo",
+    "inferred"
+  ],
+  "statement": "A named person or role is responsible for compliance and the people in the business know who it is."
+}

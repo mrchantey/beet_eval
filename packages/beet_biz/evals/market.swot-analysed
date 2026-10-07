@@ -1,0 +1,34 @@
+{
+  "anchor": "market#swot",
+  "id": "market.swot-analysed",
+  "levels": {
+    "Custom": {
+      "l0": "no SWOT, or a quadrant empty.",
+      "l1": "items in every quadrant, but generic, not relative to competitors, or misfiled, an external factor listed as a strength or a weakness as a threat.",
+      "l2": "several specific items per quadrant, strengths and weaknesses internal and measured against the named competitors, opportunities and threats external, the weaknesses and threats being ones that stand between the business and its year one goal.",
+      "l3": "each weakness and threat carries a mitigation, each opportunity is tied to a strength that can seize it, and the analysis is dated for a periodic redo."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template red",
+    "guide bold",
+    "template",
+    "guide",
+    "A3.1 transcript 00:02:58",
+    "A3.1 transcript 00:04:35",
+    "A3.1 transcript 00:05:41",
+    "A3.1 transcript 00:15:03",
+    "A3.1 transcript 00:19:14",
+    "A4.3 transcript 00:38:34",
+    "A4.3 transcript 00:39:34",
+    "mc:finance/growing-your-small-business 00:20:33",
+    "mc:finance/growing-your-small-business 00:21:35",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:33:07",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:34:11",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:35:11",
+    "demo",
+    "inferred"
+  ],
+  "statement": "A SWOT analysis names the business's internal strengths and weaknesses against its competitors and the external opportunities and threats that bear on its first year goal."
+}

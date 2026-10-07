@@ -1,0 +1,30 @@
+{
+  "anchor": "market#competitive-advantage",
+  "id": "market.competitive-advantage-stated",
+  "levels": {
+    "Custom": {
+      "l0": "no advantage stated, or the business claims to have no competitors when its own competitor analysis names them.",
+      "l1": "a claim any rival could make, such as great customer service, personalised service, quality or price.",
+      "l2": "a specific advantage drawn from the competitor analysis, an unsatisfied demand in its location or market or a new way of delivering that they do not offer or do worse, stated as the benefit the customer gets and in the business's own words.",
+      "l3": "the advantage is evidenced against the competitor table and from customers, data or competitor prices, hard for a rival to copy, and compressed to the one line that opens the pitch."
+    }
+  },
+  "note": "The eligibility declaration's first option, that the business does not compete with existing businesses, holds only when the competitor analysis found no direct or indirect competitor, which Erwin says is rare; the option kept must be the same edge the competitor analysis and this advantage describe.",
+  "sources": [
+    "guide bold",
+    "template",
+    "A3.1 transcript 00:23:20",
+    "A3.1 transcript 00:31:50",
+    "A3.1 transcript 00:32:30",
+    "C1.1 slides",
+    "C1.1 transcript 00:36:34",
+    "C1.1 transcript 00:37:11",
+    "mc:finance/growing-your-small-business 00:22:39",
+    "mc:finance/growing-your-small-business 00:23:44",
+    "mc:finance/growing-your-small-business 00:53:02",
+    "mc:sales/crm-for-small-business-how-to-generate-leads-and",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The business's competitive advantage is stated as something the named competitors do not offer or do worse, an unsatisfied demand it meets or a new way of delivering, in terms of the benefit to the customer."
+}

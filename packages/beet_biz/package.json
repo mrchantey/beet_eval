@@ -1,0 +1,20 @@
+{
+  "builds_on": [],
+  "kind": "Document",
+  "name": "beet_biz",
+  "outline": "outline.json",
+  "sources": {
+    "biz:outline": "This package's own `outline.json`.",
+    "ref:aaker-1996": "David A. Aaker, Building Strong Brands, Free Press, 1996. The brand identity system, and identity as something planned rather than found.",
+    "ref:business-gov-au": "Australian Government, business.gov.au, the business plan template and guide, the Australian form of the same outline.",
+    "ref:ip-australia": "IP Australia, Australian Trade Mark Search, and the Australian Securities and Investments Commission's Business Names Register. The two searches a name is cleared against.",
+    "ref:mark-pearson-2001": "Margaret Mark and Carol S. Pearson, The Hero and the Outlaw: Building Extraordinary Brands Through the Power of Archetypes, McGraw-Hill, 2001. The twelve archetypes and the discipline of choosing one.",
+    "ref:neumeier-2006": "Marty Neumeier, Zag: The Number One Strategy of High-Performance Brands, New Riders, 2006. The onliness statement: what the business alone is, for whom, and why.",
+    "ref:nielsen-norman-2016": "Kate Moran, The Four Dimensions of Tone of Voice, Nielsen Norman Group, 2016. Funny to serious, formal to casual, respectful to irreverent, enthusiastic to matter-of-fact.",
+    "ref:ries-trout-1981": "Al Ries and Jack Trout, Positioning: The Battle for Your Mind, McGraw-Hill, 1981. Positioning as the place a brand holds in the customer's mind against alternatives.",
+    "ref:romaniuk-2018": "Jenni Romaniuk, Building Distinctive Brand Assets, Oxford University Press, 2018. Which assets are worth owning and how recognition is measured.",
+    "ref:sba": "US Small Business Administration, Write your business plan, the traditional business plan outline the template's documents follow.",
+    "ref:sharp-2010": "Byron Sharp, How Brands Grow: What Marketers Don't Know, Oxford University Press, 2010. Distinctiveness over differentiation; consistency as the mechanism of recognition.",
+    "ref:wheeler-2024": "Alina Wheeler and Rob Meyerson, Designing Brand Identity, sixth edition, Wiley, 2024. The practitioner's process from research to a brand sheet, and what a reproducible identity specifies."
+  }
+}

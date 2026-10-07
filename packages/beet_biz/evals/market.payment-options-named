@@ -1,0 +1,22 @@
+{
+  "anchor": "market#channels",
+  "id": "market.payment-options-named",
+  "levels": {
+    "Custom": {
+      "l0": "no payment option named.",
+      "l1": "methods listed without the channel each applies to, or one mode only where the channel plainly takes others.",
+      "l2": "the modes of payment accepted on each channel, chosen to suit how that channel's customers prefer to pay, with their fees and settlement times known.",
+      "l3": "each mode carries its current fee and settlement time researched from the provider, deposit and credit terms are set, the cost of each method is in the cost structure, and the primary customer's preferred mode is the one with the least friction."
+    }
+  },
+  "note": null,
+  "sources": [
+    "guide bold",
+    "template",
+    "A4.1 transcript 00:34:55",
+    "A4.1 transcript 00:43:35",
+    "mc:finance/growing-your-small-business 00:29:27",
+    "demo"
+  ],
+  "statement": "The ways a customer can pay are named for each sales channel."
+}

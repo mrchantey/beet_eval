@@ -18,7 +18,7 @@ This page is the one source for the words. The law lives in the module docs, whi
 | subject | | The thing under evaluation. Documents under `docs/` are the first kind. |
 | eval | `Eval`, `EvalId` | One statement about the subject, true of a strong subject and false of a missing one, defined once as a row keyed `namespace.slug` and never renamed. |
 | level | `EvalLevel`, `Levels` | One of the four steps of the scale, 0 missing, 1 stated, 2 sound, 3 strong. An eval's `Levels` say how it is decided: the scale as written (`Generic`), met or not (`Binary`), or four pinned lines (`Custom`). |
-| check | `CheckRef`, `CheckOutcome` | A binary eval decided by a route under `check/` with the params its `CheckRef` carries, rather than by a grader. A new check kind is a new route. |
+| check | `CheckRef`, `CheckVerdict`, `CheckOutcome` | A binary eval decided by a route under `check/` with the params its `CheckRef` carries, rather than by a grader. The route answers a `CheckVerdict`; a run keeps its pass and detail as a `CheckOutcome`. A new check kind is a new route. |
 | judged eval | | An eval with no check, graded by a grader. |
 | source tag | `SourceTag` | Where a statement comes from, written in brackets, ie `[ref:sba]`, and defined in the source table of the package that owns the source. |
 | address | `Address` | A place in the subject, `document` or `document#section`, the section half being the heading's slug. An eval's anchor, a block's home and a claim's block are addresses. |
@@ -28,17 +28,18 @@ This page is the one source for the words. The law lives in the module docs, whi
 | grade | `Grade` | One grader's level for one judged eval with verbatim evidence from its anchor, written only through `eval/grade`. |
 | results | `Results`, `GradeSet`, `RubricResult`, `CitationResult`, `CitationStatus` | One run: every check decided, the grades merged, and every rubric's citations read as met, failing or awaiting. |
 | next step | `NextStep`, `NextVerb`, `DocumentRow`, `RubricRow` | The next unit of work, why, and the tables the choice was made from. |
-| package | `PackageManifest`, `PackageKind` | A directory in a store with a manifest. A **document** package says what the documents are, a **reader** package holds what one outside reader needs, a **workspace** package is the subject's own. |
-| workspace | `Workspace`, `PackageSource` | A store holding `docs/`, `results/` and a manifest naming its packages. |
+| package | `PackageManifest`, `PackageKind`, `LoadedPackage` | A directory in a store with a manifest. A **document** package says what the documents are, a **reader** package holds what one outside reader needs, a **workspace** package is the subject's own. |
+| workspace | `Workspace`, `PackageSource`, `LoadedWorkspace`, `PackagedEval` | A store holding `docs/`, `results/` and a manifest naming its packages, read for a verb with every package and every eval of all of them. |
 | outline | `Outline`, `DocumentSpec`, `SectionSpec`, `BlockSpec`, `HistoryEntry` | A document package's list of the documents, their sections and the data blocks they carry. It generates the evals that restate it. |
-| document | `MarkdownDocument`, `Section` | One of the subject's documents, a markdown file under `docs/` or a directory promoted from one: frontmatter, title, tagline, summary and `##` sections. Its frontmatter is beet's `PageMeta`, carrying `created`, `updated` and `authors`. |
+| document | `MarkdownDocument`, `Section`, `DocumentSet` | One of the subject's documents, a markdown file under `docs/` or a directory promoted from one: frontmatter, title, tagline, summary and `##` sections. Its frontmatter is beet's `PageMeta`, carrying `created`, `updated` and `authors`. |
 | data block | `DataBlock`, `BlockFormat`, `Column`, `ColumnKind` | A fenced `csv` or `json` block named in its info string, defined once across the documents. |
 | ask | `Ask`, `AskKind` | An open question to the owner, inline as `TODO(ask ...)`: a **fact** a source could answer, offered with a default, or a **decision** only the owner can make, challenged by the coach instead. |
-| check params | `DocumentCheckParams`, `FrontmatterCheckParams`, `H1CheckParams`, `TaglineCheckParams`, `SummaryCheckParams`, `AgreesCheckParams`, `TitlePart`, `AsksCheckParams`, `SectionsCheckParams`, `BlockCheckParams` | The params of the document check kinds, one per route. |
-| render spec | `RenderSpec` | How a reader package renders one form: the reader's own blank form, the output's name, and the form's quirks. |
-| fill spec | `FillSpec`, `FillOp`, `CellRef` | What a builder writes for one form: the operations that fill a copy of the blank form, by cell. |
+| check kind | `CheckRoutes`, `DocumentCheck`, `FrontmatterCheck`, `H1Check`, `TaglineCheck`, `SummaryCheck`, `AgreesCheck`, `AsksCheck`, `SectionsCheck`, `BlockCheck`, and the params of each, `DocumentCheckParams`, `FrontmatterCheckParams`, `H1CheckParams`, `TaglineCheckParams`, `SummaryCheckParams`, `AgreesCheckParams`, `TitlePart`, `AsksCheckParams`, `SectionsCheckParams`, `BlockCheckParams` | The document check kinds, one route each under `check/`, mounted by `<CheckRoutes/>`. |
+| render spec | `RenderSpec`, `FormKind` | How a reader package renders one form: the reader's own blank form, a Word file or a workbook, the output's name, and the form's quirks. |
+| fill spec | `FillSpec`, `FillOp`, `CellRef`, `CellsDump` | What a builder writes for one form: the operations that fill a copy of the blank form, by cell, and the cells dump of the result it reads back. |
 | claim | `Claim`, `Stakes`, `ClaimStatus` | A row of the workspace package's claims register: something the plan rests on that might be false, with its evidence 0 to 3, its stakes, its test and its status. |
 | action | `CoachAction` | One of the coach's moves, a row of a document package's actions table: the ask, when to stop pushing, the red flags, and a bad and a good exchange. |
+| verb | `EvalRoutes`, `EvalCheck`, `EvalResults`, `EvalNext`, `EvalBlocks`, `EvalWorksheet`, `EvalProject`, `EvalNew`, `EvalGrade`, `EvalPut`, `EvalCells`, `EvalBuild`, `ReportFormat` | One route of `beet-eval` under `eval/`, mounted by `<EvalRoutes/>`; a report answers in a `ReportFormat`. |
 | clerk, grader, builder, coach | | The four agent roles, below. |
 
 ## Layout
@@ -349,18 +350,28 @@ What `eval/next` answers.
 
 ## The verbs
 
-Each is a route of `beet-eval`, its flags on a params type so `--help` documents them, resolving the workspace through the store its entry declares.
+Each is a route of `beet-eval`, its flags on a params type so `--help` documents them, resolving the workspace through the store above it. A workspace runs them from its own entry, `eval.bsx` at its root, mounting `<EvalRoutes/>` under `eval`, `<CheckRoutes/>` under `check`, beet's `<OoxmlCells/>` under `ooxml` and beet's `<BlobView/>`, so the entry's directory, the repo store, is the workspace store; `tests/fixtures/acme/eval.bsx` is one:
 
-- `eval/check [--unused]`: every table's format, global ids, citations and anchors against the outline; `--unused` lists the evals no rubric cites.
-- `eval/results [--format=md]`: runs every check, merges the grades, reads every rubric, writes `results/summary.json`.
-- `eval/next`: the next step, with the document and rubric tables behind it.
+```sh
+beet-eval --main=eval.bsx eval/next
+```
+
+A report answers in markdown, or with `--format=json` in the stored form of what it computed. A verb that finds something wrong answers it and exits 1.
+
+- `eval/check [--unused]`: every table's rows, global ids, the prose rules, each check's params against its route's, citations and anchors against the outline; `--unused` lists the evals no rubric cites.
+- `eval/results [--format=md|json]`: runs every check, merges the grades, reads every rubric, writes `results/summary.json`, and answers its line or the run itself.
+- `eval/next [--format=json]`: the next step, with the document and rubric tables behind it.
 - `eval/blocks [<name> | --all]`: lists the data blocks, prints one, or prints them all as JSON.
 - `eval/worksheet [<document>]`: every judged eval anchored in each document, with its statement and level lines.
-- `eval/project <package>/<rubric>`: the brief for one form, each heading's evals, the text at their anchors and its structural lines.
+- `eval/project <package>/<rubric>`: the brief for one form, each heading's evals, the text at their anchors and its structural lines, written to `results/projections/`.
 - `eval/new <name> <author>`: scaffolds `docs/` from the outline, every body an ask; refuses a non-empty `docs/`.
-- `eval/grade`: writes one grade, refused unless the level is one the eval admits and the evidence is verbatim from its anchor.
+- `eval/grade --eval --level --by [--anchor] [--evidence]`: writes one grade, refused unless the level is one the eval admits, at most 1 where an ask is open, and the evidence is verbatim from its anchor.
+- `eval/put --package --table (--row | --from)`: writes one row of a package's table, given inline or drafted into the workspace store and named by its path, refused unless it keeps the law `eval/check` holds every row to.
+- `eval/cells <package>/<rubric>`: the cells of a reader's blank form, the map a fill spec is written against.
 - `eval/build <package>/<rubric>`: copies the reader's blank form into `dist/`, applies the fill spec, dumps the result's cells.
-- `check/<kind>`: one document check kind, called by `eval/results` for every checked eval and directly for one.
+- `check/<kind>`: one document check kind, called by `eval/results` for every checked eval and directly for one, answering a `CheckVerdict`.
+- `ooxml/cells <path>`: beet's cells dump of a Word file or a workbook in the store, the map a fill spec is written against.
+- `view <path> [--accept=text/markdown]`: beet's view of any file in the store, parsed as its media type and rendered as the request accepts, so a Word file or a slide deck reads as markdown: headings, lists, GFM tables headed `<!-- t<n> -->` with the cells dump's numbers, and what a form signals by look kept as `<mark>` and `<span style>`.
 
 ## The roles
 

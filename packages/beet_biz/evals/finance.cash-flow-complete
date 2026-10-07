@@ -1,0 +1,30 @@
+{
+  "anchor": "finance#cash-flow",
+  "id": "finance.cash-flow-complete",
+  "levels": {
+    "Custom": {
+      "l0": "no cash flow forecast, or income with no expenses.",
+      "l1": "some expenses, but a year, a startup purchase, a loan received or an on-cost is missing.",
+      "l2": "every expense in its month for both years, insurance, accountancy and marketing at the least, superannuation and workers compensation from the month a wage starts, every startup purchase, and any loan received in the month it arrives.",
+      "l3": "each figure quoted or benchmarked, lumpy costs shown where they fall, and year two's costs grown with year two's sales rather than copied."
+    }
+  },
+  "note": "The demonstration repays a loan it never receives and charges insurance its startup list never names, so it sits at level 1.",
+  "sources": [
+    "guide",
+    "B4.1 transcript 00:18:53",
+    "B4.3 transcript 00:25:19",
+    "B4.3 transcript 00:26:21",
+    "B4.3 transcript 00:29:25",
+    "B4.3 transcript 00:34:39",
+    "C1.1 transcript 00:08:41",
+    "C1.1 transcript 00:15:05",
+    "mc:finance/financial-plan-catch-up-session 00:43:59",
+    "mc:finance/financial-plan-catch-up-session 00:47:03",
+    "mc:finance/growing-your-small-business 01:13:00",
+    "mc:finance/growing-your-small-business 01:14:05",
+    "mc:finance/growing-your-small-business 01:17:15",
+    "inferred"
+  ],
+  "statement": "The cash flow forecast carries every business cash movement in the month it falls for both years, each expense the business will incur, the purchases needed to start, any loan received and its repayments, and the on-costs a wage brings."
+}

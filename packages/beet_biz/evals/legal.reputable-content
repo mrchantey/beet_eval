@@ -1,0 +1,29 @@
+{
+  "anchor": "legal#conduct",
+  "id": "legal.reputable-content",
+  "levels": {
+    "Custom": {
+      "l0": "a product, design or promotion carries a theme or claim its funder, platform, payment provider or regulator would refuse, or a client's story or image is used without permission.",
+      "l1": "no such theme is present, but a sensitive claim, healing or a therapeutic benefit, is made without the accreditation or approval behind it, or permission, proof and opt-in are not addressed where the content calls for them.",
+      "l2": "no excluded theme, any claim of benefit worded as wellness or relaxation unless accreditation backs a stronger one and otherwise backed by named proof, a client's permission and a signed release before their story or image is used, and any mailing list opt-in with an unsubscribe.",
+      "l3": "every sensitive claim is evidenced by the accreditation or approval behind it, the release form, the evidence for each claim and the list provider's compliance are held and named, and the policies of the platforms and payment providers the business will use have been checked against what it sells."
+    }
+  },
+  "note": "The department reads every plan for its flagged themes, healing first, then religion, anything polarising, violence, sex, drugs, gambling and the supernatural, and returns it to the coach for proof; its rule that no revenue stream or promotion earns from a raffle, prize draw or other gambling-like activity is a rule of that reader and sits in the rubric's sent-back list rather than here, though donating a product as someone else's prize is a community service and a product selling paid random items is cleared with the coach first; a business whose content makes no claim and uses no client material meets level 2 by saying so.",
+  "sources": [
+    "template",
+    "C1.1 transcript 00:32:38",
+    "C1.1 transcript 00:33:39",
+    "C1.1 chat 00:39:17",
+    "C1.1 chat 00:41:58",
+    "C1.1 chat 00:46:05",
+    "C3.1 transcript 00:56:49",
+    "C3.1 transcript 01:11:47",
+    "C3.2 transcript 00:07:30",
+    "C3.2 transcript 00:08:04",
+    "C3.2 transcript 00:09:15",
+    "C3.2",
+    "inferred"
+  ],
+  "statement": "Nothing the business sells or promotes carries a theme or claim that the funders, platforms, payment providers or regulators it depends on would refuse, and its promotional content uses other people's stories, images and details only with their permission."
+}

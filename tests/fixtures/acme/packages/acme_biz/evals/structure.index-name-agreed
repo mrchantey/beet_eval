@@ -1,0 +1,21 @@
+{
+  "anchor": null,
+  "id": "structure.index-name-agreed",
+  "levels": {
+    "Binary": {
+      "check": {
+        "params": {
+          "document": "index",
+          "part": "Title",
+          "section": "brand#name-and-tagline"
+        },
+        "route": "agrees"
+      }
+    }
+  },
+  "note": null,
+  "sources": [
+    "acme:outline"
+  ],
+  "statement": "The index's title, the business's name, appears under the brand document's name and tagline section, which owns it."
+}

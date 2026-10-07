@@ -1,0 +1,20 @@
+{
+  "anchor": "legal#obligations-register",
+  "id": "legal.reviews-scheduled",
+  "levels": {
+    "Custom": {
+      "l0": "no cycle or date is given against the obligations.",
+      "l1": "a cycle is named but the dates are missing, or one date is written against every obligation without regard to its cycle.",
+      "l2": "each obligation has a cycle that fits the requirement (quarterly BAS, yearly insurance, three yearly name registration), a last date or a target where the requirement has never yet been met, and a next date that follows from the cycle.",
+      "l3": "the dates are tied to the business's calendar (BAS quarters, renewal anniversaries, the financial year end), reminders are set, and past reviews are logged with their outcome."
+    }
+  },
+  "note": "Where a requirement has never yet been met, the last date is not applicable and the next date is the target for meeting it; a GST registered business reviews the tax office row quarterly with its BAS, an unregistered one yearly.",
+  "sources": [
+    "template",
+    "C2.2 transcript 00:57:27",
+    "mc:operations/accredited-compliance chat 00:36:19",
+    "demo"
+  ],
+  "statement": "Each obligation has a review cycle with the date it was last met and the date it is next due."
+}

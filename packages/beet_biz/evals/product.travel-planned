@@ -1,0 +1,25 @@
+{
+  "anchor": "product#travel",
+  "id": "product.travel-planned",
+  "levels": {
+    "Custom": {
+      "l0": "nothing is stated about travel.",
+      "l1": "travel is mentioned without a business purpose, dates or duration, or a holiday is listed as business travel.",
+      "l2": "each planned trip has its destination, a business purpose such as a supplier visit, expo, conference or client meeting, its dates (a month suffices when unsure) and its duration, an overseas trip names the meetings it is for, and where no travel is planned that is stated.",
+      "l3": "each trip carries a day by day itinerary and its cost appears in the financial projections."
+    }
+  },
+  "note": "With no travel planned, \"N/A\" or \"No business travel planned\" is the accepted answer; the template's red sentence permits an empty table, but a blank reads as a forgotten answer; a holiday is not business travel, and under Self-Employment Assistance it is notified to the coach when it happens, overseas travel with no approved itinerary suspends the allowance from the day of departure, and a business trip normally needs 28 days notice.",
+  "sources": [
+    "template red",
+    "template",
+    "guide",
+    "A4.2 transcript 00:34:20, 00:34:51, 00:36:15, 00:37:30, 00:39:29",
+    "A4.2 slides",
+    "mc:finance/growing-your-small-business 00:38:43, 01:14:05",
+    "B1.1 transcript 00:47:41",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Business travel planned for the coming year is stated with its destination, business purpose, dates and duration, or the absence of planned travel is stated."
+}

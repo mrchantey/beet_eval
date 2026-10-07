@@ -1,13 +1,30 @@
 <!--
 beet_eval's entry: `just cli` discovers it, builds it, and the root's
 `CallOnReady` calls it with the process request, dispatching down into the
-router. A route naming a type defined in this crate resolves because the binary
-links `EvalPlugin`; the stock `beet` cannot, hence the `<RequireCfg>`.
+router. The verbs resolve the workspace through the repo store, the entry's
+directory by default and any workspace with `--repo=<uri>`, ie
+`just cli --repo=fs:../beetmash eval/next`. A route naming a type defined in
+this crate resolves because the binary links `EvalPlugin`; the stock `beet`
+cannot, hence the `<RequireCfg>`.
 
     just cli --help
+    just cli eval/check
+    just cli check/sections --document=brand --headings=Voice
+    just cli ooxml/cells assets/forms/plan.docx
+    just cli view assets/decks/week-1.pptx --accept=text/markdown
 -->
 <CliServer {CallOnReady}>
 <Router {(RequestLogger, HelpHandler)}>
 	<RequireCfg cfg="feature:cli"/>
+	<!-- the verbs, `eval/<verb>` -->
+	<Route path="eval"><EvalRoutes/></Route>
+	<!-- the document check kinds, `check/<kind>`, which `eval/results` calls
+	     for every checked eval and a person may call for one -->
+	<Route path="check"><CheckRoutes/></Route>
+	<!-- a form's cells, the map a fill spec is written against -->
+	<Route path="ooxml"><OoxmlCells/></Route>
+	<!-- any file in the store rendered as the request accepts, ie a Word
+	     file or a slide deck as markdown -->
+	<BlobView/>
 </Router>
 </CliServer>

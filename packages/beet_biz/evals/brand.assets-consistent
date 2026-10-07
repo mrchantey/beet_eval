@@ -1,0 +1,21 @@
+{
+  "anchor": "brand#assets",
+  "id": "brand.assets-consistent",
+  "levels": {
+    "Custom": {
+      "l0": "no rule, and the business looks different on each touchpoint.",
+      "l1": "a rule covers some touchpoints, or the assets match by accident with nothing written down.",
+      "l2": "the touchpoints are listed, website, social accounts, documents, invoices, signage, vehicle, email, and each carries the same name, logo, colours and voice under a written rule.",
+      "l3": "recognition is checked, customers know the business from its assets alone, and a review date keeps the rule alive."
+    }
+  },
+  "note": null,
+  "sources": [
+    "ref:sharp-2010",
+    "ref:romaniuk-2018",
+    "mc:marketing/basics-of-branding",
+    "mc:marketing/branding-how-to-do-it-better-your-way",
+    "bdj-part-4"
+  ],
+  "statement": "The brand's distinctive assets appear the same way everywhere the business shows up, under a written rule that says where they appear and how."
+}

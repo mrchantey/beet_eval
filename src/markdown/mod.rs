@@ -54,8 +54,10 @@
 //! 6. **Asks**: an open question for the owner sits inline where its answer
 //!    belongs and nowhere else, an [`Ask`]: `TODO(ask fact: ...)` when a source
 //!    could answer it, `TODO(ask decision: ...)` when only the owner can, a
-//!    bare `TODO(ask: ...)` being a fact. A section with one open is graded at
-//!    most 1 on every eval anchored there.
+//!    bare `TODO(ask: ...)` being a fact. The question may instead follow the
+//!    parentheses to the end of the line, `TODO(ask): the tagline`, which is
+//!    what a scaffold writes. A section with one open is graded at most 1 on
+//!    every eval anchored there.
 //!
 //! # Writing rules
 //!
@@ -103,18 +105,28 @@
 //! renderings is then a property of the pipeline rather than something to
 //! proofread.
 //!
+//! # Reading
+//!
+//! A file is read once into a [`MarkdownDocument`], every file of the
+//! documents directory into a [`DocumentSet`]. The structure comes from the
+//! markdown parse, so a heading inside a fence is no heading and a block may
+//! sit in a list; a line's own rules, a tagline's emphasis, a block's info
+//! string and an ask, are read off the source.
+//!
 //! # Checks
 //!
 //! The kinds deciding a document's shape are routes under `check/`, their
-//! params in [`checks`]; an outline generates the evals restating it, and a
-//! package writes the rest as rows.
+//! actions and params in [`checks`]; an outline generates the evals restating
+//! it, and a package writes the rest as rows.
 pub mod checks;
 mod data_block;
 mod document;
+mod document_set;
 mod outline;
 mod section;
 pub use checks::*;
 pub use data_block::*;
 pub use document::*;
+pub use document_set::*;
 pub use outline::*;
 pub use section::*;

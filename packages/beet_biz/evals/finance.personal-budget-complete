@@ -1,0 +1,27 @@
+{
+  "anchor": "finance#owners-finances",
+  "id": "finance.personal-budget-complete",
+  "levels": {
+    "Custom": {
+      "l0": "blank, a single total, or one year only.",
+      "l1": "figures for both years, but some months or items are missing, guessed round, or a contribution the owner does not yet make is included.",
+      "l2": "every current expense in every month of both years, the owner's share of a shared household only, existing debt repayments included, and year two no lower than year one.",
+      "l3": "figures drawn from bank statements, and year two uplifted three to five per cent for rent, fuel and power."
+    }
+  },
+  "note": "The second year is what gets a plan returned, since the summary looks fine without it; the demonstration starts a new super contribution in year one and drops it and the credit card in year two, so it sits below level 2.",
+  "sources": [
+    "guide",
+    "B4.1 transcript 00:41:02",
+    "B4.1 transcript 00:46:46",
+    "C1.1 transcript 00:20:57",
+    "mc:finance/financial-plan-catch-up-session 00:30:37",
+    "mc:finance/financial-plan-catch-up-session 00:31:41",
+    "mc:finance/financial-plan-catch-up-session 00:34:33",
+    "mc:finance/growing-your-small-business 01:07:45",
+    "mc:finance/growing-your-small-business 01:09:50",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The personal budget is a complete and current picture of the owner's living costs, every bill as a monthly figure, only the owner's own share, nothing not yet being paid, for every month of both years."
+}

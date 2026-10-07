@@ -1,0 +1,26 @@
+{
+  "anchor": "product#terms-of-sale",
+  "id": "product.warranty-terms-stated",
+  "levels": {
+    "Custom": {
+      "l0": "nothing is said about warranties.",
+      "l1": "a warranty is referred to without its terms, or the consumer guarantees are presented as the business's own warranty or as optional.",
+      "l2": "the warranty's terms, what it covers, for how long and what the customer gets, are stated as an extra on top of the consumer guarantees, or it is stated that no extra warranty is offered and the business follows the Australian Consumer Law.",
+      "l3": "the terms are benchmarked against what competitors offer and the cost of honouring them is provided for in the projections."
+    }
+  },
+  "note": "Where warranties do not apply, \"Warranties are not applicable for my business\" together with \"The business will follow the provisions of the Australian Consumer Law\" is the accepted answer, never a blank; a service or software business usually has no warranty of its own and answers this way, since the minimum warranties are the consumer guarantees the law already gives and any warranty is an extra on top.",
+  "sources": [
+    "template red",
+    "guide bold",
+    "guide",
+    "B3.1 transcript 00:46:59",
+    "B3.1 slides",
+    "B3.1",
+    "B3.3 transcript 00:40:32",
+    "B3.3 slides",
+    "mc:finance/growing-your-small-business 00:46:54, 00:48:00",
+    "inferred"
+  ],
+  "statement": "Any warranty the business offers on top of the statutory consumer guarantees is stated in its terms, or it is stated that none is offered and the consumer guarantees apply."
+}

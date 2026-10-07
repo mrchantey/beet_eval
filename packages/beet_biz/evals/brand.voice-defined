@@ -1,0 +1,19 @@
+{
+  "anchor": "brand#voice",
+  "id": "brand.voice-defined",
+  "levels": {
+    "Custom": {
+      "l0": "nothing is written about voice.",
+      "l1": "adjectives only, such as friendly or professional, with no example.",
+      "l2": "the voice placed on named dimensions, formal to casual, serious to funny, respectful to irreverent, matter-of-fact to enthusiastic, with an on and an off example for each, consistent with the archetypes.",
+      "l3": "the examples are drawn from the business's own published writing, and a rule says how the voice shifts by channel and by situation, an apology, an invoice, a launch."
+    }
+  },
+  "note": null,
+  "sources": [
+    "ref:nielsen-norman-2016",
+    "ref:mark-pearson-2001",
+    "mc:marketing/brand-build-scale"
+  ],
+  "statement": "How the business speaks is defined with examples of writing that is on voice and off voice, so that anyone writing for it writes the same way."
+}

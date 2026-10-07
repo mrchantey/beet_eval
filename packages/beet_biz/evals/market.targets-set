@@ -1,0 +1,25 @@
+{
+  "anchor": "market#objectives",
+  "id": "market.targets-set",
+  "levels": {
+    "Custom": {
+      "l0": "no targets, or activities listed with no figures.",
+      "l1": "targets for some activities only, or figures with no start date, or metrics left blank rather than marked not applicable.",
+      "l2": "every planned activity has a start date, a conservative figure for each metric including sales, with zero or not applicable where a metric does not fit and the offline equivalent for an event, and one unit for sales throughout.",
+      "l3": "each activity also carries its cost, so a return can be computed, and each target is derived from a benchmark or past results rather than guessed."
+    }
+  },
+  "note": "A business not yet trading enters simulated targets and a business already posting enters its real figures; zero is an acceptable target where nothing is expected, and a rough estimate is what the assessor asks for.",
+  "sources": [
+    "template",
+    "C3.1 transcript 01:16:57",
+    "C3.1 chat 01:31:33",
+    "C3.1 slides",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:24:32",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:25:34",
+    "mc:marketing/accredited-marketing 01:17:53",
+    "mc:marketing/how-to-fill-in-the-marketing-worksheet 00:13:17 and 00:14:21",
+    "demo"
+  ],
+  "statement": "Each planned marketing activity has a dated target for the coming period, with a figure for every metric it is measured on."
+}

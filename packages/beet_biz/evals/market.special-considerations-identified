@@ -1,0 +1,20 @@
+{
+  "anchor": "market#research",
+  "id": "market.special-considerations-identified",
+  "levels": {
+    "Custom": {
+      "l0": "nothing, or none with no reason.",
+      "l1": "a generic statement, or one of the three considered and the others ignored.",
+      "l2": "each of ethical, cultural and environmental addressed, with the consideration named or the reason it does not apply.",
+      "l3": "each consideration carries the action the business takes in response and the source or standard it follows."
+    }
+  },
+  "note": "The guide accepts does not apply for any of the three when the reason is stated.",
+  "sources": [
+    "template",
+    "guide",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The ethical, cultural and environmental considerations bearing on the business are identified, or the reason each does not apply is given."
+}

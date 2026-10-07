@@ -1,0 +1,21 @@
+{
+  "anchor": "market#research",
+  "id": "market.price-points-known",
+  "levels": {
+    "Custom": {
+      "l0": "no price point.",
+      "l1": "affordable or competitive, or a figure with no source.",
+      "l2": "a dollar figure or range the customer is willing to pay, its source, and whether it is expected to rise or fall.",
+      "l3": "the range is verified from competitor quotes and from what customers said they would pay, and the movement expected is tied to a named trend."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "guide",
+    "A2.1 transcript 00:49:53",
+    "mc:finance/growing-your-small-business 00:18:24",
+    "demo"
+  ],
+  "statement": "The price customers pay in this market is known as a figure, and whether it is expected to move."
+}

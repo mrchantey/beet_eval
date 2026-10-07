@@ -1,0 +1,23 @@
+{
+  "anchor": "market#promotion",
+  "id": "market.promotional-budget-set",
+  "levels": {
+    "Custom": {
+      "l0": "no budget on any activity.",
+      "l1": "minimal or to be confirmed, a duration or a vague word rather than a figure, or a budget on some activities only.",
+      "l2": "a figure for every activity, a dollar amount per period, a written $0 where the activity is organic, or a time cost.",
+      "l3": "each figure is researched from the platform's current rates, the time cost is priced at the owner's hourly value, and the total is stated as a share of forecast revenue."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "guide",
+    "A3.3 transcript 00:55:57",
+    "mc:finance/growing-your-small-business 00:27:42",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:40:13",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Each promotional activity carries a budget, in money or in time."
+}

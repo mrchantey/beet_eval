@@ -1,0 +1,40 @@
+{
+  "anchor": "market#promotion",
+  "id": "market.promotional-activities-planned",
+  "levels": {
+    "Custom": {
+      "l0": "no activity, or a channel named with nothing the business will do on it.",
+      "l1": "activities or strategies listed without an objective, or the same activity repeated, or all of one kind.",
+      "l2": "several distinct activities across online and offline channels, each specific to this business with its own objective, its expected benefit and the risk of it going wrong.",
+      "l3": "the set is balanced across online, offline and connection activities, each risk has a control, and each activity carries the result it will be measured by and the sales it must produce to pay for itself."
+    }
+  },
+  "note": "The A3.3 deck's worked example and the demo both count one daily social post twice, so neither is a model for the mix; each activity's cost is judged by promotional-budget-set.",
+  "sources": [
+    "template red",
+    "guide bold",
+    "template",
+    "guide",
+    "A3.3 transcript 00:16:11",
+    "A3.3 transcript 00:16:45",
+    "A3.3 transcript 00:36:02",
+    "A3.3 transcript 00:37:10",
+    "A3.3 transcript 00:40:11",
+    "A3.3 transcript 01:01:19",
+    "A3.3",
+    "A4.3 transcript 00:51:10",
+    "mc:finance/growing-your-small-business 00:26:39",
+    "mc:finance/growing-your-small-business 00:29:27",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:40:13",
+    "mc:marketing/google-business-profile",
+    "mc:digital/how-to-build-an-email-database",
+    "mc:digital/seo-for-non-tech-savvy-business-owners",
+    "mc:marketing/linkedin-for-business",
+    "mc:marketing/sponsorships-collaborations-and-partnerships",
+    "mc:marketing/facebook-advertising",
+    "mc:ai-for-the-emerging-entrepreneur/how-to-build-your-landing-page-with-ai",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The promotional activities the business will run are planned, each with its objective and its expected benefits and risks, mixing online and offline."
+}

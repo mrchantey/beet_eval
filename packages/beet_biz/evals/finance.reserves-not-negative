@@ -1,0 +1,21 @@
+{
+  "anchor": "finance#profit-and-loss",
+  "id": "finance.reserves-not-negative",
+  "levels": {
+    "Custom": {
+      "l0": "reserves are negative in either year, or what is taken out is not shown.",
+      "l1": "reserves are at or above zero only because drawings are understated or tax is left out.",
+      "l2": "at or above zero in both years, with drawings the full personal shortfall, loan principal, a tax provision once profit clears the tax-free threshold, and any capital purchase.",
+      "l3": "reserves build a stated buffer, and the owner's return is compared with the wage they gave up."
+    }
+  },
+  "note": "The tax-free threshold the trainers quote is $18,200, with roughly a quarter of drawings above it set aside.",
+  "sources": [
+    "guide",
+    "template",
+    "C1.1 transcript 00:19:30",
+    "B4.3 transcript 00:36:45",
+    "B4.3 transcript 01:02:53"
+  ],
+  "statement": "Net profit covers everything taken out below it, the owner's drawings, loan principal, tax and capital purchases, leaving reserves at or above zero in both years."
+}

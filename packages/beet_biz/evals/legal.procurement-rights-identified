@@ -1,0 +1,22 @@
+{
+  "anchor": "legal#licences-and-codes",
+  "id": "legal.procurement-rights-identified",
+  "levels": {
+    "Custom": {
+      "l0": "the question is not addressed.",
+      "l1": "a yes or no with no right named against a product, or a right named without what it attaches to.",
+      "l2": "each product or service needing a right is named with the right and how long it lasts or when it renews, or none is needed and why.",
+      "l3": "each right's cost, holder, renewal date and the consequence of lapse are recorded alongside the business's own licences and registrations."
+    }
+  },
+  "note": "A licence is the right to use a thing and a subscription the way of paying for it, so a subscribed licence lasts as long as the payments do; a registered business name with its renewal counts as a right.",
+  "sources": [
+    "template",
+    "C2.1 transcript 00:45:43",
+    "C2.1 chat 00:44:39",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:10:38",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Any licence, permit, order limit or trade restriction that a product or service the business buys or sells requires is identified with its term, or the absence of any is stated with the reason."
+}

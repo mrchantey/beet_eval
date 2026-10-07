@@ -1,0 +1,22 @@
+{
+  "anchor": "finance#break-even",
+  "id": "finance.break-even-analysed",
+  "levels": {
+    "Custom": {
+      "l0": "no break even figure exists.",
+      "l1": "break even is computed for one year only, is above the year's sales or is not compared with them, or does not follow from the projection's own expenses and margin.",
+      "l2": "break even sales are computed for both years from the projection's own total expenses and gross margin, and the forecast sales exceed them in each year, so the business breaks even inside its first year.",
+      "l3": "the month in which cumulative sales pass break even is identified and the margin of safety between forecast and break even is stated."
+    }
+  },
+  "note": "The workbook's break even covers the business's expenses only, not the owner's personal budget, so trading above it is not yet trading enough to live on.",
+  "sources": [
+    "template",
+    "guide",
+    "C1.1 transcript 00:21:34",
+    "B4.1 slides",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The business knows the sales it needs to cover its costs in each year and forecasts sales above that point."
+}

@@ -1,0 +1,31 @@
+{
+  "anchor": "finance#funding",
+  "id": "finance.sources-of-finance-identified",
+  "levels": {
+    "Custom": {
+      "l0": "no source of finance is identified, or sources are ticked with no reference to the need.",
+      "l1": "a source is named without its amount, cost or the step that obtains it, the list is incomplete, a loan or capital the financial plan relies on is not among them, or an amount borrowed is given with a default term or rate rather than the lender's.",
+      "l2": "every source the business will actually draw on is named, own funds as a figure or a written zero, business sources such as deposits and supplier credit, and external sources such as loans and grants, each with its amount, its cost of use, zero where free, and the step that obtains it, any loan with its lender, amount, establishment costs, term in months and the lender's actual rate, together covering the capital needed, and each findable in the financial plan.",
+      "l3": "the terms and timing of each are set, every grant, rebate or reimbursement the business is entitled to is counted, the lender, platform or buyer is named with costs quoted rather than rounded, each source rejected carries a reason, a loan's serviceability out of net profit is shown, and the business's own trading is named as the source it runs on once past startup."
+    }
+  },
+  "note": "A JobSeeker or Self-Employment Assistance payment is government support; where the capital need is zero, a statement that no outside source is needed, with the reason, meets level 2; a business that is not borrowing leaves the loan tab of the workbook empty and is not marked down; a personal loan belongs in the personal budget, per personal-and-business-separated.",
+  "sources": [
+    "guide bold",
+    "template",
+    "B3.2 slides",
+    "B3.2 transcript 00:26:43",
+    "B3.2",
+    "B4.1",
+    "B4.3 transcript 00:23:10",
+    "C1.1 transcript 00:12:59",
+    "mc:finance/financial-plan-catch-up-session 00:40:48",
+    "mc:finance/growing-your-small-business 00:42:49",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:16:53",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:59:13",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:19:54",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:20:56",
+    "inferred"
+  ],
+  "statement": "Every source of finance the business will draw on to start and run is identified, the owner's own money, business sources and external sources alike, each with the amount from it, its cost of use and the step that obtains it."
+}

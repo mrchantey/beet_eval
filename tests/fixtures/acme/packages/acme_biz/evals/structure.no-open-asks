@@ -1,0 +1,17 @@
+{
+  "anchor": null,
+  "id": "structure.no-open-asks",
+  "levels": {
+    "Binary": {
+      "check": {
+        "params": {},
+        "route": "asks"
+      }
+    }
+  },
+  "note": null,
+  "sources": [
+    "acme:outline"
+  ],
+  "statement": "No ask remains open anywhere under the documents directory."
+}

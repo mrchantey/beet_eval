@@ -1,0 +1,24 @@
+{
+  "anchor": "finance#owners-finances",
+  "id": "finance.outside-income-timed",
+  "levels": {
+    "Custom": {
+      "l0": "no outside income is shown where some exists, or a payment that ends is carried through both years.",
+      "l1": "outside income is entered, but its end date is not reflected in the months after it.",
+      "l2": "each payment runs for its known duration, an allowance to its last month and nothing after, so year two normally carries none unless a job or other income continues.",
+      "l3": "the fall in income at each end date is shown to be covered by drawings, savings or the business."
+    }
+  },
+  "note": "Under Self-Employment Assistance the JobSeeker payment becomes the allowance for nine months and rent assistance runs six; another Centrelink payment runs as long as it actually runs, and a direct registrant on no payment enters nothing.",
+  "sources": [
+    "template comment",
+    "guide",
+    "B4.1 transcript 00:38:52",
+    "B4.1 transcript 00:39:56",
+    "C1.1 transcript 00:10:20",
+    "C1.1 transcript 00:20:57",
+    "mc:finance/financial-plan-catch-up-session 00:29:35",
+    "demo"
+  ],
+  "statement": "Each source of income from outside the business runs in the personal budget for exactly as long as it will actually be received, and no longer."
+}

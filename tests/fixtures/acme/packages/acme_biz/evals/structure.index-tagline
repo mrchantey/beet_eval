@@ -1,0 +1,19 @@
+{
+  "anchor": null,
+  "id": "structure.index-tagline",
+  "levels": {
+    "Binary": {
+      "check": {
+        "params": {
+          "document": "index"
+        },
+        "route": "tagline"
+      }
+    }
+  },
+  "note": null,
+  "sources": [
+    "acme:outline"
+  ],
+  "statement": "A tagline stands alone on the line beneath the index's title."
+}

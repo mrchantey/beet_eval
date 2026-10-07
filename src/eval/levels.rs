@@ -28,6 +28,16 @@ pub enum Levels {
 }
 
 impl Levels {
+	/// How the levels are decided, as a worksheet names it: `generic`,
+	/// `binary` or `custom`.
+	pub fn word(&self) -> &'static str {
+		match self {
+			Self::Generic => "generic",
+			Self::Binary { .. } => "binary",
+			Self::Custom { .. } => "custom",
+		}
+	}
+
 	/// The check route deciding the eval, if any.
 	pub fn check(&self) -> Option<&CheckRef> {
 		match self {

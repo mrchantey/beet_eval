@@ -1,0 +1,17 @@
+{
+  "anchor": "brand#archetypes",
+  "id": "brand.archetypes-chosen",
+  "levels": {
+    "Custom": {
+      "l0": "no archetype is named.",
+      "l1": "an archetype is named without a reason, or without what it rules in and out.",
+      "l2": "a primary and a secondary from a named system, each with why it fits the customer and the positioning and with the behaviours it licenses and forbids.",
+      "l3": "the pair is checked against the archetypes competitors occupy so that the business holds one none of them does, and the voice and identity are shown to follow from it."
+    }
+  },
+  "note": null,
+  "sources": [
+    "ref:mark-pearson-2001"
+  ],
+  "statement": "A primary and a secondary brand archetype are chosen from a named system, each with why it fits and with what it licenses and forbids in tone and imagery."
+}

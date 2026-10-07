@@ -1,0 +1,68 @@
+{
+  "id": "01-business-plan",
+  "intro": "The plan an assessor marks before coaching starts, uploaded as the course's own Word form.",
+  "reader": "an assessor marking the form satisfactory",
+  "sections": [
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [],
+      "example": null,
+      "label": "whole",
+      "prose": "The form as uploaded.",
+      "sections": [],
+      "sent_back_when": [
+        "A red instruction sentence is left in. [form]"
+      ],
+      "structural": [
+        {
+          "sources": [
+            "form"
+          ],
+          "text": "Every red instruction sentence is deleted."
+        },
+        {
+          "sources": [
+            "form"
+          ],
+          "text": "The Surveys box is ticked where the research used one."
+        }
+      ],
+      "title": "Whole document"
+    },
+    {
+      "agrees_with": [
+        "the cover page's business name"
+      ],
+      "beyond_minimum": null,
+      "citations": [
+        {
+          "eval": "product.origin",
+          "level": 2
+        },
+        {
+          "eval": "product.alternatives-considered",
+          "level": 2
+        }
+      ],
+      "example": "The demonstration names one rejected idea. [demo]",
+      "label": "1.2",
+      "prose": "What the business is and why a customer chooses it.",
+      "sections": [],
+      "sent_back_when": [],
+      "structural": [
+        {
+          "sources": [
+            "form"
+          ],
+          "text": "The description names the business in its first sentence."
+        }
+      ],
+      "title": "1.2 Business Description"
+    }
+  ],
+  "sources": [
+    "the blank form",
+    "the demonstration"
+  ]
+}

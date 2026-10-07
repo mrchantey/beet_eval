@@ -1,0 +1,28 @@
+{
+  "anchor": "product#pricing",
+  "id": "product.pricing-strategy-justified",
+  "levels": {
+    "Custom": {
+      "l0": "no pricing strategy is given, or only a price.",
+      "l1": "a strategy is named by its kind, competitive, cost-plus, premium, penetration, value based or hourly, or a position such as competitive prices is asserted, without a reason or a method.",
+      "l2": "each strategy named carries its basis, why it fits this business and its customers, the method by which the price follows from costs and competitors' prices, where the price sits against the named competitors, premium, mid or budget, and it is the strategy the unit prices in the financial plan follow.",
+      "l3": "the derivation is worked with the figures, several competitors' prices and the unit costs behind the price cited, the position tested against what customers will pay, alternatives including discounting weighed and rejected with reasons, and combined strategies say which applies where."
+    }
+  },
+  "note": "Erwin says a discount strategy is the one never to choose, because someone will always undercut you further.",
+  "sources": [
+    "template",
+    "B3.2 slides",
+    "B3.2 transcript 00:01:09",
+    "B3.2 transcript 00:35:12",
+    "B3.2 transcript 00:36:45",
+    "B3.2",
+    "C3.1 transcript 01:21:07",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:26:12",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:29:21",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:30:25",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The pricing strategy is named by its kind, the reason it fits this business and its customers is given, and where the price it yields sits against competitors is stated."
+}

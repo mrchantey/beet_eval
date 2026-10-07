@@ -1,0 +1,13 @@
+{
+  "anchor": "legal#rights-and-contracts",
+  "id": "legal.contract-advice-identified",
+  "levels": "Generic",
+  "note": null,
+  "sources": [
+    "template",
+    "C2.1 transcript 00:52:05",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:13:28",
+    "demo"
+  ],
+  "statement": "The contractual rights and obligations on which a lawyer's confirmation is needed are identified specifically to the business."
+}

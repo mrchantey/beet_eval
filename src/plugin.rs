@@ -4,7 +4,8 @@ use crate::prelude::*;
 use beet::prelude::*;
 
 /// This crate's types: the rows of every table, the typed documents of every
-/// package and workspace, and the params of every check kind.
+/// package and workspace, the check kinds with their params, the verbs, and
+/// the `<CheckRoutes/>` and `<EvalRoutes/>` mounting them.
 #[derive(Default)]
 pub struct EvalPlugin;
 
@@ -31,6 +32,28 @@ impl Plugin for EvalPlugin {
 			.register_type::<AgreesCheckParams>()
 			.register_type::<AsksCheckParams>()
 			.register_type::<SectionsCheckParams>()
-			.register_type::<BlockCheckParams>();
+			.register_type::<BlockCheckParams>()
+			.register_template::<CheckRoutes>()
+			.register_type::<DocumentCheck>()
+			.register_type::<FrontmatterCheck>()
+			.register_type::<H1Check>()
+			.register_type::<TaglineCheck>()
+			.register_type::<SummaryCheck>()
+			.register_type::<AgreesCheck>()
+			.register_type::<AsksCheck>()
+			.register_type::<SectionsCheck>()
+			.register_type::<BlockCheck>()
+			.register_template::<EvalRoutes>()
+			.register_type::<EvalCheck>()
+			.register_type::<EvalResults>()
+			.register_type::<EvalNext>()
+			.register_type::<EvalBlocks>()
+			.register_type::<EvalWorksheet>()
+			.register_type::<EvalProject>()
+			.register_type::<EvalNew>()
+			.register_type::<EvalGrade>()
+			.register_type::<EvalBuild>()
+			.register_type::<EvalCells>()
+			.register_type::<EvalPut>();
 	}
 }

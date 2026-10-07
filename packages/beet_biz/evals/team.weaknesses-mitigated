@@ -1,0 +1,20 @@
+{
+  "anchor": "team#risks",
+  "id": "team.weaknesses-mitigated",
+  "levels": {
+    "Custom": {
+      "l0": "nothing.",
+      "l1": "factors are listed without the concern or the action.",
+      "l2": "each factor carries the concern it raises and what the owner will do about it.",
+      "l3": "each mitigation is in the plan with a date or a cost, and the risk is in the risk register."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:03:30",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:01:22",
+    "inferred"
+  ],
+  "statement": "The personal factors that could stop the owner reaching their objectives are identified with the risk each poses and what will be done to minimise it."
+}

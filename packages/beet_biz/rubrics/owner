@@ -1,0 +1,1571 @@
+{
+  "id": "owner",
+  "intro": "The bar a business holds its own documentation to: the reader is the owner a year on, a partner thinking of joining, or an investor, and the basis is level 3 on everything that matters to running the business, level 2 on the knowledge a course asks the owner to show and on the household figures a sole trader carries, and 2 on every checked eval, since a check is binary. It is the default rubric every business workspace runs, read off `results/summary.json` once grading exists, and the profile every reader package's rubrics sit beneath: a document that meets this rubric meets any form's criteria lines, and only the form's structural lines remain to check on the rendering.\n\nIt is a profile over every eval in this package and cites each one exactly once, under the document and section of the outline where the eval is anchored, so the headings below are the outline's and an address here is an address in `docs/`. The prose under each heading is the owner's reading of the section; the level each eval must reach is on its line, and what that level means is in the eval's own row.",
+  "reader": "the owner a year on, a partner thinking of joining, or an investor",
+  "sections": [
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [
+        {
+          "eval": "structure.action-plan-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.activity-calendar-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.brand-present",
+          "level": 2
+        },
+        {
+          "eval": "structure.brand-sections",
+          "level": 2
+        },
+        {
+          "eval": "structure.competitors-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.expenses-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.finance-present",
+          "level": 2
+        },
+        {
+          "eval": "structure.finance-sections",
+          "level": 2
+        },
+        {
+          "eval": "structure.frontmatter-complete",
+          "level": 2
+        },
+        {
+          "eval": "structure.funding-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.index-name-agreed",
+          "level": 2
+        },
+        {
+          "eval": "structure.index-present",
+          "level": 2
+        },
+        {
+          "eval": "structure.index-sections",
+          "level": 2
+        },
+        {
+          "eval": "structure.index-tagline",
+          "level": 2
+        },
+        {
+          "eval": "structure.index-tagline-agreed",
+          "level": 2
+        },
+        {
+          "eval": "structure.index-titled",
+          "level": 2
+        },
+        {
+          "eval": "structure.insurance-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.legal-present",
+          "level": 2
+        },
+        {
+          "eval": "structure.legal-sections",
+          "level": 2
+        },
+        {
+          "eval": "structure.market-present",
+          "level": 2
+        },
+        {
+          "eval": "structure.market-sections",
+          "level": 2
+        },
+        {
+          "eval": "structure.no-open-asks",
+          "level": 2
+        },
+        {
+          "eval": "structure.obligations-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.personal-budget-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.price-list-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.product-present",
+          "level": 2
+        },
+        {
+          "eval": "structure.product-sections",
+          "level": 2
+        },
+        {
+          "eval": "structure.risk-register-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.sales-projection-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.startup-costs-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.summaries-present",
+          "level": 2
+        },
+        {
+          "eval": "structure.suppliers-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.team-present",
+          "level": 2
+        },
+        {
+          "eval": "structure.team-sections",
+          "level": 2
+        }
+      ],
+      "example": null,
+      "label": "whole",
+      "prose": "The shape of `docs/` before any of it is read: every document present and opening with a summary, every document carrying its frontmatter, the index titled and taglined with the brand document agreeing on both, every section list exactly the outline's, every data block defined once under its anchor with its columns, and no ask left open. All checked by `eval/results`; a failure here is fixed before anything is graded.",
+      "sections": [],
+      "sent_back_when": [],
+      "structural": [],
+      "title": "Whole set"
+    },
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [
+        {
+          "eval": "product.business-described",
+          "level": 3
+        }
+      ],
+      "example": null,
+      "label": "index",
+      "prose": "The owner reads the index as the page a stranger gets, and as the page the owner reads back a year on to see whether the business became what it said. The pitch must survive being said aloud, the canvas must carry the figures the other documents establish, and the goals must be ones the finance document can be checked against.",
+      "sections": [
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [],
+          "example": null,
+          "label": "mission",
+          "prose": "Why the business exists, in one or two sentences a stranger can repeat.\n\nNo eval is anchored here yet; the section is checked for presence by `structure.index-sections`.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Mission"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.canvas-complete",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "canvas",
+          "prose": "The nine blocks of the business model canvas as bullet points, each pointing into the document that holds the detail.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Canvas"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.business-goal-set",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "index.goals",
+          "prose": "The business goals for the end of year one, each with its measure. The owner's personal goals live in team.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Goals"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [],
+          "example": null,
+          "label": "documents",
+          "prose": "The map, one line per document in reading order.\n\nNo eval is anchored here yet; the section is checked for presence by `structure.index-sections`.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Documents"
+        }
+      ],
+      "sent_back_when": [],
+      "structural": [],
+      "title": "index"
+    },
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [],
+      "example": null,
+      "label": "product",
+      "prose": "What the business sells, at what price and on what terms, and how it delivers it. The owner holds this to the level a partner joining the business would need: every line priced from its own economics, every term written down before the first dispute, every supplier compared and quoted, and an action plan that is actually being worked.",
+      "sections": [
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.alternatives-considered",
+              "level": 2
+            },
+            {
+              "eval": "product.origin",
+              "level": 2
+            },
+            {
+              "eval": "product.viability-reasoned",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "idea",
+          "prose": "Where it came from, why it will work, and the alternatives it was preferred to.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Idea"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.value-proposition-stated",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "value",
+          "prose": "Why a customer buys here rather than elsewhere, problem first, then the offer and its benefit.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Value proposition"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.products-services-listed",
+              "level": 3
+            },
+            {
+              "eval": "product.revenue-streams-identified",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "products",
+          "prose": "Each line, who buys it, the add-on that lifts the sale, and which lines earn most of the income.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Products and services"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.main-earners-priced",
+              "level": 3
+            },
+            {
+              "eval": "product.pricing-strategies-defined",
+              "level": 2
+            },
+            {
+              "eval": "product.pricing-strategy-justified",
+              "level": 3
+            },
+            {
+              "eval": "product.unit-economics",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "pricing",
+          "prose": "The strategy and its justification, the unit economics of each line; the `price-list` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Pricing"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.credit-policy-defined",
+              "level": 3
+            },
+            {
+              "eval": "product.refund-terms-stated",
+              "level": 3
+            },
+            {
+              "eval": "product.warranty-terms-stated",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "terms",
+          "prose": "Credit, warranties and refunds.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Terms of sale"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.contact-channels-stated",
+              "level": 3
+            },
+            {
+              "eval": "product.location-stated",
+              "level": 3
+            },
+            {
+              "eval": "product.trading-hours-stated",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "place",
+          "prose": "Where the business operates from, when it trades and how it is reached.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Place and hours"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.key-activities-named",
+              "level": 3
+            },
+            {
+              "eval": "product.key-partners-named",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "partners",
+          "prose": "Who the business depends on and what it must do week to week.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Partners and activities"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.procurement-procedure",
+              "level": 3
+            },
+            {
+              "eval": "product.resource-upkeep-known",
+              "level": 2
+            },
+            {
+              "eval": "product.resource-use-logged",
+              "level": 2
+            },
+            {
+              "eval": "product.resources-identified",
+              "level": 3
+            },
+            {
+              "eval": "product.supplier-options-compared",
+              "level": 3
+            },
+            {
+              "eval": "product.supplier-quote-held",
+              "level": 2
+            },
+            {
+              "eval": "product.supply-terms-negotiated",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "resources",
+          "prose": "What it needs to operate, where each comes from and the alternatives weighed, how buying is done, the quotes held, upkeep and usage; the `suppliers` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Resources and suppliers"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.action-plan-complete",
+              "level": 3
+            },
+            {
+              "eval": "product.action-plan-owned-and-dated",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "action",
+          "prose": "The dated, owned steps to launch and through year one; the `action-plan` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Action plan"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.travel-planned",
+              "level": 2
+            }
+          ],
+          "example": null,
+          "label": "travel",
+          "prose": "Business travel, its purpose and cost, or that there is none.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Travel"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.unforeseen-developments-recorded",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "developments",
+          "prose": "What happened that the plan did not foresee, and what changed as a result.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Developments"
+        }
+      ],
+      "sent_back_when": [],
+      "structural": [],
+      "title": "product"
+    },
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [],
+      "example": null,
+      "label": "market",
+      "prose": "Everything outside the business. The owner holds the research to its sources, the customer to the people actually spoken to, the competitors to real names, and the marketing to a calendar with a budget and a review that changes something; a plan nobody measures is the one thing this document may not be.",
+      "sections": [
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "market.price-points-known",
+              "level": 3
+            },
+            {
+              "eval": "market.research-sourced",
+              "level": 3
+            },
+            {
+              "eval": "market.size-estimated",
+              "level": 3
+            },
+            {
+              "eval": "market.special-considerations-identified",
+              "level": 2
+            },
+            {
+              "eval": "market.supplier-availability-assessed",
+              "level": 2
+            },
+            {
+              "eval": "market.trends-identified",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "research",
+          "prose": "What the research drew on, the market's size and direction, the price points customers accept, whether suppliers can be relied on, and the ethical, cultural or environmental considerations that bear on trading.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Research"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "market.need-identified",
+              "level": 3
+            },
+            {
+              "eval": "market.primary-customer-profiled",
+              "level": 3
+            },
+            {
+              "eval": "market.secondary-market-considered",
+              "level": 2
+            }
+          ],
+          "example": null,
+          "label": "customers",
+          "prose": "The primary customer profiled as a person or an organisation, the need the business meets for them, and the secondary market or the reason there is none.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Customers"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "market.discovery-applied",
+              "level": 3
+            },
+            {
+              "eval": "market.discovery-conducted",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "discovery",
+          "prose": "What potential customers were asked, what they said, and what changed because of it.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Discovery"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "market.competitors-named",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "competitors",
+          "prose": "Named rivals and substitutes with strengths, weaknesses and the comparison; the `competitors` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Competitors"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "market.swot-analysed",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "swot",
+          "prose": "Strengths, weaknesses, opportunities and threats, each specific to this business.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "SWOT"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "market.competitive-advantage-stated",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "competitive",
+          "prose": "What the business does that its competitors do not, in the customer's terms.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Competitive advantage"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "market.objective-quantified",
+              "level": 3
+            },
+            {
+              "eval": "market.targets-set",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "objectives",
+          "prose": "The marketing objective and the targets it is measured by.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Objectives"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "market.channel-strategy",
+              "level": 3
+            },
+            {
+              "eval": "market.channels-chosen",
+              "level": 3
+            },
+            {
+              "eval": "market.payment-options-named",
+              "level": 3
+            },
+            {
+              "eval": "market.primary-channel-chosen",
+              "level": 3
+            },
+            {
+              "eval": "market.sales-channels-listed",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "channels",
+          "prose": "The marketing channels and the one that leads, how each is worked, and the sales channels and payment options customers buy through.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Channels"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "market.acquisition-actions-planned",
+              "level": 3
+            },
+            {
+              "eval": "market.customer-journey-mapped",
+              "level": 3
+            },
+            {
+              "eval": "market.growth-actions-planned",
+              "level": 3
+            },
+            {
+              "eval": "market.referrals-sought",
+              "level": 3
+            },
+            {
+              "eval": "market.retention-actions-planned",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "customer",
+          "prose": "How a customer is acquired, kept, grown and asked for referrals, from first hearing of the business onward.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Customer journey"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "market.activity-calendar",
+              "level": 3
+            },
+            {
+              "eval": "market.promotional-activities-planned",
+              "level": 3
+            },
+            {
+              "eval": "market.promotional-budget-set",
+              "level": 3
+            },
+            {
+              "eval": "market.responsibility-assigned",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "promotion",
+          "prose": "The activities, their budget and who runs them; the `activity-calendar` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Promotion"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "market.channel-monitored",
+              "level": 3
+            },
+            {
+              "eval": "market.results-acted-on",
+              "level": 3
+            },
+            {
+              "eval": "market.results-measured",
+              "level": 3
+            },
+            {
+              "eval": "market.review-cadence",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "review",
+          "prose": "How channels are monitored, how often results are reviewed, what was measured and what was done about it.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Review"
+        }
+      ],
+      "sent_back_when": [],
+      "structural": [],
+      "title": "market"
+    },
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [],
+      "example": null,
+      "label": "brand",
+      "prose": "How the business presents itself, held to the literature rather than to taste: a positioning no rival could claim, archetypes chosen on purpose, a voice with examples, an identity whose every choice has a reason, and assets that look the same everywhere the business appears.",
+      "sections": [
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "brand.name-cleared",
+              "level": 3
+            },
+            {
+              "eval": "brand.tag-line",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "name",
+          "prose": "The registered name, the trading name where it differs, the tagline and what it compresses, and the clearance of the name.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Name and tagline"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "brand.positioning-stated",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "positioning",
+          "prose": "The one thing the business is for, for whom, against what alternative.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Positioning"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "brand.archetypes-chosen",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "archetypes",
+          "prose": "The primary and secondary archetype, and what each licenses and forbids in tone.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Archetypes"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "brand.voice-defined",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "voice",
+          "prose": "How the business speaks, with examples of on and off.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Voice"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "brand.identity-traced",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "identity",
+          "prose": "Logo, colour, type and mascot, each choice traced to the positioning.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Identity"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "brand.assets-consistent",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "assets",
+          "prose": "Where the brand appears and the rule that keeps it consistent.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Assets"
+        }
+      ],
+      "sent_back_when": [],
+      "structural": [],
+      "title": "brand"
+    },
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [],
+      "example": null,
+      "label": "legal",
+      "prose": "The law the business trades under and how it keeps to it. The owner wants the structure's consequences understood, the registrations real, the insurance active, the risks rated and treated, and the obligations in a register that someone reviews on a date. The knowledge items a course asks for sit at 2; the registers sit at 3.",
+      "sections": [
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "legal.structure-chosen",
+              "level": 3
+            },
+            {
+              "eval": "legal.structure-consequences-stated",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "structure",
+          "prose": "The legal structure chosen and what follows from it for banking, liability and tax.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Structure"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "legal.gst-status-decided",
+              "level": 3
+            },
+            {
+              "eval": "legal.registrations-recorded",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "registrations",
+          "prose": "ABN, business name, GST position and tax registrations, each with its number and date or the step that obtains it.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Registrations"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "legal.licences-identified",
+              "level": 3
+            },
+            {
+              "eval": "legal.procurement-rights-identified",
+              "level": 2
+            }
+          ],
+          "example": null,
+          "label": "licences",
+          "prose": "The licences, permits, qualifications, memberships and codes of practice the business trades under, and the rights attached to what it buys and sells.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Licences and codes"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "legal.insurance-held",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "insurance",
+          "prose": "Each class held or quoted, with insurer, cover, premium and renewal; the `insurance` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Insurance"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "legal.whs-framework-identified",
+              "level": 2
+            }
+          ],
+          "example": null,
+          "label": "work",
+          "prose": "The framework that applies and how it is met wherever the business works.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Work health and safety"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "legal.risk-treatment-procedure",
+              "level": 3
+            },
+            {
+              "eval": "legal.risks-identified",
+              "level": 3
+            },
+            {
+              "eval": "legal.risks-rated",
+              "level": 3
+            },
+            {
+              "eval": "legal.risks-treated",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "risk",
+          "prose": "The risks, rated and treated, and the procedure that keeps the register alive; the `risk-register` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Risk register"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "legal.employer-obligations-planned",
+              "level": 2
+            }
+          ],
+          "example": null,
+          "label": "employing",
+          "prose": "The obligations that start with the first wage, or that there are none yet.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Employing people"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "legal.contract-advice-identified",
+              "level": 2
+            }
+          ],
+          "example": null,
+          "label": "rights",
+          "prose": "The contracts the business signs and the matters that need a lawyer.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Rights and contracts"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "legal.reputable-content",
+              "level": 2
+            }
+          ],
+          "example": null,
+          "label": "conduct",
+          "prose": "What the business will not do or sell, and the standards its content keeps.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Conduct"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "legal.obligations-listed",
+              "level": 3
+            },
+            {
+              "eval": "legal.reviews-scheduled",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "obligations",
+          "prose": "Every obligation with its authority, due date and owner; the `obligations` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Obligations register"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "legal.checks-scheduled",
+              "level": 3
+            },
+            {
+              "eval": "legal.corrective-actions-defined",
+              "level": 3
+            },
+            {
+              "eval": "legal.responsibility-assigned",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "compliance",
+          "prose": "How compliance is checked, how often, and what happens when a check fails.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Compliance checks"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "legal.records-backed-up",
+              "level": 3
+            },
+            {
+              "eval": "legal.records-disposed-securely",
+              "level": 2
+            },
+            {
+              "eval": "legal.records-retained",
+              "level": 3
+            },
+            {
+              "eval": "legal.records-secured",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "records",
+          "prose": "What is kept, for how long, where, how it is backed up and how it is disposed of.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Records"
+        }
+      ],
+      "sent_back_when": [],
+      "structural": [],
+      "title": "legal"
+    },
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [],
+      "example": null,
+      "label": "finance",
+      "prose": "The numbers, held to what an investor or a lender would ask: a projection built from capacity, a cash flow that never goes negative, a profit that supports the owner with headroom, and a management routine that compares actuals to plan. The owner's household figures are carried at 2, present and separated, because a sole trader's drawings are the business's biggest cost; the definitions and tool choices a course asks for are at 2 as well.",
+      "sections": [
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "finance.need-established",
+              "level": 3
+            },
+            {
+              "eval": "finance.sources-of-finance-identified",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "funding",
+          "prose": "Whether finance beyond the owner's means is needed and by what process that was decided, then every source with its amount, cost and the step that obtains it; the `funding` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Funding"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "finance.startup-costs-listed",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "startup",
+          "prose": "Every asset owned and every purchase or lease needed to open, valued, with its supplier, and totalled; the `startup-costs` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Startup costs"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "finance.expenses-identified",
+              "level": 3
+            },
+            {
+              "eval": "finance.major-costs-identified",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "costs",
+          "prose": "The major costs and every expense in the month it falls; the `expenses` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Costs"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "finance.projection-starts-with-trading",
+              "level": 2
+            },
+            {
+              "eval": "finance.sales-built-from-capacity",
+              "level": 3
+            },
+            {
+              "eval": "finance.sales-projection-seasonal",
+              "level": 3
+            },
+            {
+              "eval": "finance.sales-projection-two-years",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "sales",
+          "prose": "Two years by month and by line, built from capacity and seasonality, starting when trading starts; the `sales-projection` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Sales projection"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "finance.outside-income-timed",
+              "level": 2
+            },
+            {
+              "eval": "finance.personal-and-business-separated",
+              "level": 3
+            },
+            {
+              "eval": "finance.personal-balance-sheet-complete",
+              "level": 2
+            },
+            {
+              "eval": "finance.personal-budget-complete",
+              "level": 2
+            }
+          ],
+          "example": null,
+          "label": "owner",
+          "prose": "The owner's balance sheet and household budget for both years, kept apart from the business, and when any outside income ends; the `personal-budget` block.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Owner's finances"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "finance.cash-flow-complete",
+              "level": 3
+            },
+            {
+              "eval": "finance.cash-flow-never-negative",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "cash",
+          "prose": "The forecast for both years and the working capital that keeps every month at or above zero.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Cash flow"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "finance.net-profit-supports-owner",
+              "level": 3
+            },
+            {
+              "eval": "finance.profit-and-loss-projected",
+              "level": 3
+            },
+            {
+              "eval": "finance.reserves-not-negative",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "profit",
+          "prose": "Both years, with net profit set against what the owner needs and against everything taken out below it.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Profit and loss"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "finance.break-even-analysed",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "break",
+          "prose": "The sales that cover costs in each year and the margin above them.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Break even"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "finance.actuals-reviewed",
+              "level": 3
+            },
+            {
+              "eval": "finance.debt-collection-strategy",
+              "level": 3
+            },
+            {
+              "eval": "finance.digital-tools-chosen",
+              "level": 2
+            },
+            {
+              "eval": "finance.plan-revision-procedure",
+              "level": 3
+            },
+            {
+              "eval": "finance.reporting-organised",
+              "level": 2
+            },
+            {
+              "eval": "finance.reports-and-controls-understood",
+              "level": 2
+            },
+            {
+              "eval": "finance.tax-provisioned",
+              "level": 3
+            },
+            {
+              "eval": "finance.terms-defined",
+              "level": 2
+            },
+            {
+              "eval": "finance.variance-acted-on",
+              "level": 3
+            },
+            {
+              "eval": "finance.working-capital-cycle-analysed",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "management",
+          "prose": "The terms the owner works in, how actuals are reviewed against the plan and the plan revised, tax provisioning, working capital, debt collection, reporting and the tools used.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Management"
+        }
+      ],
+      "sent_back_when": [],
+      "structural": [],
+      "title": "finance"
+    },
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [],
+      "example": null,
+      "label": "team",
+      "prose": "Who is behind it. The owner's goal must read back from the business goal and the net profit, the hours must be enough for the plan, and the strengths, the personal risks and the advisers must each be tied to something in the other documents rather than listed.",
+      "sections": [
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [],
+          "example": null,
+          "label": "people",
+          "prose": "Who is in the business and what each does; for a sole trader, the owner.\n\nNo eval is anchored here yet; the section is checked for presence by `structure.team-sections`.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "People"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "team.motivation",
+              "level": 2
+            }
+          ],
+          "example": null,
+          "label": "motivation",
+          "prose": "Why the owner is doing this.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Motivation"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "team.personal-goal-set",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "team.goals",
+          "prose": "What the owner expects the business to do for them by the end of year one, with a measure.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Goals"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "team.commitment",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "commitment",
+          "prose": "The hours a week and the resources committed, and that they are enough for the plan.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Commitment"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "team.strengths-leveraged",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "strengths",
+          "prose": "What the owner brings and how each strength is used.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Strengths"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "team.weaknesses-mitigated",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "risks",
+          "prose": "The personal factors that could stop the owner, and what is done about each.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Risks"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "team.advice-sought",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "advisers",
+          "prose": "Where legal, financial, marketing and compliance advice comes from, what it costs and what it changed.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Advisers"
+        }
+      ],
+      "sent_back_when": [],
+      "structural": [],
+      "title": "team"
+    },
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [],
+      "example": null,
+      "label": "history",
+      "prose": "- 2026-10-02: first version, generated from the anchors of every eval in the package and then kept by hand; every eval cited once, 3 by default, 2 on the knowledge, household and checked items named in the introduction.",
+      "sections": [],
+      "sent_back_when": [],
+      "structural": [],
+      "title": "History"
+    }
+  ],
+  "sources": [
+    "`outline.json`, the documents, their sections and the data blocks.",
+    "`beet_eval`'s `markdown` module docs, the shape of a document, and its `eval` module docs, the scale.",
+    "The level 3 line of each judged eval in the `product`, `market`, `brand`, `legal`, `finance` and `team` namespaces, which is the bar this rubric names unless it says 2.",
+    "The `structure` evals, generated by the outline or written as rows, which this rubric cites at 2."
+  ]
+}

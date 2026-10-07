@@ -1,0 +1,25 @@
+{
+  "anchor": "market#objectives",
+  "id": "market.objective-quantified",
+  "levels": {
+    "Custom": {
+      "l0": "no objective, or one that could belong to any business, such as getting the name out there.",
+      "l1": "the objective names its kind, sales, followers, prospects or leads, but carries no number.",
+      "l2": "the expected outcome is a number over a period, such as enquiries per week and the average sale they convert to.",
+      "l3": "the number is worked back from the sales projection through the average sale and the conversion rate, so that reaching it delivers the projected revenue."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C3.1 transcript 00:16:54",
+    "C3.1 transcript 00:19:01",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:06:57",
+    "mc:marketing/marketing-worksheet-masterclass chat 00:19:26",
+    "mc:marketing/marketing-worksheet-masterclass chat 00:23:18",
+    "mc:marketing/how-to-fill-in-the-marketing-worksheet 00:00:00 and 00:01:03",
+    "demo",
+    "inferred"
+  ],
+  "statement": "A primary marketing objective is stated and its expected outcome is quantified over a period."
+}

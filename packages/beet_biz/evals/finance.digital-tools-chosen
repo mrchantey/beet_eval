@@ -1,0 +1,21 @@
+{
+  "anchor": "finance#management",
+  "id": "finance.digital-tools-chosen",
+  "levels": {
+    "Custom": {
+      "l0": "none is named.",
+      "l1": "only categories are named, accounting software or a payment system, or products are named with no purpose.",
+      "l2": "named products are given, each with what it does for this business, covering at least the books and the money coming in.",
+      "l3": "each tool's cost sits in the expenses and its records feed the periodic review."
+    }
+  },
+  "note": null,
+  "sources": [
+    "C1.2 slides",
+    "C1.2 transcript 01:30:25",
+    "C1.2 transcript 01:31:29",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 02:00:23",
+    "inferred"
+  ],
+  "statement": "The digital tools that run the business's financial management are chosen by name, with what each is for."
+}

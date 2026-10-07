@@ -1,0 +1,42 @@
+{
+  "blocks": [
+    {
+      "columns": [
+        { "kind": "Text", "name": "line" },
+        { "kind": "Num", "name": "price_ex_gst" }
+      ],
+      "lives_in": "product#pricing",
+      "name": "price-list"
+    }
+  ],
+  "documents": [
+    {
+      "name": "index",
+      "sections": [
+        { "heading": "Mission", "holds": "Why the business exists." },
+        { "heading": "Documents", "holds": "The map of the rest." }
+      ],
+      "summary": "The business on a page: its name, tagline and pitch."
+    },
+    {
+      "name": "product",
+      "sections": [
+        { "heading": "Idea", "holds": "Where it came from and the alternatives it was preferred to." },
+        { "heading": "Pricing", "holds": "The prices of each line; the price-list block." }
+      ],
+      "summary": "What the business sells and how it delivers it."
+    },
+    {
+      "name": "brand",
+      "sections": [
+        { "heading": "Name and tagline", "holds": "The name and the tagline, which the index carries." },
+        { "heading": "Voice", "holds": "How the business speaks." }
+      ],
+      "summary": "How the business presents itself."
+    }
+  ],
+  "history": [
+    { "change": "First draft.", "date": "2026-10-02" }
+  ],
+  "source": "acme:outline"
+}

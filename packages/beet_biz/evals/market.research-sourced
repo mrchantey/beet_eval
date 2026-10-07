@@ -1,0 +1,27 @@
+{
+  "anchor": "market#research",
+  "id": "market.research-sourced",
+  "levels": {
+    "Custom": {
+      "l0": "no source is named for any finding.",
+      "l1": "sources are named without what each told about the market, findings are not attributed to them, or one kind of source only.",
+      "l2": "both primary sources, such as surveys, interviews or observation, and secondary sources, such as industry bodies, government statistics, suppliers and competitors, each real, with the source named after each finding and what it says about the products, customers or area recorded.",
+      "l3": "government data first, business.gov.au and the Australian Bureau of Statistics, then trade reports, figures quoted with their dates, a conflicting source noted, and any figure found through an AI prompt verified against a real source before it is cited."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "guide",
+    "A2.1 transcript 00:12:58",
+    "A2.1 transcript 00:49:53",
+    "A2.1",
+    "A2.2 transcript 00:52:41",
+    "A2.2 chat 00:52:36",
+    "mc:finance/growing-your-small-business 00:08:06",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:29:56",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Market research draws on both the business's own primary sources and published secondary sources, and each finding names its source and what it says."
+}

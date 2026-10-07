@@ -1,0 +1,25 @@
+{
+  "anchor": "product#value-proposition",
+  "id": "product.value-proposition-stated",
+  "levels": {
+    "Custom": {
+      "l0": "no value proposition, or a description of the offer with no reason to choose it.",
+      "l1": "a reason any rival could claim, such as quality, service, price or convenience alone, with no gap named.",
+      "l2": "a specific reason to choose this business, naming what it offers that customers need or want and the gap competitors leave, such as a turnaround, a niche, a qualification, a sourcing or a guarantee.",
+      "l3": "written problem first, then the solution and its benefit, evidenced against named competitors and confirmed by customers who chose the business for it, and compressible to a line and then to a tagline."
+    }
+  },
+  "note": "The marketing plan's unique sales proposition and the business plan's value proposition are one statement, which the marketing plan's own summary grid treats as one; the marketing plan asks for the gap as a second line and the journal asks for it as why customers will choose the business.",
+  "sources": [
+    "template",
+    "guide",
+    "A1.3 transcript 00:07:34",
+    "A1.3 transcript 00:09:44",
+    "A1.3 transcript 00:12:56",
+    "C3.1 transcript 00:30:28",
+    "C3.1 transcript 00:31:31",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:08:05",
+    "demo"
+  ],
+  "statement": "The value proposition states why a customer would buy from this business rather than from another: what it offers that they need and the gap competitors leave."
+}

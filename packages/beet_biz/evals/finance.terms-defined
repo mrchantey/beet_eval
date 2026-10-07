@@ -1,0 +1,23 @@
+{
+  "anchor": "finance#management",
+  "id": "finance.terms-defined",
+  "levels": {
+    "Custom": {
+      "l0": "no term is defined, or the definitions are pasted from elsewhere.",
+      "l1": "terms are defined but one is confused with another, profit with cost of goods or expenses with drawings, or a definition is too vague to apply to a figure.",
+      "l2": "every term is defined correctly and distinctly, net profit as what remains after cost of goods and business expenses, cost of goods as the direct cost of what is sold, capital as the money to start or grow, GST as a tax on the selling price at its rate, drawings as what the owner takes out.",
+      "l3": "each definition carries the term's own position in this business, whether it registers for GST, what the owner will draw, what its cost of goods is made of."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "guide",
+    "B3.2 slides",
+    "B4.3",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:16:45",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:36:38",
+    "inferred"
+  ],
+  "statement": "The financial terms the plan relies on are each defined in the owner's own words in the sense the plan uses them."
+}

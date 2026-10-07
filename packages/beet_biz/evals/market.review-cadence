@@ -1,0 +1,21 @@
+{
+  "anchor": "market#review",
+  "id": "market.review-cadence",
+  "levels": {
+    "Custom": {
+      "l0": "no review is planned.",
+      "l1": "a review is mentioned with no frequency, or with no target it compares against.",
+      "l2": "a review frequency per channel, daily, weekly or monthly as fits it, naming what is compared with what, and what changes if the channel is not working.",
+      "l3": "the review is a dated calendar entry with the decision rule written down, and each past review records the change it made."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C3.1 transcript 01:11:47",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:19:25",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Marketing is reviewed on a stated cadence, comparing each channel's results with its target and stating what changes if it is not working."
+}

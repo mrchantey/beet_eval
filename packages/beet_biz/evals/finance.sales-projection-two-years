@@ -1,0 +1,28 @@
+{
+  "anchor": "finance#sales-projection",
+  "id": "finance.sales-projection-two-years",
+  "levels": {
+    "Custom": {
+      "l0": "no monthly sales projection, or one year only.",
+      "l1": "both years carry figures, but year two is a copy of year one, a flat uplift with no reason given, or restarts from zero.",
+      "l2": "every line is projected for every month of both years, year two picks up from month twelve's level with its costs and the owner's drawings re-forecast for the year, and the growth or the plateau expected is explained.",
+      "l3": "each year's figures rest on a stated assumption per line, such as customers won per month or a contract in hand, and year two's change is tied to named drivers, capacity, price changes or new streams, and tested against what year one has to achieve first."
+    }
+  },
+  "note": "A blank second year is the omission that gets a plan returned, because the summary figures look complete without it.",
+  "sources": [
+    "template comment",
+    "guide",
+    "C1.1 transcript 00:08:41",
+    "C1.1 transcript 00:20:22",
+    "C1.1 transcript 00:20:57",
+    "B4.3 transcript 00:17:50",
+    "B4.3 transcript 01:10:14",
+    "B4.1 transcript 00:16:51",
+    "mc:finance/financial-plan-catch-up-session 00:14:44",
+    "mc:finance/financial-plan-catch-up-session 00:40:48",
+    "mc:finance/growing-your-small-business 01:00:30",
+    "inferred"
+  ],
+  "statement": "Sales are projected month by month for every product or service across two years, the second year its own forecast continuing from where the first ends rather than repeating it."
+}

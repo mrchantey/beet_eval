@@ -1,0 +1,22 @@
+{
+  "anchor": "market#research",
+  "id": "market.size-estimated",
+  "levels": {
+    "Custom": {
+      "l0": "no estimate, or large or growing only.",
+      "l1": "a buying frequency or an average spend without a count, or a number with no source.",
+      "l2": "how many people buy in a year or how many dollars are spent in a year, with its source.",
+      "l3": "worked from population and competitor count or from a surveyed percentage, with the share this business targets and the working shown."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "guide",
+    "A2.1 transcript 00:44:51",
+    "A2.1 transcript 00:45:51",
+    "mc:finance/growing-your-small-business 00:10:10",
+    "demo"
+  ],
+  "statement": "The size of the market is estimated as a number of buyers or dollars of sales in a year."
+}

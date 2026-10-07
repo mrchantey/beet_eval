@@ -1,0 +1,24 @@
+{
+  "anchor": "legal#risk-register",
+  "id": "legal.risks-identified",
+  "levels": {
+    "Custom": {
+      "l0": "no risks are named, or only category labels such as \"legal\" or \"natural disasters\".",
+      "l1": "risks are listed but generic to any business, or the legal and compliance exposure and the natural disaster are labels rather than events.",
+      "l2": "several risks specific to this business are named as events, among them a specific legal or compliance risk (a tax default, a licence lapsing, a consumer law breach) and the disaster the business location is actually exposed to.",
+      "l3": "the register is drawn from a systematic search of the industry's risks rather than the ones that came to mind, includes the sole owner's illness, loss of a key supplier or platform and a cyber breach where they apply, and is ordered by severity."
+    }
+  },
+  "note": "A home based online business has no not-applicable row: legal and compliance is answered with tax obligations, consumer law or privacy of customer data, and natural disasters with the flood, storm, bushfire or storm outage the home is exposed to; the B1.2 trainer's way of finding risks is to ask an AI for the ten risks of a business in the industry.",
+  "sources": [
+    "template red",
+    "guide bold",
+    "template",
+    "B1.2 transcript 00:46:34, 00:47:36, 00:48:38",
+    "B3.3 transcript 00:04:40",
+    "B1.2",
+    "mc:finance/growing-your-small-business 00:40:48",
+    "demo"
+  ],
+  "statement": "The risks and hazards the business faces are identified as specific events, including its legal and compliance exposure and the natural disaster its location is exposed to."
+}

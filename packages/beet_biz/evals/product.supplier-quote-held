@@ -1,0 +1,20 @@
+{
+  "anchor": "product#resources-and-suppliers",
+  "id": "product.supplier-quote-held",
+  "levels": {
+    "Binary": {
+      "check": null
+    }
+  },
+  "note": "A paid invoice is accepted in place of a quote, since an invoice means a quote was had and acted on; the public liability quote the business plan appends serves both documents.",
+  "sources": [
+    "template",
+    "C2.1 transcript 00:54:17",
+    "C2.1 transcript 00:55:24",
+    "C2.1 chat 00:55:15",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:15:30",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:14:29",
+    "demo"
+  ],
+  "statement": "A quote or invoice has been obtained from a supplier for a resource the business needs."
+}

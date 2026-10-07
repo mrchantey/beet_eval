@@ -1,0 +1,22 @@
+{
+  "anchor": "market#customer-journey",
+  "id": "market.customer-journey-mapped",
+  "levels": {
+    "Custom": {
+      "l0": "no map, or stages named with nothing under them.",
+      "l1": "some stages carry an objective, but processes are missing or generic, such as providing good service.",
+      "l2": "every stage from awareness through interest, purchase and retention to advocacy carries an objective and a concrete process that brings it about.",
+      "l3": "a map per key product or service, each process a repeatable step with a trigger and a timing, and the stages measured so the leakiest one is known."
+    }
+  },
+  "note": "The advocacy stage's referral ask is judged by market.referrals-sought, and a database or newsletter named as a process is judged for opt-in by legal.reputable-content.",
+  "sources": [
+    "template",
+    "C3.1 transcript 00:57:55",
+    "C3.1 transcript 00:59:00",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:13:00",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:14:02",
+    "mc:marketing/marketing-worksheet-masterclass 01:01:16"
+  ],
+  "statement": "The customer journey is mapped from awareness to advocacy, with an objective and a process at each stage."
+}

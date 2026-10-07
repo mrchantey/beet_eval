@@ -1,0 +1,24 @@
+{
+  "anchor": "finance#management",
+  "id": "finance.actuals-reviewed",
+  "levels": {
+    "Custom": {
+      "l0": "no period is reported, or actuals appear with no forecast beside them.",
+      "l1": "forecast and actual figures are given but the period is not stated or the variance is not computed.",
+      "l2": "for a stated period of at least a month, forecast and actual income and expenses sit side by side with the balance of each, the debtors and creditors outstanding, and the actual balance measured against the forecast balance.",
+      "l3": "the review runs every quarter, compares each income and expense line rather than only the totals, and reads the trend across periods."
+    }
+  },
+  "note": "A bill already paid is an expense, not a creditor, and neither debtors nor creditors enter the variance [C1.3 transcript 00:18:33]; the figures may be real, simulated by the student or taken from the form's case.",
+  "sources": [
+    "guide bold",
+    "template",
+    "C1.3 transcript 00:04:22",
+    "C1.3 transcript 00:05:24",
+    "C1.3 transcript 00:17:26",
+    "C1.3 transcript 00:18:33",
+    "C1.3 transcript 00:19:37",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 02:06:19"
+  ],
+  "statement": "Actual income and expenses for each trading period are reported against the forecast for that period and the variance measured."
+}

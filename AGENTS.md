@@ -13,6 +13,7 @@ Downstream deltas from the inherited conventions:
 - Upstream work happens in the `eval` worktree, `../worktrees/beet/eval/beet`, which `Cargo.toml` names, left unstaged there for review. Never edit `/home/pete/me/beet` directly: other agents work in the primary checkout, and a change reaches it only once the operator syncs the trees, so say when a verification needs that. `beet_atproto` is symlinked into the worktree's parent because `beet-cli`'s manifest names it by relative path; without it no cargo command in that worktree loads the workspace.
 - No course material or real business data is committed: tests run on synthetic fixtures under `tests/fixtures/`, and comparisons against a live workspace run from uncommitted captures under `.agents/tmp/`.
 - `.agents/` is gitignored here (skills excepted), so the plan, reports, the `gstack` reference under `.agents/reference/` and the Codex clone under `.agents/tmp/codex/` are local to this checkout.
+- `.agents/skills/` holds the skills a workspace runs, the loop (`iterate`, `write-docs`, `grade-docs`, `build-form`, `write-criteria`, `write-rubric`) and `ingest-source`, written for any workspace and cited by path from each workspace's `AGENTS.md`; a workspace's own specifics live in its own copy, layered over these. They are committed, so they name no course and no business.
 
 ## Commands
 

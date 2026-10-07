@@ -1,0 +1,31 @@
+{
+  "anchor": "market#customers",
+  "id": "market.primary-customer-profiled",
+  "levels": {
+    "Custom": {
+      "l0": "no customer described, or the answer is everyone, anybody, general or all.",
+      "l1": "a category of customer with a trait or two, such as small businesses or an age range alone, which could be any business's customer in the trade.",
+      "l2": "a named persona or one specific segment described on demographic, geographic, psychographic and behavioural factors, with the problem it has, what it is most likely to buy from this business, why, what it values and how often it buys.",
+      "l3": "a full avatar with a name, an age, a place, a job, where they spend time, the trigger that makes them buy and how they buy, sized, and drawn from customer discovery rather than assumed."
+    }
+  },
+  "note": null,
+  "sources": [
+    "guide bold",
+    "template",
+    "guide",
+    "A2.2",
+    "A2.2 chat 00:03:39",
+    "A2.2 chat 00:50:23",
+    "A4.3 transcript 00:33:21",
+    "mc:finance/growing-your-small-business 00:14:12",
+    "mc:finance/growing-your-small-business 00:16:17",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:20:46",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:21:49",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:27:39",
+    "mc:entrepreneurship/being-a-creative-in-business",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The primary customer is profiled as a specific person or business segment rather than as everyone."
+}

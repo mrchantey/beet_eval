@@ -1,0 +1,32 @@
+{
+  "anchor": "legal#registrations",
+  "id": "legal.registrations-recorded",
+  "levels": {
+    "Custom": {
+      "l0": "nothing is recorded, or the word \"ABN\" or the business name stands in for the number.",
+      "l1": "a working name or an ABN applied for and not yet issued, registrations named without their numbers or dates, the ABN the owner's personal one where the structure needs its own, or a record attached that is not this business's or whose particulars do not match.",
+      "l2": "the ABN as its eleven digits with its registration date, the business name as registered with its date or, where no name is registered, the owner's legal name with the note that none is needed, each belonging to the entity the chosen structure names, and each evidenced by the issuing body's record, ABN Lookup or the ASIC registration, with particulars matching, as is every qualification, membership and tax registration claimed.",
+      "l3": "each record is current with its renewal or expiry date known, the name was checked against the domain, social handles and the trade mark register before it was registered, and the records a bank or investor would ask for first are kept together."
+    }
+  },
+  "note": "An undecided name is written as a working name with TBA and an ABN applied for as TBA, both level 1, never left blank; a business name is registered only where it is anything other than the owner's own name, and an unregistered name is the owner's legal name with \"N/A\" as the date; a sole trader has one ABN, linked to their tax file number, for every business they run, while a company or partnership needs its own; ABN Lookup gives a forgotten registration date, and everything here is free except the business name, about $45 a year or $104 for three.",
+  "sources": [
+    "template",
+    "guide bold",
+    "guide",
+    "B2.3 transcript 00:02:00, 00:06:16",
+    "B2.3 chat 00:08:37",
+    "B2.3",
+    "B3.3 transcript 00:26:40, 00:27:43, 00:28:47",
+    "B3.3 slides",
+    "C1.1 slides",
+    "C1.1 transcript 00:38:12",
+    "C1.1 transcript 00:42:01",
+    "mc:finance/growing-your-small-business 00:45:51, 00:55:07",
+    "mc:legal/intellectual-propoerty-protecting-your-brand",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:48:03",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The business's registrations, its ABN and its business name, are recorded with their numbers and dates and evidenced by the issuing body's record, or the absence of a registration is stated with the reason."
+}

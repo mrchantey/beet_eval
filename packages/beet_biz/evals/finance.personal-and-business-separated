@@ -1,0 +1,26 @@
+{
+  "anchor": "finance#owners-finances",
+  "id": "finance.personal-and-business-separated",
+  "levels": {
+    "Custom": {
+      "l0": "business and personal money are mixed in one place, or one side is missing.",
+      "l1": "separated, but a home bill, personal vehicle or personal loan sits on the business side, or drawings from the business appear as personal income.",
+      "l2": "a clean split, with only a separate premises, a business phone or a business-only vehicle counted to the business.",
+      "l3": "shared costs are apportioned on a stated basis agreed with an accountant."
+    }
+  },
+  "note": "Any tax deduction on a home cost is an accountant's conversation, not the plan's.",
+  "sources": [
+    "template comment",
+    "B4.1 transcript 00:12:37",
+    "B4.3 transcript 00:26:21",
+    "C1.1 transcript 00:12:59",
+    "mc:finance/financial-plan-catch-up-session 00:30:37",
+    "mc:finance/financial-plan-catch-up-session 00:31:41",
+    "mc:finance/financial-plan-catch-up-session 00:40:48",
+    "mc:finance/financial-plan-catch-up-session 00:43:59",
+    "mc:finance/growing-your-small-business 01:04:42",
+    "mc:finance/growing-your-small-business 01:14:05"
+  ],
+  "statement": "Personal living costs, personal debts and outside income sit in the personal budget and business costs and business borrowing in the cash flow, with no household bill counted as a business expense and no hoped-for drawings counted as personal income."
+}

@@ -1,0 +1,10 @@
+{
+  "anchor": "product#pricing",
+  "id": "product.pricing-justified",
+  "levels": "Generic",
+  "note": null,
+  "sources": [
+    "ref:sba"
+  ],
+  "statement": "Each price is justified by what it costs to deliver and what customers pay elsewhere."
+}

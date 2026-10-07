@@ -99,6 +99,17 @@ pub struct StructuralLine {
 	pub sources: Vec<SourceTag>,
 }
 
+impl StructuralLine {
+	/// The line as a rubric writes it, its source tags after the text, ie
+	/// `Every red sentence is deleted. [template red]`.
+	pub fn written(&self) -> String {
+		std::iter::once(self.text.clone())
+			.chain(self.sources.iter().map(|source| format!("[{source}]")))
+			.collect::<Vec<_>>()
+			.join(" ")
+	}
+}
+
 text_type!(
 	/// A rubric named across a workspace, `<package>/<rubric>`, ie
 	/// `course/01-business-plan`: what `eval/project` and `eval/build`

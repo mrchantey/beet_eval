@@ -1,0 +1,19 @@
+{
+  "anchor": "brand#name-and-tagline",
+  "id": "brand.tag-line",
+  "levels": {
+    "Custom": {
+      "l0": "no tag line or message.",
+      "l1": "a line that could belong to any business, such as quality and service.",
+      "l2": "about three words that say what the business does, in the customer's language.",
+      "l3": "the line is tested with customers and carried unchanged across every channel."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C3.1 transcript 00:32:35",
+    "mc:marketing/how-to-fill-in-the-marketing-worksheet"
+  ],
+  "statement": "A primary message of a few words says what the business does."
+}

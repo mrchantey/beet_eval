@@ -1,0 +1,20 @@
+{
+  "anchor": "market#channels",
+  "id": "market.channel-strategy",
+  "levels": {
+    "Custom": {
+      "l0": "the channel is named with no plan for working it.",
+      "l1": "a strategy or an action is stated but names no frequency, no content rule or no starting step.",
+      "l2": "a strategy with a frequency and a content rule, at least one start action and one ongoing action, and the platforms and devices the content will be seen on.",
+      "l3": "the plan is costed and dated, each action has an owner, and the content is checked on every device before it goes out."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C3.1 transcript 01:10:40",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:16:15",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:18:20"
+  ],
+  "statement": "Each chosen channel has a plan for how it will be worked, with the strategy, the actions that start and sustain it, and the platforms and devices it reaches the customer on."
+}

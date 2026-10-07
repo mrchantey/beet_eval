@@ -1,0 +1,32 @@
+{
+  "anchor": "finance#profit-and-loss",
+  "id": "finance.net-profit-supports-owner",
+  "levels": {
+    "Custom": {
+      "l0": "year one net profit is missing or negative, or no target and no method is given.",
+      "l1": "year one net profit is positive but below the floor per owner, the floor is reached only by a figure that cannot be defended, a price or volume pushed up to make the number, or a target is asserted without a method.",
+      "l2": "year one net profit per owner clears the floor the plan's funder sets, the method is stated, the costs added and the margin applied, and the sales, prices, costs and expenses behind it are each defensible and are the ones the projections carry.",
+      "l3": "the floor is cleared with headroom, a downside case of lower volume or price still clears it, the target is compared with market prices or industry benchmarks and with the owner's income needs, and it covers the owner's own personal budget drawings and leaves a return on the money put in."
+    }
+  },
+  "note": "Under Self-Employment Assistance the floor is $13,500 of year one net profit per owner, roughly a year of income support: the C1.1 deck's speaker notes give it per owner while the slide, the financial plan guide and both trainers give it flat, and the workbook's CHECKLIST formula divides year one net profit by the owner count, so it is per owner and for a sole owner the readings agree; training does not fail a plan on the number but the coach and the department gate coaching on it, and the route to it when short is more sales, a higher price, cheaper materials or a smaller expense, never a smaller personal budget, which does not move net profit.",
+  "sources": [
+    "template formula",
+    "template comment",
+    "template",
+    "guide",
+    "C1.1 slides",
+    "C1.1 transcript 00:16:06",
+    "C1.1 transcript 00:35:22",
+    "C1.1 transcript 00:42:01",
+    "B4.1 transcript 00:20:58",
+    "B4.3 transcript 00:30:28",
+    "B4.3 transcript 00:43:59",
+    "B4.3 transcript 01:10:14",
+    "mc:finance/financial-plan-catch-up-session 00:25:20",
+    "mc:finance/financial-plan-catch-up-session 00:53:22",
+    "mc:finance/growing-your-small-business 01:15:06",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:26:12"
+  ],
+  "statement": "Year one net profit is enough to support each owner of the business, reached by a stated method from sales, prices, costs and margin rather than by a figure pushed up to make the number."
+}

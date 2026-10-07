@@ -1,0 +1,23 @@
+{
+  "anchor": "market#channels",
+  "id": "market.channels-chosen",
+  "levels": {
+    "Custom": {
+      "l0": "no channel or place is named.",
+      "l1": "a single channel, or every channel there is, with no reason for the set, or places named without an action.",
+      "l2": "several channels, both physical and online, each one the target customer actually uses, each with a specific action and how often, including those the business will add once it is running.",
+      "l3": "the set spans online, offline and in person, each channel carrying the reason it fits the customer, the role it plays, what it costs to reach and how many customers it is expected to bring."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C3.1 transcript 00:11:41",
+    "mc:marketing/accredited-marketing 00:05:13",
+    "mc:marketing/accredited-marketing 01:06:45",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:38:06",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The marketing channels are a chosen set, several rather than one or all of them, each a physical or online place the target customer actually gathers, with what the business will do to reach them there."
+}

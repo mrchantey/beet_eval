@@ -58,6 +58,63 @@ pub struct Ask {
 	pub section: Option<SmolStr>,
 }
 
+impl Ask {
+	/// The marker every ask opens with.
+	const MARKER: &str = "TODO(ask";
+
+	/// Every ask in one line, in order, with its kind and question. Two
+	/// spellings are read: the question inside the parentheses, `TODO(ask
+	/// decision: which market first?)`, and the question after them running to
+	/// the end of the line or the next ask, `TODO(ask): the tagline`, which is
+	/// what a scaffold writes. A kind of `fact` or `decision` follows `ask`;
+	/// none is a fact.
+	pub fn find_all(line: &str) -> Vec<(AskKind, String)> {
+		let mut asks = Vec::new();
+		let mut rest = line;
+		while let Some(start) = rest.find(Self::MARKER) {
+			let after = &rest[start + Self::MARKER.len()..];
+			let (kind, after) = match after.trim_start() {
+				spelled if spelled.starts_with("fact") => {
+					(AskKind::Fact, &spelled[4..])
+				}
+				spelled if spelled.starts_with("decision") => {
+					(AskKind::Decision, &spelled[8..])
+				}
+				_ => (AskKind::Fact, after),
+			};
+			let (question, remainder) = match after.strip_prefix(':') {
+				// inside the parentheses, to the one that closes them
+				Some(inside) => {
+					let mut depth = 0;
+					let close = inside.char_indices().find(|(_, char)| {
+						match char {
+							'(' => depth += 1,
+							')' if depth == 0 => return true,
+							')' => depth -= 1,
+							_ => {}
+						}
+						false
+					});
+					match close {
+						Some((at, _)) => (&inside[..at], &inside[at + 1..]),
+						None => (inside, ""),
+					}
+				}
+				// after the parentheses, to the next ask or the line's end
+				None => {
+					let after = after.strip_prefix(')').unwrap_or(after);
+					let after = after.strip_prefix(':').unwrap_or(after);
+					let end = after.find(Self::MARKER).unwrap_or(after.len());
+					(&after[..end], &after[end..])
+				}
+			};
+			asks.push((kind, question.trim().to_string()));
+			rest = remainder;
+		}
+		asks
+	}
+}
+
 /// Who can answer an [`Ask`].
 #[derive(
 	Debug, Clone, Copy, PartialEq, Eq, Reflect, Serialize, Deserialize,
@@ -74,6 +131,23 @@ pub enum AskKind {
 mod test {
 	use crate::prelude::*;
 	use beet::prelude::*;
+
+	#[beet::test]
+	fn finds_asks() {
+		Ask::find_all("Name: TODO(ask): the name. More text")
+			.xpect_eq(vec![(AskKind::Fact, "the name. More text".to_string())]);
+		Ask::find_all(
+			"TODO(ask decision: which (first) market?) then TODO(ask: why)",
+		)
+		.xpect_eq(vec![
+			(AskKind::Decision, "which (first) market?".to_string()),
+			(AskKind::Fact, "why".into()),
+		]);
+		Ask::find_all("TODO(ask): one. TODO(ask): two.")
+			.len()
+			.xpect_eq(2);
+		Ask::find_all("no asks").xpect_empty();
+	}
 
 	#[beet::test]
 	fn slugs_headings() {

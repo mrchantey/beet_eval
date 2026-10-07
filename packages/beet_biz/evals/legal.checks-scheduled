@@ -1,0 +1,31 @@
+{
+  "anchor": "legal#compliance-checks",
+  "id": "legal.checks-scheduled",
+  "levels": {
+    "Custom": {
+      "l0": "no way of checking compliance is described, or only an intention to stay compliant.",
+      "l1": "checks are mentioned without a schedule, a method or a person, or the answer is a textbook list of framework parts with nothing about this business.",
+      "l2": "checks run on a stated cycle by a named person against the obligations register, with the timing and findings of each check recorded and the plan updated afterwards.",
+      "l3": "checks have been carried out and logged with dates, findings and changes, the cycle is tightened where a check found a gap, and the people involved are trained in what applies."
+    }
+  },
+  "note": "The compliance plan asks this seven times over (the framework's components, validating it, the features of an effective process, monitoring the checklist, conducting checks, identifying non-compliance, recording timing and outcomes) and the trainer concedes the duplication; one grade covers all of them.",
+  "sources": [
+    "template",
+    "C2.2 transcript 00:51:06",
+    "C2.2 transcript 00:53:49",
+    "C2.2 transcript 00:54:43",
+    "C2.2 transcript 01:03:34",
+    "C2.2 transcript 01:09:31",
+    "C2.2 transcript 01:11:19",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:20:38",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:23:51",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:32:14",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:42:45",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:45:58",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:49:16",
+    "C2.2 slides",
+    "demo"
+  ],
+  "statement": "Compliance is checked on a stated schedule by a defined method, with who does it and the timing and findings of each check recorded."
+}

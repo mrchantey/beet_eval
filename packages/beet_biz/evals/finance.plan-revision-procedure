@@ -1,0 +1,23 @@
+{
+  "anchor": "finance#management",
+  "id": "finance.plan-revision-procedure",
+  "levels": {
+    "Custom": {
+      "l0": "no procedure is stated.",
+      "l1": "a bare yes or no on whether the plan changes, or a review promised with no steps.",
+      "l2": "whether the plan changes follows from the period's result, and both branches are set out, what is done when no change is needed and the ordered steps when one is, assessing the result, identifying the change, reviewing the plan and choosing a lever among sales, expenses and pricing.",
+      "l3": "the procedure names the rows that would move and by how much, and carries a trigger such as a variance threshold and a date for the next review."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C1.3 slides",
+    "C1.3 transcript 00:14:14",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 02:07:07",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 02:07:39",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and chat 02:14:13",
+    "inferred"
+  ],
+  "statement": "The financial plan is revisited on each period's result by a stated procedure that says whether it changes and, if it does, which of sales, expenses and pricing moves."
+}

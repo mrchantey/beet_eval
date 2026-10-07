@@ -1,0 +1,32 @@
+{
+  "anchor": "market#channels",
+  "id": "market.sales-channels-listed",
+  "levels": {
+    "Custom": {
+      "l0": "no channel listed.",
+      "l1": "channels named without a cost or with none asserted, with a benefit but no limitation, or as a list with no reason.",
+      "l2": "every channel the business intends to sell through, each fitting where the target customers buy, with its cost as a figure, a percentage per transaction, a fee per period or $0 stated, and both a benefit and a limitation, and a business with one channel says why one is enough.",
+      "l3": "channels chosen from the customer's stated buying preference, each with its expected share of sales, each fee researched from the provider's current rates, and the handling cost of cash or manual channels counted."
+    }
+  },
+  "note": null,
+  "sources": [
+    "guide bold",
+    "template",
+    "guide",
+    "A4.1 transcript 00:02:35",
+    "A4.1 transcript 00:34:55",
+    "A4.1 transcript 00:43:35",
+    "A4.1 transcript 00:49:25",
+    "A4.1 transcript 00:49:56",
+    "A4.1 transcript 00:50:44",
+    "A4.1 transcript 00:52:29",
+    "A4.1",
+    "mc:finance/growing-your-small-business 00:29:27",
+    "mc:finance/growing-your-small-business 00:30:28",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:42:50",
+    "mc:digital/how-to-set-up-an-etsy-store",
+    "demo"
+  ],
+  "statement": "Every channel through which customers can buy is listed, with why it fits where they buy, its cost and its benefit and limitation."
+}

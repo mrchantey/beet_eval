@@ -1,0 +1,29 @@
+{
+  "anchor": "legal#structure",
+  "id": "legal.structure-chosen",
+  "levels": {
+    "Custom": {
+      "l0": "no structure is named, or more than one.",
+      "l1": "a structure is named with a reason, but its advantages or disadvantages are missing, generic or wrong for that structure, such as limited liability for a sole trader, or control is unclear, a partnership whose shares are unstated or a franchise whose terms are not described.",
+      "l2": "one structure named with reasons specific to this business, advantages and disadvantages true of it, a way to protect against each disadvantage, such as insurance, policies and procedures or a separate account, a partnership or company naming its parties and their shares, and the owner in control, with no franchise agreement or majority partner able to overrule them.",
+      "l3": "the alternatives are compared on liability, tax and cost, the point at which changing structure would pay, such as the profit level at which a company beats a sole trader, is stated, and control is written into a partnership or shareholder agreement with the decisions reserved to others named."
+    }
+  },
+  "note": "The SRI form wants the structure alone in its first sentence, not the business name, and two answers under every other bullet, one word being enough where one word answers; the structure must match the ABN holder in the registrations and the wording of the eligibility declaration, whose independence clause is met by the structure showing the owner in control, which a sole trader meets by definition; for a sole trader the advantages are simple, low cost and full control, the disadvantages unlimited liability and one owner, and the point at which a company starts to pay for itself is roughly $180,000 to $200,000 of profit.",
+  "sources": [
+    "template red",
+    "guide bold",
+    "template",
+    "B2.1 slides",
+    "B2.1 transcript 00:48:39, 00:49:57, 00:53:53",
+    "B2.1 chat 00:53:55",
+    "B2.1",
+    "C1.1 transcript 00:32:38",
+    "mc:finance/growing-your-small-business 00:43:50, 00:44:50, 00:53:02",
+    "mc:finance/small-business-accounting",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:47:03",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The business's legal structure is named, the choice is reasoned with its advantages and disadvantages and how the owner will protect against them, and the structure leaves the owner in control."
+}

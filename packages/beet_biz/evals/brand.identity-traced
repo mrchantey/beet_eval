@@ -1,0 +1,20 @@
+{
+  "anchor": "brand#identity",
+  "id": "brand.identity-traced",
+  "levels": {
+    "Custom": {
+      "l0": "no identity, or a logo with no reasoning behind it.",
+      "l1": "the elements exist but their reasons are absent or are matters of preference.",
+      "l2": "each element carries the reason it expresses the positioning or an archetype, and the set is specified well enough to reproduce, files, colour values and typefaces named.",
+      "l3": "the identity has been tested for distinctiveness against competitors and for legibility where it is used, and a brand sheet lets a stranger apply it correctly."
+    }
+  },
+  "note": null,
+  "sources": [
+    "ref:wheeler-2024",
+    "ref:aaker-1996",
+    "mc:marketing/basics-of-branding",
+    "mc:marketing/branding-how-to-do-it-better-your-way"
+  ],
+  "statement": "Each element of the visual identity, logo, colour, type and any mascot, is chosen for a reason that traces to the positioning and the archetypes rather than to taste."
+}

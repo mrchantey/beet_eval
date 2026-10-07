@@ -1,0 +1,27 @@
+{
+  "anchor": "finance#startup-costs",
+  "id": "finance.startup-costs-listed",
+  "levels": {
+    "Custom": {
+      "l0": "no startup list, a total with no items, or no figure for the capital needed.",
+      "l1": "some items with values, but assets already owned or items to lease are missing, a personal phone or home internet is counted, a supplier or a cost is missing for some items, the supplier is a category such as a hardware shop, or the list carries no total.",
+      "l2": "every owned asset and every purchase or lease the business needs, each valued, business items only, a named supplier for each to be bought or leased, and one capital figure that follows from them, zero being a legitimate answer when the reason is given.",
+      "l3": "each value is a current quote from that supplier with an alternative considered, the choice follows from the comparison of supplier options, the figure separates what is already owned from what must be bought and adds the working capital that covers the early months' shortfall, any reimbursement or offset available is noted against the item it covers, and the costs reconcile with the cash flow."
+    }
+  },
+  "note": "A split of items by value, such as plant over $1,000 and consumables under it, is the form's and not the criterion's; an asset already owned needs no supplier; the chosen supplier need not be the one ranked first in the comparison of options, though it is easier if they match.",
+  "sources": [
+    "template",
+    "guide",
+    "B4.1 transcript 00:52:00",
+    "B4.1 transcript 00:53:03",
+    "B4.1 transcript 00:54:04",
+    "C2.1 transcript 00:24:35",
+    "mc:finance/financial-plan-catch-up-session 00:37:41",
+    "mc:finance/growing-your-small-business 01:10:53",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:17:49",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Every asset the business will start with and every item it must buy or lease to open and run is listed with its value and, for anything to be bought or leased, its supplier, business items only, and totalled to the capital needed to start."
+}

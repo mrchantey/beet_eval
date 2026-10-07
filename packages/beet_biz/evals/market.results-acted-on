@@ -1,0 +1,19 @@
+{
+  "anchor": "market#review",
+  "id": "market.results-acted-on",
+  "levels": {
+    "Custom": {
+      "l0": "no evaluation or no decision.",
+      "l1": "an evaluation that restates the figures, or a decision with no evaluation behind it.",
+      "l2": "each activity has a sentence saying what it produced and whether it worked, and a decision to continue, change or stop, with the change named.",
+      "l3": "the decision is reasoned against the cost and the target, dated, and carried into the next period's plan."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C3.2 transcript 00:35:10",
+    "C3.2 transcript 00:35:55"
+  ],
+  "statement": "Each measured result is evaluated in words and a decision is made on it, continue, change or stop, with what the change is."
+}

@@ -1,0 +1,24 @@
+{
+  "anchor": "finance#cash-flow",
+  "id": "finance.cash-flow-never-negative",
+  "levels": {
+    "Custom": {
+      "l0": "a month closes negative by thousands, or the balance is never computed.",
+      "l1": "a dollar or two of red remains in an early month, or a negative month in year two is left because only year one was checked.",
+      "l2": "every month of both years closes at or above zero, with working capital sized to the early shortfall.",
+      "l3": "the source of the working capital is named, and a cash buffer of a stated number of months is held once the last shortfall is cleared."
+    }
+  },
+  "note": "The trainers tolerate a dollar or two of red in an early month but would rather see it cleared with one more sale or a little working capital than explained.",
+  "sources": [
+    "guide",
+    "template formula",
+    "B4.1 transcript 00:24:07",
+    "B4.3 transcript 00:40:58",
+    "B4.3 transcript 01:08:05",
+    "C1.1 transcript 00:24:58",
+    "C1.1 transcript 00:26:02",
+    "mc:finance/growing-your-small-business 01:24:38"
+  ],
+  "statement": "Enough working capital is put in, normally at the start, that the business's cash balance never closes a month negative in either year."
+}

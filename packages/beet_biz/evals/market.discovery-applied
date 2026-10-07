@@ -1,0 +1,11 @@
+{
+  "anchor": "market#discovery",
+  "id": "market.discovery-applied",
+  "levels": "Generic",
+  "note": null,
+  "sources": [
+    "template",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:28:55"
+  ],
+  "statement": "What potential customers said has changed or confirmed the offer or the marketing, and the change is named."
+}

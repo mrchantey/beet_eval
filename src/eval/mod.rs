@@ -83,9 +83,11 @@
 //!
 //! A check kind is a route under `check/` in the engine's router, its params a
 //! [`Reflect`](beet::prelude::Reflect) type behind its `ParamsPartial`, against
-//! which `eval/check` validates every [`CheckRef`]. A new kind is a new route,
-//! nothing else. The document kinds are listed in the
-//! [`document`](crate::markdown) module.
+//! which `eval/check` validates every [`CheckRef`] without calling it. A run
+//! calls the route with the ref's params as flags, [`CheckRef::call`], and
+//! reads the [`CheckVerdict`] it answers. A new kind is a new route answering
+//! a verdict, nothing else. The document kinds are listed in the
+//! [`checks`](crate::markdown::checks) module.
 //!
 //! ## Rubrics
 //!
@@ -135,7 +137,10 @@
 //!
 //! A package is a store with a [`PackageManifest`], whose docs give the layout
 //! and how its tables lie in the store; a workspace is a store with a
-//! [`Workspace`] manifest naming its packages.
+//! [`Workspace`] manifest naming its packages. A verb reads both once, a
+//! [`LoadedWorkspace`]: every package with its rows, every eval of all of them
+//! in one list, and what could not be read, which `eval/check` reports and
+//! every other verb refuses to run on.
 mod check;
 mod eval;
 mod grade;

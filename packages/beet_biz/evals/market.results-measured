@@ -1,0 +1,21 @@
+{
+  "anchor": "market#review",
+  "id": "market.results-measured",
+  "levels": {
+    "Custom": {
+      "l0": "no results, or results for none of the targeted activities.",
+      "l1": "results for some activities, or figures with no review date, or metrics left blank rather than marked not applicable or zero.",
+      "l2": "every targeted activity has a row, including one never run, with a review date after its period, a figure or not applicable in every metric, and sales in the unit the target used.",
+      "l3": "each row carries the activity's cost and the return computed from it, and the figures are taken from the tool that monitored the channel rather than recalled."
+    }
+  },
+  "note": "Simulated results are accepted where the business has not traded, provided they are plausible for the business and its channels; a result that falls short of its target is the measurement working, not a failure.",
+  "sources": [
+    "template",
+    "C3.2 transcript 00:35:55",
+    "C3.1 slides",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The actual result of each marketing activity is recorded against its target, with a review date and a figure for every metric."
+}

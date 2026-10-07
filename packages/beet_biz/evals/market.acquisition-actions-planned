@@ -1,0 +1,29 @@
+{
+  "anchor": "market#customer-journey",
+  "id": "market.acquisition-actions-planned",
+  "levels": {
+    "Custom": {
+      "l0": "no acquisition action.",
+      "l1": "a restatement of the heading, or a channel named with nothing the business will do on it.",
+      "l2": "several distinct concrete actions, each a channel, an event, a program or an offer the business will run, aimed at the primary customer.",
+      "l3": "each action carries a target and a measure, such as leads per month or conversion rate, with acquisition cost kept below customer lifetime value."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template red",
+    "template",
+    "A3.2 transcript 00:15:50",
+    "A3.2 transcript 00:26:01",
+    "A3.2 transcript 00:42:50",
+    "A4.3 transcript 00:45:54",
+    "A4.3",
+    "mc:finance/growing-your-small-business 00:24:33",
+    "mc:marketing/the-marketing-matrix",
+    "mc:sales/crm-for-small-business-how-to-generate-leads-and",
+    "mc:marketing/getting-your-digital-marketing-framework-for",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The actions by which a stranger becomes a customer are planned as things the business will do."
+}

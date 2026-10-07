@@ -1,0 +1,22 @@
+{
+  "anchor": "legal#records",
+  "id": "legal.records-backed-up",
+  "levels": {
+    "Custom": {
+      "l0": "no backup is described.",
+      "l1": "a backup is named but on the same medium or in the same place as the primary, or the method is unspecified.",
+      "l2": "a primary store and a backup on different media or in different places, so that the loss of one does not lose the other.",
+      "l3": "the backup runs automatically on a stated schedule, its restore has been tested, and it covers every class of record the business keeps."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C2.2 transcript 01:07:14",
+    "C2.2 slides",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:39:40",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Business records are held in a primary store with a backup on different media or in a different place."
+}

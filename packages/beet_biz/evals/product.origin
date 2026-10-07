@@ -1,0 +1,11 @@
+{
+  "anchor": "product#idea",
+  "id": "product.origin",
+  "levels": "Generic",
+  "note": null,
+  "sources": [
+    "template",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:07:05"
+  ],
+  "statement": "Where the idea came from is told: the experience, observation or demand that produced it."
+}

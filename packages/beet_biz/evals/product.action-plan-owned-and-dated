@@ -1,0 +1,21 @@
+{
+  "anchor": "product#action-plan",
+  "id": "product.action-plan-owned-and-dated",
+  "levels": {
+    "Custom": {
+      "l0": "no person or no date on the actions, or no launch date.",
+      "l1": "some actions lack a person or a date, or one date is copied through the plan.",
+      "l2": "a launch date is set, and every action names its responsible person and carries a target date of its own period, pre-launch actions dated on or before launch and later dates ascending through the plan.",
+      "l3": "dates are sequenced by dependency, so whatever must precede launch or a later action is dated before it, and the milestones tie to the twelve month goal."
+    }
+  },
+  "note": "The owner by name, as \"the business owner\" or by initials (the demonstration's \"EB\") is accepted as the responsible person.",
+  "sources": [
+    "template",
+    "A4.2 slides",
+    "mc:finance/growing-your-small-business 00:33:34, 00:36:37, 00:37:40",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Every action in the plan names who is responsible for it and a target completion date that belongs to its own period, anchored on a stated launch date."
+}

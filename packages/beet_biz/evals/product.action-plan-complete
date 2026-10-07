@@ -1,0 +1,26 @@
+{
+  "anchor": "product#action-plan",
+  "id": "product.action-plan-complete",
+  "levels": {
+    "Custom": {
+      "l0": "no action plan, or a list of tasks with no periods.",
+      "l1": "whole periods or whole functions have no actions, or the pre-launch phase leaves out a registration, licence or insurance the plan itself shows as outstanding.",
+      "l2": "every period and every function carries actions, the pre-launch phase includes every registration, licence and insurance the plan shows as still outstanding, and a sole owner fills the people function with their own development.",
+      "l3": "actions are traced to the SWOT, the risk register and the marketing strategy, a recurring action is written into each period it recurs in, and the plan carries its own review cadence."
+    }
+  },
+  "note": "A function that seems not to apply is answered, never blank: a sole owner with no staff answers HR and Professional Development with their own development, mentoring sessions, masterclasses, sales training or trade reading; a repeated activity is fine in every period, since the plan is a calendar, not a list of unique tasks; the assessor walkthrough's \"you don't need to use them all\" is overruled by the template's red sentence and the guide's bold.",
+  "sources": [
+    "template red",
+    "guide bold",
+    "template",
+    "guide",
+    "A4.2 slides",
+    "A4.2 transcript 00:21:14, 00:22:18",
+    "A4.2",
+    "mc:finance/growing-your-small-business 00:33:34, 00:34:35",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The action plan schedules actions for every function of the business, marketing and sales, research and development, finance and legal, people and professional development, and operations, in every period from before launch through the first months of trading."
+}

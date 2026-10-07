@@ -1,0 +1,20 @@
+{
+  "anchor": "legal#records",
+  "id": "legal.records-disposed-securely",
+  "levels": {
+    "Custom": {
+      "l0": "no disposal method is stated.",
+      "l1": "records are binned or deleted with no regard to what they contain, or kept indefinitely.",
+      "l2": "paper is shredded or sent to a secure destruction service and digital copies deleted once the retention period has passed.",
+      "l3": "disposal is logged with the date and the class of record, and a destruction certificate kept where a service is used."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C2.2 transcript 01:08:58",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:41:43",
+    "demo"
+  ],
+  "statement": "Records past their retention period are destroyed rather than discarded."
+}

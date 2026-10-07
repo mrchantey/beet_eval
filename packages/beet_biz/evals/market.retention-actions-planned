@@ -1,0 +1,29 @@
+{
+  "anchor": "market#customer-journey",
+  "id": "market.retention-actions-planned",
+  "levels": {
+    "Custom": {
+      "l0": "no retention action.",
+      "l1": "a restatement of the heading, or good service with nothing the business will do.",
+      "l2": "a concrete action the business will run, such as a follow-up call, a loyalty offer, a newsletter through an opt-in platform or a customer event.",
+      "l3": "a customer database on an opt-in platform, a scheduled contact rhythm for new, existing, lost and quoted customers, and a retention measure such as repeat rate or lifetime value."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template red",
+    "template",
+    "A3.2 transcript 00:26:01",
+    "A3.2 transcript 00:42:50",
+    "A4.3",
+    "A1.2 transcript 00:24:32",
+    "mc:finance/growing-your-small-business 00:24:33",
+    "mc:digital/how-to-build-an-email-database",
+    "mc:marketing/the-marketing-matrix",
+    "mc:sales/sales-shift",
+    "mc:marketing/getting-your-digital-marketing-framework-for",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The actions by which a customer is brought back are planned as things the business will do."
+}

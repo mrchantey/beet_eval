@@ -1,0 +1,11 @@
+{
+  "anchor": "product#idea",
+  "id": "product.viability-reasoned",
+  "levels": "Generic",
+  "note": null,
+  "sources": [
+    "template",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:08:05"
+  ],
+  "statement": "Why the idea will work is argued: the demand for it, the owner's skill at it, or the gap nobody else fills."
+}

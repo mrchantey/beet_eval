@@ -1,0 +1,23 @@
+{
+  "anchor": "product#place-and-hours",
+  "id": "product.contact-channels-stated",
+  "levels": {
+    "Custom": {
+      "l0": "no channel is stated.",
+      "l1": "channels are stated but the list omits one the business uses elsewhere in its plan, or includes one nobody will answer, such as an unattended social media inbox.",
+      "l2": "every channel the business will offer is stated, none is offered that cannot be answered within the stated hours, and any channel named elsewhere in the plan, such as a website, appears here.",
+      "l3": "the channels are chosen from how the target customers say they want to be contacted and how often, the industry's norms, the time each channel costs, its reach and how well it generates leads."
+    }
+  },
+  "note": "An unanswered social media inbox irritates a customer exactly as an unanswered landline does; every channel offered is a promise the trading hours have to keep.",
+  "sources": [
+    "guide bold",
+    "template",
+    "A4.2 transcript 00:16:17",
+    "A4.2 slides",
+    "mc:finance/growing-your-small-business 00:33:34",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The channels through which customers and key partners can reach the business are stated, and each is one the business will service within its hours."
+}

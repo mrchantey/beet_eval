@@ -1,0 +1,21 @@
+{
+  "anchor": "product#products-and-services",
+  "id": "product.products-services-listed",
+  "levels": {
+    "Custom": {
+      "l0": "nothing named, or a category alone such as framing or consulting.",
+      "l1": "items named as a bare list, with no sense of the range, of what each is or of which matter.",
+      "l2": "each product or service named with what it is and for whom, the principal ones first, so the range being sold is clear.",
+      "l3": "the range includes the add-on or upsell that lifts each sale, each item is one a named customer segment buys, and the list is grouped into the lines the financial projections use with each line's expected share of sales."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "A1.3",
+    "mc:finance/growing-your-small-business 00:05:56",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The products and services the business sells are named, the most important first, and their range described."
+}

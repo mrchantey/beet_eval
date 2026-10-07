@@ -1,0 +1,14 @@
+{
+  "anchor": "legal#records",
+  "id": "legal.records-secured",
+  "levels": "Generic",
+  "note": null,
+  "sources": [
+    "template",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:41:43",
+    "C2.2 slides",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Primary records are protected from loss and unauthorised access while staying accessible to the people who need them."
+}

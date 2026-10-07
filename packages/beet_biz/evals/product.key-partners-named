@@ -1,0 +1,21 @@
+{
+  "anchor": "product#partners-and-activities",
+  "id": "product.key-partners-named",
+  "levels": {
+    "Custom": {
+      "l0": "no partner, or the owner alone.",
+      "l1": "kinds of partner only, such as suppliers or an accountant, with none named, or partners named without what they give the business.",
+      "l2": "named partners beyond the owner, suppliers, a landlord, an accountant, a lawyer, associations, advisers, referrers, the business coach or a mentor, each with the benefit the business gets from them.",
+      "l3": "each partnership is in place or agreed, with its terms, and the loss of any one partner has a named alternative."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "mc:finance/growing-your-small-business 00:04:51",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:44:57",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The partners and stakeholders the business depends on beyond the owner are named, with what each provides."
+}

@@ -1,0 +1,20 @@
+{
+  "anchor": "team#commitment",
+  "id": "team.commitment",
+  "levels": {
+    "Custom": {
+      "l0": "nothing, or the owner's weekly hours are neither stated nor readable from the trading hours.",
+      "l1": "hours or resources are stated but not both, or the hours are vague or would not run the business as its trading hours and action plan need.",
+      "l2": "an hours figure that covers selling, producing, marketing and bookkeeping for a full-time business, at least what the trading hours imply and what the owner has undertaken to a program, a funder or a partner, and the resources named, vehicle, equipment, stock, online presence.",
+      "l3": "the hours are broken down by activity and reconciled with the operational plan and the owner's other commitments, and the resources are valued and in the balance sheet."
+    }
+  },
+  "note": "The programme builds full-time businesses: the recap puts the figure at about 40 hours a week and a student writing 15 is told to talk to their coach, and the guide reads the business plan's hours row as the hours the owner will trade, at least the participant's Workforce Australia capacity, 35 a week for full time or the approved partial capacity.",
+  "sources": [
+    "template",
+    "guide",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:59:13",
+    "inferred"
+  ],
+  "statement": "The time each week and the resources the owner commits to the business are stated and are enough to run it as planned."
+}

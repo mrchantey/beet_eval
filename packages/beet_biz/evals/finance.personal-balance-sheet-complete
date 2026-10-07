@@ -1,0 +1,22 @@
+{
+  "anchor": "finance#owners-finances",
+  "id": "finance.personal-balance-sheet-complete",
+  "levels": {
+    "Custom": {
+      "l0": "skipped, or no net worth is shown.",
+      "l1": "a token entry, cash alone, with liabilities missing that the personal budget is repaying.",
+      "l2": "every asset and every liability the owner carries, all partners combined, with the debts the personal budget repays appearing among the liabilities.",
+      "l3": "assets valued at current market with evidence, and the business equipment listed reconciled with the startup assets."
+    }
+  },
+  "note": "It feeds nothing else in the plan and the trainers say so every time, and every time add that it must still be completed.",
+  "sources": [
+    "template",
+    "B4.1 transcript 00:35:42",
+    "B4.1 transcript 00:36:44",
+    "C1.1 transcript 00:08:41",
+    "mc:finance/financial-plan-catch-up-session 00:26:25",
+    "inferred"
+  ],
+  "statement": "The owner's personal balance sheet lists every asset and every liability they carry, all partners combined, to a stated net worth."
+}

@@ -17,6 +17,68 @@ impl FillSpec {
 		RelPath::new(rubric.package())
 			.join(format!("{}.fill.json", rubric.rubric()))
 	}
+
+	/// Applies every op to a Word form in order, answering a line per op and
+	/// a warning for one that matched nothing.
+	pub fn apply_word(&self, form: &mut WordDocument) -> Result<Vec<String>> {
+		let mut log = Vec::new();
+		for (index, op) in self.ops.iter().enumerate() {
+			let warn = |log: &mut Vec<String>, count: usize, what: &str| {
+				if count == 0 {
+					log.push(format!("  WARNING op {}: {what}", index + 1));
+				}
+			};
+			match op {
+				FillOp::Set { cell, text } => {
+					form.set_cell(cell.table_address()?, text)?;
+					log.push(format!("set {cell}"));
+				}
+				FillOp::Append { cell, text } => {
+					form.append_cell(cell.table_address()?, text)?;
+					log.push(format!("append {cell}"));
+				}
+				FillOp::Check { label } => {
+					let count = form.check(label)?;
+					log.push(format!("check \"{label}\": {count}"));
+					warn(&mut log, count, "no checkbox carries that label");
+				}
+				FillOp::Delete { text } => {
+					let count = form.delete_paragraphs(text)?;
+					log.push(format!(
+						"delete \"{text}\": {count} paragraph(s)"
+					));
+					warn(&mut log, count, "no paragraph carries that text");
+				}
+				FillOp::Replace { old, new } => {
+					let count = form.replace_text(old, new)?;
+					log.push(format!("replace \"{old}\": {count}"));
+					warn(&mut log, count, "no paragraph carries that text");
+				}
+			}
+		}
+		log.xok()
+	}
+
+	/// Applies every op to a workbook form in order: only `Set` applies, a
+	/// locked cell or a formula failing the build, and any other op is
+	/// skipped with a warning.
+	pub fn apply_workbook(&self, form: &mut Workbook) -> Result<Vec<String>> {
+		let mut log = Vec::new();
+		for (index, op) in self.ops.iter().enumerate() {
+			match op {
+				FillOp::Set { cell, text } => {
+					let written = form.set(&cell.sheet_address()?, text)?;
+					log.push(format!("set {written} = {text}"));
+				}
+				other => log.push(format!(
+					"WARNING op {}: only `Set` applies to a workbook, skipped `{}`",
+					index + 1,
+					other.word()
+				)),
+			}
+		}
+		log.xok()
+	}
 }
 
 /// One operation of a [`FillSpec`]. Text is plain, a newline starting a new
@@ -63,14 +125,27 @@ pub enum FillOp {
 	},
 }
 
+impl FillOp {
+	/// The op's name, ie `Set`.
+	pub fn word(&self) -> &'static str {
+		match self {
+			Self::Set { .. } => "Set",
+			Self::Append { .. } => "Append",
+			Self::Check { .. } => "Check",
+			Self::Delete { .. } => "Delete",
+			Self::Replace { .. } => "Replace",
+		}
+	}
+}
+
 text_type!(
 	/// A cell of a form, as the blank form's cells dump names it: a Word table
-	/// cell `t<table>r<row>c<cell>` counted from 1 in document order, ie
-	/// `t3r2c1`, or a workbook cell `<sheet>!<column><row>`, ie `Start
-	/// Here!D3`.
+	/// cell, a [`TableCellAddress`] `t<table>r<row>c<cell>` counted from 1 in
+	/// document order, ie `t3r2c1`, or a workbook cell, a
+	/// [`SheetCellAddress`] `<sheet>!<column><row>`, ie `Start Here!D3`.
 	CellRef,
-	|text| match CellRef::table_parts(&text).is_some()
-		|| CellRef::sheet_parts(&text).is_some()
+	|text| match TableCellAddress::parse(&text).is_ok()
+		|| SheetCellAddress::parse(&text).is_ok()
 	{
 		true => OK,
 		false => bevybail!(
@@ -80,43 +155,18 @@ text_type!(
 );
 
 impl CellRef {
-	/// A Word table cell's table, row and cell, each from 1.
-	pub fn table_cell(&self) -> Option<(u32, u32, u32)> {
-		Self::table_parts(&self.0)
+	/// The Word table cell this names, refusing a workbook cell.
+	pub fn table_address(&self) -> Result<TableCellAddress> {
+		TableCellAddress::parse(&self.0).map_err(|_| {
+			bevyhow!("`{self}` is a workbook cell, not a Word table cell")
+		})
 	}
 
-	/// A workbook cell's sheet and `A1` address.
-	pub fn sheet_cell(&self) -> Option<(&str, &str)> {
-		Self::sheet_parts(&self.0)
-	}
-
-	fn table_parts(text: &str) -> Option<(u32, u32, u32)> {
-		let rest = text.strip_prefix('t')?;
-		let (table, rest) = rest.split_once('r')?;
-		let (row, cell) = rest.split_once('c')?;
-		let number = |part: &str| {
-			part.chars()
-				.all(|char| char.is_ascii_digit())
-				.then(|| part.parse::<u32>().ok())
-				.flatten()
-				.filter(|number| *number > 0)
-		};
-		Some((number(table)?, number(row)?, number(cell)?))
-	}
-
-	fn sheet_parts(text: &str) -> Option<(&str, &str)> {
-		let (sheet, cell) = text.rsplit_once('!')?;
-		let letters = cell
-			.chars()
-			.take_while(|char| char.is_ascii_uppercase())
-			.count();
-		let (column, row) = cell.split_at(letters);
-		(!sheet.is_empty()
-			&& !column.is_empty()
-			&& !row.is_empty()
-			&& !row.starts_with('0')
-			&& row.chars().all(|char| char.is_ascii_digit()))
-		.then_some((sheet, cell))
+	/// The workbook cell this names, refusing a Word table cell.
+	pub fn sheet_address(&self) -> Result<SheetCellAddress> {
+		SheetCellAddress::parse(&self.0).map_err(|_| {
+			bevyhow!("`{self}` is a Word table cell, not a workbook cell")
+		})
 	}
 }
 
@@ -129,12 +179,21 @@ mod test {
 	fn parses_cells() {
 		CellRef::parse("t3r2c1")
 			.unwrap()
-			.table_cell()
-			.xpect_eq(Some((3, 2, 1)));
+			.table_address()
+			.unwrap()
+			.to_string()
+			.xpect_eq("t3r2c1");
 		CellRef::parse("Start Here!D3")
 			.unwrap()
-			.sheet_cell()
-			.xpect_eq(Some(("Start Here", "D3")));
+			.sheet_address()
+			.unwrap()
+			.sheet
+			.as_str()
+			.xpect_eq("Start Here");
+		CellRef::parse("t1r1c1")
+			.unwrap()
+			.sheet_address()
+			.xpect_err();
 		for bad in ["t0r1c1", "t1r1", "Sheet!3", "!A1", "Sheet!A01", "A1"] {
 			CellRef::parse(bad).xpect_err();
 		}

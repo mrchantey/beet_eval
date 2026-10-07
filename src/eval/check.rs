@@ -28,6 +28,125 @@ impl CheckRef {
 		}
 		.xok()
 	}
+
+	/// The request calling the route: each param a flag in kebab case, a list
+	/// repeating its flag.
+	pub fn request(&self) -> Request {
+		let mut request = Request::get(format!("/check/{}", self.route));
+		if let Value::Map(map) = &self.params {
+			for (key, value) in map.0.iter() {
+				let flag = key.replace('_', "-");
+				match value {
+					Value::List(items) => {
+						for item in items {
+							request.insert_param(
+								flag.clone(),
+								Self::flag_value(item),
+							);
+						}
+					}
+					value => {
+						request.insert_param(flag, Self::flag_value(value))
+					}
+				}
+			}
+		}
+		request
+	}
+
+	/// The route deciding the check, found in the route tree above `caller`.
+	pub async fn route_entity(&self, caller: &AsyncEntity) -> Result<Entity> {
+		let path = std::iter::once("check")
+			.chain(self.route.as_str().split('/'))
+			.map(SmolStr::new)
+			.collect::<Vec<_>>();
+		caller
+			.with_state::<AncestorQuery<&RouteTree>, _>(move |entity, trees| {
+				trees
+					.get(entity)
+					.ok()
+					.and_then(|tree| tree.find(&path))
+					.map(|node| node.entity)
+			})
+			.await?
+			.ok_or_else(|| {
+				bevyhow!("no route `check/{}` decides this check", self.route)
+			})
+	}
+
+	/// Calls the check's route and reads its verdict.
+	pub async fn call(&self, caller: &AsyncEntity) -> Result<CheckVerdict> {
+		let route = self.route_entity(caller).await?;
+		caller
+			.world()
+			.entity(route)
+			.call::<Request, Response>(self.request())
+			.await?
+			.json::<CheckVerdict>()
+			.await
+	}
+
+	/// Checks the params against the params the route declares, without
+	/// calling it.
+	pub async fn validate(&self, caller: &AsyncEntity) -> Result {
+		let route = self.route_entity(caller).await?;
+		let request = self.request();
+		caller
+			.world()
+			.entity(route)
+			.get::<ParamsPartial, _>(move |partial| {
+				partial.validate(request.params())
+			})
+			.await
+			.map_err(|_| {
+				bevyhow!("the route `check/{}` declares no params", self.route)
+			})?
+	}
+
+	/// A scalar as a flag's value.
+	fn flag_value(value: &Value) -> String {
+		match value {
+			Value::Str(text) => text.to_string(),
+			Value::Null => String::new(),
+			other => other.to_string(),
+		}
+	}
+}
+
+/// What a check route answers, as JSON: whether its eval passes, what it
+/// found, and the documents whose shape a failure is laid at, which the
+/// triage reads. An open ask is no shape failure, counted on its own.
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
+pub struct CheckVerdict {
+	/// Whether the check passed.
+	pub pass: bool,
+	/// What the route found.
+	pub detail: String,
+	/// The documents a failure concerns, by name; empty on a pass.
+	pub documents: Vec<SmolStr>,
+}
+
+impl CheckVerdict {
+	/// A pass, with what was found.
+	pub fn pass(detail: impl Into<String>) -> Self {
+		Self {
+			pass: true,
+			detail: detail.into(),
+			documents: Vec::new(),
+		}
+	}
+
+	/// A failure laid at `documents`.
+	pub fn fail(
+		detail: impl Into<String>,
+		documents: impl IntoIterator<Item = impl Into<SmolStr>>,
+	) -> Self {
+		Self {
+			pass: false,
+			detail: detail.into(),
+			documents: documents.into_iter().map(Into::into).collect(),
+		}
+	}
 }
 
 /// What one check route decided about one eval in one run: a row of

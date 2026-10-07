@@ -1,0 +1,20 @@
+{
+  "anchor": "market#research",
+  "id": "market.supplier-availability-assessed",
+  "levels": {
+    "Custom": {
+      "l0": "nothing on suppliers.",
+      "l1": "suppliers are available, with none named and no reason.",
+      "l2": "the suppliers or kinds of supplier named, whether they are reliable and whether an availability issue is expected, with the reason.",
+      "l3": "an alternative for each critical supplier, lead times and terms known, and the business's exposure to any one supplier quantified."
+    }
+  },
+  "note": "A business that buys nothing in states so and why; that is an accepted answer at level 2.",
+  "sources": [
+    "template",
+    "guide",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The availability and reliability of the suppliers the business depends on is assessed."
+}

@@ -1,0 +1,14 @@
+{
+  "anchor": "product#pricing",
+  "id": "product.quote-held",
+  "levels": {
+    "Binary": {
+      "check": null
+    }
+  },
+  "note": "A judged binary eval: met or not, with no check to decide it.",
+  "sources": [
+    "inferred"
+  ],
+  "statement": "A supplier's quote is held for every kit the business rents."
+}

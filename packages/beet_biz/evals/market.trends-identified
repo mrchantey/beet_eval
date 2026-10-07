@@ -1,0 +1,22 @@
+{
+  "anchor": "market#research",
+  "id": "market.trends-identified",
+  "levels": {
+    "Custom": {
+      "l0": "no trend named.",
+      "l1": "a trend asserted with no direction, source or bearing on the business.",
+      "l2": "the current trends in the market and the potential change in each, with a source and what each means for this business.",
+      "l3": "trends quantified over time from published data and tested against what the business's own customers report."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "guide",
+    "A4.3 transcript 00:20:52",
+    "A4.3 transcript 00:21:52",
+    "A2.1 transcript 00:49:53",
+    "demo"
+  ],
+  "statement": "The market's current trends and the change expected in them are identified."
+}

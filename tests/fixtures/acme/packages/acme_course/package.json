@@ -1,0 +1,12 @@
+{
+  "builds_on": [
+    "acme_biz"
+  ],
+  "kind": "Reader",
+  "name": "acme_course",
+  "outline": null,
+  "sources": {
+    "demo": "The course's demonstration form, a floor not a ceiling.",
+    "form": "The blank form's own prompt or instruction."
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "anchor": "legal#registrations",
+  "id": "legal.gst-status-decided",
+  "levels": {
+    "Custom": {
+      "l0": "GST is not mentioned, or the registration row is left empty.",
+      "l1": "the threshold is known, or a status is stated without a reason, or it contradicts the projected turnover.",
+      "l2": "registered or not registered is stated with the reason and, where registered, the date, consistent with the projected turnover, compulsory at $75,000 and voluntary below it, with who will be asked if turnover crosses it, and the projections apply GST if and only if the business is or will have to be registered.",
+      "l3": "the month projected turnover crosses the threshold is identified and the cash flow effect of registering, on prices, GST collected and credited, the BAS cadence and reporting, is worked through with the registration timing planned."
+    }
+  },
+  "note": "\"Not registered for GST\" with \"N/A\" as the date is the accepted answer where the business is not registered, and the assessor walkthrough's \"leave that blank\" is overruled by the guide's bold and both class trainers; the $75,000 threshold is intrinsic to the decision, not a template count; the interview's second question role-plays the threshold being crossed unregistered, and the marker wants the figure and a request for help, not a remedy.",
+  "sources": [
+    "guide bold",
+    "guide",
+    "template",
+    "B2.1 transcript 00:51:05",
+    "B2.3 transcript 00:01:00, 00:47:39",
+    "B3.3 transcript 00:28:47",
+    "B4.3 chat 00:56:52",
+    "B4.3 transcript 00:52:28",
+    "C3.3 slides",
+    "mc:finance/growing-your-small-business 00:45:51",
+    "mc:finance/growing-your-small-business 01:16:12",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:36:38",
+    "inferred"
+  ],
+  "statement": "Whether the business is registered for GST is stated, with the registration date where it is, the decision follows from its projected turnover against the registration threshold, and the projections apply GST accordingly."
+}

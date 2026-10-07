@@ -1,0 +1,19 @@
+{
+  "anchor": "market#discovery",
+  "id": "market.discovery-conducted",
+  "levels": {
+    "Custom": {
+      "l0": "no potential customer was asked.",
+      "l1": "questions are drafted but the answers are guessed, or come from friends rather than potential customers.",
+      "l2": "several potential customers were asked the same questions and each answer is recorded against its question.",
+      "l3": "enough were asked to see a pattern, the pattern is stated with the numbers behind it, and a price question was among them."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:25:41",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:27:49"
+  ],
+  "statement": "Potential customers have been asked what matters to them, who they buy from now and what they like and dislike about them, and their answers are recorded."
+}

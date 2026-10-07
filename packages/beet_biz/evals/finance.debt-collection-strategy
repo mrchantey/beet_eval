@@ -1,0 +1,22 @@
+{
+  "anchor": "finance#management",
+  "id": "finance.debt-collection-strategy",
+  "levels": {
+    "Custom": {
+      "l0": "no procedure is stated.",
+      "l1": "steps are listed but none is chosen for this business, or a step is not lawful.",
+      "l2": "several lawful steps are given in escalating order, reminder, notice, demand, payment plan, agency and legal action, with the ones this business will use chosen.",
+      "l3": "the days between steps are set, the procedure is tied to the credit terms offered and it is applied the same way to every debtor."
+    }
+  },
+  "note": "Buy now pay later through a third party is not credit the business extends; a business that extends no credit still states the procedure it would use [C1.2 transcript 01:19:33].",
+  "sources": [
+    "template",
+    "C1.2 slides",
+    "C1.2 transcript 01:23:55",
+    "C1.2 transcript 01:26:06",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 02:00:23",
+    "inferred"
+  ],
+  "statement": "Overdue customer debt is pursued by an escalating procedure of lawful steps, with the steps this business will use chosen."
+}

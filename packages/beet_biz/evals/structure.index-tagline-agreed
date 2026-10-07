@@ -1,0 +1,21 @@
+{
+  "anchor": null,
+  "id": "structure.index-tagline-agreed",
+  "levels": {
+    "Binary": {
+      "check": {
+        "params": {
+          "document": "index",
+          "part": "Tagline",
+          "section": "brand#name-and-tagline"
+        },
+        "route": "agrees"
+      }
+    }
+  },
+  "note": null,
+  "sources": [
+    "biz:outline"
+  ],
+  "statement": "The tagline beneath the index's title appears under the brand document's name and tagline section, which owns it."
+}

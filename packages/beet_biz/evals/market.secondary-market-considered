@@ -1,0 +1,23 @@
+{
+  "anchor": "market#customers",
+  "id": "market.secondary-market-considered",
+  "levels": {
+    "Custom": {
+      "l0": "nothing on a secondary or indirect market.",
+      "l1": "a secondary or indirect market named without a profile, or ruled out without a reason.",
+      "l2": "each that exists is profiled on the same factors as the primary, and each that does not is stated not to with a reason.",
+      "l3": "each is sized against the primary market with a plan for when it is pursued, or the choice to serve one market is evidenced from the primary market's size and the decision costed."
+    }
+  },
+  "note": "The guide and the recap accept no secondary market and no indirect customers when the reason is stated, written as NA rather than left blank; a bare NA is level 1.",
+  "sources": [
+    "guide",
+    "template",
+    "A2.2",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:21:49",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:22:54",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Any secondary market, and any indirect market that buys to on-sell, is identified and profiled on the same factors as the primary market, or the reason the business has only one market is given."
+}

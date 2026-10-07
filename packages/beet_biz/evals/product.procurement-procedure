@@ -1,0 +1,26 @@
+{
+  "anchor": "product#resources-and-suppliers",
+  "id": "product.procurement-procedure",
+  "levels": {
+    "Custom": {
+      "l0": "no procedure is described.",
+      "l1": "a procedure that could be anyone's (research, buy) with no channels, no approval and nothing on quotes or rights.",
+      "l2": "the steps say how the need was identified, where suppliers were found and how they were contacted, who approves the purchase, what a quote needs (the requirements, quantity, price, delivery and terms) and where to check whether a right is needed.",
+      "l3": "the procedure has been followed for a real acquisition and the record shows it: the quotes obtained, the right checked, the approval dated."
+    }
+  },
+  "note": "For a sole trader the approver is the owner; the resource plan also asks who would approve in a large organisation, which is a knowledge question and stays with the form.",
+  "sources": [
+    "template red",
+    "template",
+    "C2.1 transcript 00:38:19",
+    "C2.1 transcript 00:39:24",
+    "C2.1 transcript 00:40:29",
+    "C2.1 transcript 00:53:11",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:02:23",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:05:12",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:14:29",
+    "demo"
+  ],
+  "statement": "Procuring a resource follows stated steps: identifying the need, finding and contacting suppliers, checking any right the purchase requires, obtaining quotes with the information they need, and approving the purchase."
+}

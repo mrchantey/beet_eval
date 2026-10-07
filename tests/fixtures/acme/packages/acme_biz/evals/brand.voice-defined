@@ -1,0 +1,10 @@
+{
+  "anchor": "brand#voice",
+  "id": "brand.voice-defined",
+  "levels": "Generic",
+  "note": null,
+  "sources": [
+    "inferred"
+  ],
+  "statement": "How the business speaks is described, with an example of on and off voice."
+}

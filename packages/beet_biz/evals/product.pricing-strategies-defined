@@ -1,0 +1,22 @@
+{
+  "anchor": "product#pricing",
+  "id": "product.pricing-strategies-defined",
+  "levels": {
+    "Custom": {
+      "l0": "no strategy is defined.",
+      "l1": "the definitions are generic or wrong, penetration as permanent discounting, or no strategy is marked as suited.",
+      "l2": "each strategy is defined in its accepted sense and distinct from the others, cost plus adds a margin to cost, market follows the going price, penetration lowers the price for a period then raises it, value prices above rivals for value added, prestige charges a premium for a product regarded as superior, and each carries a yes or no on suitability.",
+      "l3": "each mark carries why the strategy does or does not suit this business, and discounting is rejected with a reason."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "B3.2 slides",
+    "B3.2 transcript 00:35:12",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:20:56",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:21:57",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:23:03"
+  ],
+  "statement": "The pricing strategies the business chose between are each defined and marked as suited or not to this business."
+}

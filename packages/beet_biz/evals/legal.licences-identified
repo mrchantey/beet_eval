@@ -1,0 +1,28 @@
+{
+  "anchor": "legal#licences-and-codes",
+  "id": "legal.licences-identified",
+  "levels": {
+    "Custom": {
+      "l0": "nothing is recorded and nothing is said about whether anything applies, or insurance stands in their place.",
+      "l1": "requirements are listed from memory or copied wholesale from the search without sifting, without their particulars and dates, or standards are named without why they bind this business.",
+      "l2": "an ABLIS search has been run for the business and its location and its report kept, and every requirement that applies, qualifications held, memberships, and the standards and codes the business trades under, Australian Consumer Law for consumer sales, the Privacy Act for customer data and work health and safety, is recorded with its issuer or holder, its number, its dates and why it matters to this business, or the search's finding that none applies is stated.",
+      "l3": "the search date is kept, the requirements the search listed but the business does not need are dismissed with a reason, each obligation names its issuing body, cost, renewal date and the consequence of trading without it, a renewal reminder is set months ahead of every expiry, and workplace and employment law is covered where staff are planned."
+    }
+  },
+  "note": "The dates are the date granted with the expiry, a completion date with \"ongoing\" for a qualification that does not expire, and \"ongoing from commencement\" for a code or a law; where the search returns no licence or permit, the accepted answer is a sentence stating that the ABLIS check identified no requirements, with the table left blank, but a business selling to consumers trades under the Australian Consumer Law and one holding customer data under the Privacy Act, and each is a row with \"ongoing\" as its dates, so the table is rarely empty; ABLIS returns more than applies and the plan lists what actually does; insurance is not a licence, permit or qualification and belongs under insurance-held.",
+  "sources": [
+    "guide bold",
+    "template",
+    "guide",
+    "B2.3 transcript 00:40:05, 00:44:23, 00:47:39",
+    "B3.3 transcript 00:29:49, 00:30:50, 00:31:53, 00:32:58",
+    "C1.1 transcript 00:34:35",
+    "C1.1 transcript 00:40:13",
+    "C3.3 slides",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:49:05",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 00:50:11",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Every licence, permit, registration, qualification, membership, standard and code of practice the business must hold or trade under, Australian Consumer Law included, has been identified by a search of the licensing registers and is recorded with its particulars, its dates and why it binds this business, or the finding that none applies is stated."
+}

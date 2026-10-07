@@ -1,0 +1,20 @@
+{
+  "anchor": "product#partners-and-activities",
+  "id": "product.key-activities-named",
+  "levels": {
+    "Custom": {
+      "l0": "no activity named.",
+      "l1": "only the making or delivering of the product or service.",
+      "l2": "the most important activities named, including marketing and selling and not only production.",
+      "l3": "each activity carries who does it and how much of the owner's week it takes, and any the business cannot yet do is flagged."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "mc:finance/growing-your-small-business 00:03:49",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The few activities the business must perform to deliver its value proposition are named, marketing and selling among them."
+}

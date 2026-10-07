@@ -1,0 +1,20 @@
+{
+  "anchor": "team#strengths",
+  "id": "team.strengths-leveraged",
+  "levels": {
+    "Custom": {
+      "l0": "nothing.",
+      "l1": "strengths are listed without the opportunity or the action.",
+      "l2": "each strength carries the opportunity it gives this business and what the owner will do to make the most of it.",
+      "l3": "each opportunity is tied to a goal or a figure in the plan."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:00:19",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:01:22",
+    "inferred"
+  ],
+  "statement": "The owner's personal strengths, knowledge, skills, experience, connections, qualifications and licences, are identified with the opportunity each gives and how it will be used."
+}

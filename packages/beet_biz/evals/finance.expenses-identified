@@ -1,0 +1,20 @@
+{
+  "anchor": "finance#costs",
+  "id": "finance.expenses-identified",
+  "levels": {
+    "Custom": {
+      "l0": "no procedure is stated.",
+      "l1": "the procedure is one word, or a list of expenses with no source for the figures.",
+      "l2": "the procedure covers start-up costs as well as running costs and names where the figures came from.",
+      "l3": "each significant figure has a quote or a named source, and the procedure includes a review when prices move."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:29:21",
+    "mc:recap-sessions/workshop-week-recap-of-business-development 01:30:25",
+    "inferred"
+  ],
+  "statement": "Start-up and running expenses are identified by a stated procedure from supplier prices, quotes and comparable businesses rather than guesses."
+}

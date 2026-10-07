@@ -1,0 +1,42 @@
+{
+  "anchor": "legal#insurance",
+  "id": "legal.insurance-held",
+  "levels": {
+    "Custom": {
+      "l0": "no insurance, or only \"yes I have insurance\", \"to be advised\" or \"to be obtained\".",
+      "l1": "an insurer or a cover type is named without the quote or policy number, the cover amount or a date, the document held is not this business's or does not match what is claimed, a class the business plainly needs is missing, professional indemnity for advice or software, workers' compensation with staff, contents for premises outside the home, or the premium is costed in one year and not the other.",
+      "l2": "public liability from a named insurer with its quote or policy number, a cover amount meeting the minimum the business's program, clients or premises require, and its effective date, the quote or certificate held in the business's and owner's name with particulars matching, every other class the industry, regulator, contracts or premises call for likewise quoted or held and the rest stated as not needed, and the premium carried in every year of the projections.",
+      "l3": "several quotes are compared, the cover of each class is reasoned from the business's own exposure, professional indemnity from day one because of the retroactive date, a certificate of currency shows each policy active, and any reimbursement available against the premium is noted."
+    }
+  },
+  "note": "Self-Employment Assistance requires public liability regardless of the nature and type of business, a home based online business included, with $5 million minimum cover, active on or before coaching commences and a certificate of currency then quarterly, a quote sufficing until then with nothing paid before coaching starts and $330 including GST reimbursed toward the premium once it does; the effective date is the quote's date where no policy is held yet, or the policy's start date where one is; whether product liability or professional indemnity is needed is the industry association's question, not the trainer's, property and contents applies only to premises outside the home and a home based business may answer with its home policy's business extension, and workers' compensation belongs under Other where anyone is employed; unused rows of the SRI table take NA, never blank; the demo attaches a certificate for a different person and business, the shape without the substance; insurance costed in one year and not the other, often year two alone, is the commonest reason a financial plan is sent back, and there is no minimum premium, only presence.",
+  "sources": [
+    "template red",
+    "guide bold",
+    "template",
+    "template formula",
+    "guide",
+    "B1.3 slides",
+    "B1.3 transcript 00:02:17, 00:23:59, 00:24:51, 00:25:54, 00:41:12, 00:41:47, 00:43:19, 00:43:53, 00:44:30, 00:45:33",
+    "B1.3 chat 00:32:11",
+    "B3.3 slides",
+    "B3.3 transcript 00:21:27, 00:22:28",
+    "B4.1 transcript 00:25:12",
+    "B4.1 transcript 00:52:00",
+    "B4.3 transcript 00:35:42",
+    "B4.3 transcript 00:36:45",
+    "C1.1 slides",
+    "C1.1 transcript 00:26:02",
+    "C1.1 transcript 00:39:17",
+    "C1.1 transcript 00:40:13",
+    "C1.1 transcript 00:41:15",
+    "C1.1 chat 00:43:35",
+    "C1.1 chat 00:43:52",
+    "mc:finance/growing-your-small-business 00:41:49, 00:42:49, 00:43:50",
+    "mc:finance/financial-plan-catch-up-session 00:37:41",
+    "mc:operations/start-smart-the-insurance-essentials-every-new",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Every class of insurance the business needs, public liability at the least, is quoted or held from a named insurer with its number, cover amount and effective date, evidenced by the insurer's own document and carried as a cost in every year of the projections, and the classes not needed are stated as such."
+}

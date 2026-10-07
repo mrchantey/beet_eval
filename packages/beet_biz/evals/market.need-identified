@@ -1,0 +1,23 @@
+{
+  "anchor": "market#customers",
+  "id": "market.need-identified",
+  "levels": {
+    "Custom": {
+      "l0": "no need or problem stated.",
+      "l1": "a generic need, such as wanting quality or value, that any business could claim to meet, or a product feature restated as a problem no customer has voiced.",
+      "l2": "at least one concrete need or problem the customer has, the specific need the business addresses for its consumer or the main priorities of its business customer, stated in the customer's own terms.",
+      "l3": "the pain the customer avoids and the gain they get, each evidenced from customer discovery or market data, with the problem, solution and comfort cycle the customer goes through described."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "guide",
+    "A2.2",
+    "A1.3 transcript 00:03:17",
+    "C3.1 transcript 00:32:35",
+    "mc:marketing/how-to-fill-in-the-marketing-worksheet",
+    "demo"
+  ],
+  "statement": "The specific need or problem the business meets for its customer is identified from the customer's side."
+}

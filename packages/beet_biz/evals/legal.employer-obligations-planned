@@ -1,0 +1,21 @@
+{
+  "anchor": "legal#employing-people",
+  "id": "legal.employer-obligations-planned",
+  "levels": {
+    "Custom": {
+      "l0": "nothing is said, or the question is dismissed because there are no staff.",
+      "l1": "a generic intention to follow Fair Work with nothing on pay, superannuation, entitlements or records.",
+      "l2": "what the business will do when it employs: the award or agreement followed, wages, superannuation and entitlements paid on time, and employment records kept for the statutory period.",
+      "l3": "the split between the tax office (withholding, superannuation, Single Touch Payroll from the first employee) and the Fair Work Ombudsman (award, entitlements) is named, and a written contract and workplace policies are planned beyond the award."
+    }
+  },
+  "note": "A business with no staff answers for when it employs; not applicable is not an accepted answer.",
+  "sources": [
+    "C2.2 transcript 01:11:19",
+    "C2.2 slides",
+    "mc:finance/hiring-and-paying-workers",
+    "mc:legal/6-legal-gaps-most-businesses-face-and-how-to",
+    "demo"
+  ],
+  "statement": "The obligations of employing people are known and what the business will do to meet them is stated, whether or not it employs anyone yet."
+}

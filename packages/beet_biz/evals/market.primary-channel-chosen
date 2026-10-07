@@ -1,0 +1,20 @@
+{
+  "anchor": "market#channels",
+  "id": "market.primary-channel-chosen",
+  "levels": {
+    "Custom": {
+      "l0": "no channel is singled out as primary.",
+      "l1": "a primary channel is named with no objective or reason, or several channels are each called primary.",
+      "l2": "one primary channel, its objective tied to the marketing objective, and the reason it reaches the target customer.",
+      "l3": "the choice is tested against alternatives on reach or cost, and the channel that takes over if the first fails is named."
+    }
+  },
+  "note": "Word of mouth is accepted as a channel, but the trainers advise against making it primary unless it is controlled through a referral program and a net promoter score [mc:recap-sessions/recap-for-finance-resource-compliance-and 00:20:29].",
+  "sources": [
+    "template",
+    "C3.1 transcript 01:10:40",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 00:16:15",
+    "mc:marketing/accredited-marketing 01:14:11"
+  ],
+  "statement": "One channel is chosen as the primary marketing channel, with the objective it serves and the reason it fits the customer."
+}

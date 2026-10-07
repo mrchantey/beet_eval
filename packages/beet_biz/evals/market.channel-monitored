@@ -1,0 +1,18 @@
+{
+  "anchor": "market#review",
+  "id": "market.channel-monitored",
+  "levels": {
+    "Custom": {
+      "l0": "no measure or tool is named.",
+      "l1": "monitoring is promised in general terms, such as checking how it is going.",
+      "l2": "a named measure or tool per channel, such as engagement or website traffic by source.",
+      "l3": "a baseline figure for each measure and the tool's reports kept, so a trend can be read."
+    }
+  },
+  "note": null,
+  "sources": [
+    "template",
+    "C3.1 slides"
+  ],
+  "statement": "Each channel's performance is read through a named measure or tool."
+}

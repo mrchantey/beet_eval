@@ -1,0 +1,19 @@
+{
+  "anchor": null,
+  "id": "structure.index-titled",
+  "levels": {
+    "Binary": {
+      "check": {
+        "params": {
+          "document": "index"
+        },
+        "route": "h1"
+      }
+    }
+  },
+  "note": null,
+  "sources": [
+    "acme:outline"
+  ],
+  "statement": "The index opens with a level one heading, the business's name."
+}

@@ -1,0 +1,21 @@
+{
+  "anchor": "product#resources-and-suppliers",
+  "id": "product.supply-terms-negotiated",
+  "levels": {
+    "Custom": {
+      "l0": "nothing is said about terms with suppliers.",
+      "l1": "terms are asserted generically (good service, a fair price) with no provision or condition named.",
+      "l2": "each provision (delivery time, credit terms, warranty, a stock buffer, service at the premises) is named with the condition negotiated for it and how the negotiation was done, or no agreement exists and why.",
+      "l3": "the terms are in writing with the supplier, tied to the ranked supplier choice, and reviewed on renewal."
+    }
+  },
+  "note": "No contractual agreement, stated with the reason, is an accepted answer where the business has none yet.",
+  "sources": [
+    "template",
+    "C2.1 transcript 00:41:33",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:06:20",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:12:19",
+    "demo"
+  ],
+  "statement": "The terms negotiated with suppliers to ensure supply, such as delivery, payment, warranty and extras, are recorded with how they were reached."
+}

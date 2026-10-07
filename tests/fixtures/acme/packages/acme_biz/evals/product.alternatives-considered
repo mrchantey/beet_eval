@@ -1,0 +1,17 @@
+{
+  "anchor": "product#idea",
+  "id": "product.alternatives-considered",
+  "levels": {
+    "Custom": {
+      "l0": "No alternative is named.",
+      "l1": "Alternatives are named without a reason for passing them over.",
+      "l2": "Each alternative carries why the chosen idea beat it.",
+      "l3": "The alternatives were weighed on the same grounds as the chosen idea, and the comparison is written down."
+    }
+  },
+  "note": null,
+  "sources": [
+    "inferred"
+  ],
+  "statement": "Other ideas were considered and the chosen idea is preferred to them for a reason."
+}

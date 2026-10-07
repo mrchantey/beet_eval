@@ -1,0 +1,25 @@
+{
+  "anchor": "finance#costs",
+  "id": "finance.major-costs-identified",
+  "levels": {
+    "Custom": {
+      "l0": "no cost is identified.",
+      "l1": "costs are listed but they are minor ones or generic categories such as overheads, every cost listed with no sense of which matter, or a household or personal expense is among them.",
+      "l2": "the direct cost of the product or service and the largest overheads are named specifically for this business, every one a business expense found in the financial plan's cost of goods and expense rows, and a service with no material cost says so.",
+      "l3": "each cost is quantified and ranked by its share of sales, its driver is known, fixed costs are told apart from variable ones, and the ones that decide viability are singled out."
+    }
+  },
+  "note": "A household cost apportioned to the business belongs in the owner's personal budget, and the financial plan catch-up says it is better left out of the business's costs altogether.",
+  "sources": [
+    "guide bold",
+    "template",
+    "B3.2 transcript 00:40:51",
+    "B3.2 transcript 00:42:05",
+    "mc:finance/growing-your-small-business 00:04:51",
+    "mc:finance/growing-your-small-business 00:50:05",
+    "mc:finance/financial-plan-catch-up-session 00:42:57",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The largest costs the business will carry are identified and set apart from the rest, the direct cost of each product or service and the biggest overheads, and every one is a business expense."
+}

@@ -1,0 +1,26 @@
+{
+  "anchor": "finance#management",
+  "id": "finance.reports-and-controls-understood",
+  "levels": {
+    "Custom": {
+      "l0": "none is described, or only their names are given.",
+      "l1": "the descriptions are generic or confuse what a report contains with what it gives, and could be said of any document.",
+      "l2": "for each report and control the business keeps, its components and its purposes are stated correctly and kept distinct.",
+      "l3": "each is tied to the business's own workbook tab or system and to a decision it has informed."
+    }
+  },
+  "note": "The SRI worksheet asks about every report and control whether or not the business keeps it, stock records for a service business or a credit policy where no credit is extended, and those rows are answered as knowledge and graded on correctness alone [C1.2 transcript 01:00:23] [C1.2 transcript 01:19:33].",
+  "sources": [
+    "template",
+    "C1.2 slides",
+    "C1.2 transcript 00:59:21",
+    "C1.2 transcript 01:00:23",
+    "C1.2 transcript 01:19:33",
+    "C1.2 transcript 01:20:39",
+    "C1.2 transcript 01:23:55",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:54:32",
+    "mc:finance/accredited-finance",
+    "inferred"
+  ],
+  "statement": "The financial reports and controls the business runs on are each understood in what they are made of, what they are for and what they tell the owner."
+}

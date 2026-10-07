@@ -1,0 +1,27 @@
+{
+  "anchor": "legal#obligations-register",
+  "id": "legal.obligations-listed",
+  "levels": {
+    "Custom": {
+      "l0": "no obligation is listed, or only the names of laws with nothing against them.",
+      "l1": "obligations are listed with an action, but the entries are generic or copied between obligations and the risk of missing them is not stated.",
+      "l2": "each obligation carries the action it requires of this business, for consumer law how the products or services meet the standards and guarantees it imposes and the claims made for them, its current status, and what could go wrong and what it would cost the business as two different things.",
+      "l3": "obligations beyond the standard set (privacy, spam, data protection, an industry code) are included where they apply, status is evidenced (a certificate of currency, a registration number) and each consequence is quantified."
+    }
+  },
+  "note": "The risk and consequence of each obligation are the parts most often left empty and the one omission named aloud as sending the compliance plan back; a row copied from another obligation, as the demonstration's WHS row is, is no answer for its own; the Australian Consumer Law is a row wherever the business sells to consumers, and its refund and warranty terms are judged in offer.",
+  "sources": [
+    "template",
+    "C2.2 transcript 00:59:23",
+    "C2.2 transcript 01:00:54",
+    "C2.2 transcript 00:56:02",
+    "C2.2 transcript 00:58:48",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:25:58",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:45:58",
+    "mc:operations/accredited-compliance chat 00:41:27",
+    "C2.2 slides",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The business's regulatory obligations are each listed with the action the law requires, the current state of compliance, and the risk and consequence of failing it."
+}

@@ -1,0 +1,28 @@
+{
+  "anchor": "finance#management",
+  "id": "finance.tax-provisioned",
+  "levels": {
+    "Custom": {
+      "l0": "no strategy is stated and nothing says when tax is reviewed or paid.",
+      "l1": "the strategy leaves nothing set aside, the accountant will handle it, an intention is given with no mechanism, or the obligations are named with no timing or person.",
+      "l2": "a mechanism in the business's own hands is stated as what this business will do, a share of income moved to a separate account, a periodic reconciliation with a provision, or software or an accountant that automates the set-aside, and each tax obligation has when it is reviewed and paid and who does it, following from the GST decision and the structure.",
+      "l3": "the share is derived from the projected profit and tax rate, GST is provided for separately where the business is registered, the set-aside earns until it is needed, and the dates sit in the business's calendar with the bookkeeper or accountant named."
+    }
+  },
+  "note": "The timing follows the GST decision and the structure, yearly with the return if not registered and quarterly with the BAS if registered.",
+  "sources": [
+    "template",
+    "C1.2 slides",
+    "C1.2 transcript 01:07:46",
+    "C1.2 transcript 01:08:49",
+    "C1.2 transcript 01:09:50",
+    "C1.2 chat 01:06:37",
+    "C2.2 transcript 01:10:17",
+    "C2.2 slides",
+    "B4.3",
+    "mc:recap-sessions/recap-for-finance-resource-compliance-and 01:56:39",
+    "demo",
+    "inferred"
+  ],
+  "statement": "Money for tax is set aside by a stated strategy so that it is available when tax falls due, and when each tax obligation is reviewed and paid, and by whom, is set."
+}

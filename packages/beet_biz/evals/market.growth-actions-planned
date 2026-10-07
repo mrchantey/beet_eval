@@ -1,0 +1,29 @@
+{
+  "anchor": "market#customer-journey",
+  "id": "market.growth-actions-planned",
+  "levels": {
+    "Custom": {
+      "l0": "no growth action.",
+      "l1": "a restatement of the heading, or an action already counted as acquisition or retention.",
+      "l2": "a concrete upsell, bundle or referral action the business will run.",
+      "l3": "the referral is asked for explicitly and measured with a net promoter question, and the upsell is measured as average order value."
+    }
+  },
+  "note": "The referral ask itself, as the advocacy stage of the customer journey, is judged by referrals-sought.",
+  "sources": [
+    "template red",
+    "template",
+    "A3.2 transcript 00:08:41",
+    "A3.2 transcript 00:32:41",
+    "A3.2 transcript 00:33:43",
+    "A3.2 transcript 00:35:47",
+    "A4.3",
+    "mc:finance/growing-your-small-business 00:24:33",
+    "mc:finance/growing-your-small-business 00:26:39",
+    "mc:marketing/the-marketing-matrix",
+    "mc:marketing/getting-your-digital-marketing-framework-for",
+    "demo",
+    "inferred"
+  ],
+  "statement": "The actions by which an existing customer spends more or refers others are planned as things the business will do."
+}

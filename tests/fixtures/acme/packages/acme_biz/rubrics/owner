@@ -1,0 +1,165 @@
+{
+  "id": "owner",
+  "intro": "The bar a business holds its own documents to: level 3 on what matters to running it, 2 on every checked eval.",
+  "reader": "the owner a year on, a partner thinking of joining, or an investor",
+  "sections": [
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [
+        {
+          "eval": "structure.index-present",
+          "level": 2
+        },
+        {
+          "eval": "structure.index-sections",
+          "level": 2
+        },
+        {
+          "eval": "structure.product-present",
+          "level": 2
+        },
+        {
+          "eval": "structure.product-sections",
+          "level": 2
+        },
+        {
+          "eval": "structure.brand-present",
+          "level": 2
+        },
+        {
+          "eval": "structure.brand-sections",
+          "level": 2
+        },
+        {
+          "eval": "structure.price-list-block",
+          "level": 2
+        },
+        {
+          "eval": "structure.frontmatter-complete",
+          "level": 2
+        },
+        {
+          "eval": "structure.summaries-present",
+          "level": 2
+        },
+        {
+          "eval": "structure.index-titled",
+          "level": 2
+        },
+        {
+          "eval": "structure.index-tagline",
+          "level": 2
+        },
+        {
+          "eval": "structure.index-name-agreed",
+          "level": 2
+        },
+        {
+          "eval": "structure.index-tagline-agreed",
+          "level": 2
+        },
+        {
+          "eval": "structure.no-open-asks",
+          "level": 2
+        }
+      ],
+      "example": null,
+      "label": "whole",
+      "prose": "The shape of the documents before any of it is read.",
+      "sections": [],
+      "sent_back_when": [],
+      "structural": [],
+      "title": "Whole set"
+    },
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [],
+      "example": null,
+      "label": "product",
+      "prose": "What the business sells.",
+      "sections": [
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.origin",
+              "level": 3
+            },
+            {
+              "eval": "product.alternatives-considered",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "product.idea",
+          "prose": "Where the idea came from.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Idea"
+        },
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "product.pricing-justified",
+              "level": 3
+            },
+            {
+              "eval": "product.quote-held",
+              "level": 2
+            }
+          ],
+          "example": null,
+          "label": "product.pricing",
+          "prose": "The prices and the quotes behind them.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Pricing"
+        }
+      ],
+      "sent_back_when": [],
+      "structural": [],
+      "title": "product"
+    },
+    {
+      "agrees_with": [],
+      "beyond_minimum": null,
+      "citations": [],
+      "example": null,
+      "label": "brand",
+      "prose": "How the business presents itself.",
+      "sections": [
+        {
+          "agrees_with": [],
+          "beyond_minimum": null,
+          "citations": [
+            {
+              "eval": "brand.voice-defined",
+              "level": 3
+            }
+          ],
+          "example": null,
+          "label": "brand.voice",
+          "prose": "How it speaks.",
+          "sections": [],
+          "sent_back_when": [],
+          "structural": [],
+          "title": "Voice"
+        }
+      ],
+      "sent_back_when": [],
+      "structural": [],
+      "title": "brand"
+    }
+  ],
+  "sources": [
+    "outline.json",
+    "the level 3 line of each judged eval"
+  ]
+}

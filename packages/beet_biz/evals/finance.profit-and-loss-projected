@@ -1,0 +1,23 @@
+{
+  "anchor": "finance#profit-and-loss",
+  "id": "finance.profit-and-loss-projected",
+  "levels": {
+    "Custom": {
+      "l0": "no profit and loss projection exists.",
+      "l1": "a projection exists for one year only, or its lines do not add up.",
+      "l2": "both years are projected and in each year gross profit is sales less cost of goods sold and net profit is gross profit less total expenses, as the financial plan computes them.",
+      "l3": "the assumptions behind each line are stated, a conservative case is told apart from the stretch case, and the year's figure is one the owner tracks against quarterly."
+    }
+  },
+  "note": "A table that no longer adds up has been edited by hand after the paste; the workbook computes every line.",
+  "sources": [
+    "template",
+    "guide",
+    "C1.1 slides",
+    "B4.3 transcript 00:54:33",
+    "C1.1 transcript 00:17:50",
+    "demo",
+    "inferred"
+  ],
+  "statement": "A profit and loss projection covers both years with sales, cost of goods sold, gross profit, expenses and net profit, each line following from the ones above it."
+}

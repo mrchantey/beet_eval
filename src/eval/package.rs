@@ -84,6 +84,86 @@ pub enum PackageKind {
 	Workspace,
 }
 
+/// A package read: its manifest, the store it lives in, and its tables.
+#[derive(Debug, Clone)]
+pub struct LoadedPackage {
+	/// Its manifest.
+	pub manifest: PackageManifest,
+	/// Its store, every path below relative to it.
+	pub store: BlobStore,
+	/// Where the workspace says it is.
+	pub source: PackageSource,
+	/// Its `evals` rows.
+	pub evals: Vec<Eval>,
+	/// Its `rubrics` rows.
+	pub rubrics: Vec<Rubric>,
+	/// Its `render` rows.
+	pub render: Vec<RenderSpec>,
+	/// Its `actions` rows.
+	pub actions: Vec<CoachAction>,
+	/// A document package's outline.
+	pub outline: Option<Outline>,
+}
+
+impl LoadedPackage {
+	/// Reads the package at the root of `store`, with every row that could
+	/// not be read listed.
+	pub async fn load(
+		store: BlobStore,
+		source: PackageSource,
+	) -> Result<(Self, Vec<String>)> {
+		let manifest = json_ext::read::<PackageManifest>(
+			&store,
+			&RelPath::new(PackageManifest::FILE),
+		)
+		.await?;
+		let mut problems = Vec::new();
+		let outline = match &manifest.outline {
+			Some(path) => match json_ext::read::<Outline>(&store, path).await {
+				Ok(outline) => Some(outline),
+				Err(err) => {
+					problems.push(format!("{}: {err}", manifest.name));
+					None
+				}
+			},
+			None => None,
+		};
+		let name = manifest.name.clone();
+		let package = Self {
+			evals: Self::rows(&store, &name, &mut problems).await?,
+			rubrics: Self::rows(&store, &name, &mut problems).await?,
+			render: Self::rows(&store, &name, &mut problems).await?,
+			actions: Self::rows(&store, &name, &mut problems).await?,
+			manifest,
+			store,
+			source,
+			outline,
+		};
+		(package, problems).xok()
+	}
+
+	/// Every row of `T`'s table, the rows that could not be read listed as
+	/// the package's problems.
+	async fn rows<T: TableStoreRow + DeserializeOwned>(
+		store: &BlobStore,
+		package: &str,
+		problems: &mut Vec<String>,
+	) -> Result<Vec<T>> {
+		let (rows, row_problems) = json_ext::rows::<T>(store).await?;
+		problems.extend(
+			row_problems
+				.into_iter()
+				.map(|problem| format!("{package}/{problem}")),
+		);
+		rows.xok()
+	}
+
+	/// The render spec of `rubric`.
+	pub fn render_spec(&self, rubric: &str) -> Option<&RenderSpec> {
+		self.render.iter().find(|spec| spec.rubric == rubric)
+	}
+}
+
 #[cfg(test)]
 mod test {
 	use crate::prelude::*;

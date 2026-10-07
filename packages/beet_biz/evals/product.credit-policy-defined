@@ -1,0 +1,24 @@
+{
+  "anchor": "product#terms-of-sale",
+  "id": "product.credit-policy-defined",
+  "levels": {
+    "Custom": {
+      "l0": "nothing is said about credit, or the question is answered with a bare not applicable.",
+      "l1": "the business says it extends no credit without saying how customers pay instead, says it extends credit without terms, or projects receipts at thirty, sixty or ninety days while offering no credit.",
+      "l2": "a business extending no credit says so and how customers pay instead, in advance, on delivery or by card, one extending it names who can have it, the term in days and the condition before it is granted, every payment plan or delayed payment it offers is treated as credit, and the share of sales received as cash and at each term in the projections matches the terms offered.",
+      "l3": "the policy also sets the credit limit and what happens when an account is not paid, and it shows the business customer who will not pay on delivery has been thought about."
+    }
+  },
+  "note": "A card payment is not credit; a payment plan or any delayed payment is, per Francis's ruling in the B3.2 chat.",
+  "sources": [
+    "guide",
+    "template comment",
+    "B3.2 slides",
+    "B3.2 transcript 00:38:32",
+    "B3.2 transcript 00:46:44",
+    "B3.2 chat 00:42:41",
+    "mc:finance/growing-your-small-business 00:50:05",
+    "demo"
+  ],
+  "statement": "The business has decided whether it extends credit and on what terms, and the timing of receipts in its projections follows that decision."
+}

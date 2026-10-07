@@ -1,0 +1,22 @@
+{
+  "anchor": "product#pricing",
+  "id": "product.main-earners-priced",
+  "levels": {
+    "Custom": {
+      "l0": "nothing is priced, or an unranked list of everything the business could sell.",
+      "l1": "lines are priced, but the biggest earner is not identified or every variant has its own line.",
+      "l2": "a few main earners, the biggest first, variants averaged, chosen from a longer list ranked by what each will earn.",
+      "l3": "the ranking is evidenced from research or trading and the averaging of variants is shown."
+    }
+  },
+  "note": "One to three lines is the trainers' advice and four the most they accept; the count of slots a workbook offers is the form's.",
+  "sources": [
+    "B4.3 transcript 00:03:15",
+    "C1.1 transcript 00:05:34",
+    "B4.1 transcript 00:09:28",
+    "mc:finance/financial-plan-catch-up-session 00:05:18",
+    "mc:finance/financial-plan-catch-up-session 00:12:39",
+    "mc:finance/growing-your-small-business 00:57:18"
+  ],
+  "statement": "The lines priced are the few products or services expected to earn most of the income, led by the biggest earner, with variants that differ only by size or colour grouped at an average price and cost."
+}

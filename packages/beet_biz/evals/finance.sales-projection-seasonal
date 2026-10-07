@@ -1,0 +1,19 @@
+{
+  "anchor": "finance#sales-projection",
+  "id": "finance.sales-projection-seasonal",
+  "levels": {
+    "Custom": {
+      "l0": "a seasonal trade is projected as flat or as a smooth climb.",
+      "l1": "seasonality is mentioned but the monthly figures do not show it.",
+      "l2": "the peaks and troughs of the trade appear in both years' figures.",
+      "l3": "the seasonal pattern is evidenced from industry data or past trading, and the troughs are shown to be covered."
+    }
+  },
+  "note": "A trade with no season passes with a smooth climb; the demonstration has none.",
+  "sources": [
+    "guide",
+    "B4.3 transcript 00:18:56",
+    "mc:finance/growing-your-small-business 01:02:34"
+  ],
+  "statement": "Where the trade is seasonal, the sales projection shows its peaks and troughs in both years rather than a smooth climb."
+}
