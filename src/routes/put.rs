@@ -6,14 +6,14 @@ use beet::prelude::*;
 #[derive(Reflect)]
 struct PutParams {
 	/// The package whose table takes the row.
-	package: String,
+	package: SmolStr,
 	/// The table: `evals`, `rubrics`, `render` or `actions`.
-	table: String,
+	table: PackageTable,
 	/// The row in its stored form, JSON, replacing any of the same key.
 	row: Option<String>,
 	/// The workspace store path of a file holding the row, in place of
 	/// `--row`, for a row too long for a command line.
-	from: Option<String>,
+	from: Option<RelPath>,
 }
 
 /// `eval/put`: writes one row of a package's table, refused unless it parses
@@ -39,14 +39,12 @@ pub async fn EvalPut(cx: ActionContext<Request>) -> Result<Response> {
 	let tables = TableStore::new(package.store.clone());
 	let row = match (params.row, params.from) {
 		(Some(row), None) => row.into_bytes(),
-		(None, Some(from)) => {
-			workspace.store.get(&RelPath::new(&from)).await?.to_vec()
-		}
+		(None, Some(from)) => workspace.store.get(&from).await?.to_vec(),
 		_ => bevybail!("give the row with exactly one of `--row` and `--from`"),
 	};
 	let row = row.as_slice();
-	let problems = match params.table.as_str() {
-		"evals" => {
+	let problems = match params.table {
+		PackageTable::Evals => {
 			let eval = MediaType::Json.deserialize::<Eval>(row)?;
 			let mut problems =
 				Laws::eval_row(&cx.caller, &eval, workspace.outline().ok())
@@ -62,26 +60,23 @@ pub async fn EvalPut(cx: ActionContext<Request>) -> Result<Response> {
 			}
 			Put::finish(problems, tables.table::<Eval>().push(eval)).await?
 		}
-		"rubrics" => {
+		PackageTable::Rubrics => {
 			let rubric = MediaType::Json.deserialize::<Rubric>(row)?;
 			let problems = Laws::rubric(&workspace, &rubric);
 			Put::finish(problems, tables.table::<Rubric>().push(rubric)).await?
 		}
-		"render" => {
+		PackageTable::Render => {
 			let spec = MediaType::Json.deserialize::<RenderSpec>(row)?;
 			let problems = Laws::prose(&spec);
 			Put::finish(problems, tables.table::<RenderSpec>().push(spec))
 				.await?
 		}
-		"actions" => {
+		PackageTable::Actions => {
 			let action = MediaType::Json.deserialize::<CoachAction>(row)?;
 			let problems = Laws::prose(&action);
 			Put::finish(problems, tables.table::<CoachAction>().push(action))
 				.await?
 		}
-		other => bevybail!(
-			"`{other}` is no table: expected evals, rubrics, render or actions"
-		),
 	};
 	match problems.is_empty() {
 		true => Response::ok_text(format!(

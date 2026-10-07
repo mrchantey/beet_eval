@@ -37,7 +37,7 @@ impl Fixture {
 			)
 			.await
 			.unwrap();
-		let mut world = (AsyncPlugin, RouterPlugin).into_world();
+		let mut world = (AsyncPlugin, RouterPlugin, EvalPlugin).into_world();
 		let router = world.spawn((store.clone(), Router::with_defaults())).id();
 		world
 			.spawn((ChildOf(router), PathPartial::new("eval")))

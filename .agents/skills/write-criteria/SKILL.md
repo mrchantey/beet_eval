@@ -35,7 +35,7 @@ just eval put --package=<package> --table=evals --from=.agents/tmp/criteria/mark
 
 ## Changing one
 
-8. An id is permanent. Read the row, edit it and put it back under the same id: wording can be tightened when every citing rubric still means the same thing. A change of meaning is a new eval plus removal of the old one's row, `<package>/evals/<old id>`, after which `just eval check` names every rubric still citing it to fix. A move between namespaces when the outline's documents change keeps the slug, rewrites every citation in the same change and is recorded in the package README's History. Merging two evals keeps the better slug and repoints the other's citations.
+8. An id is permanent. Read the row, edit it and put it back under the same id: wording can be tightened when every citing rubric still means the same thing. A change of meaning is a new eval, every rubric repointed at it, then the old row removed with `just eval drop --package=<package> --table=evals --key=<old id>`, which refuses while any rubric still cites it and names them. A move between namespaces when the outline's documents change keeps the slug, rewrites every citation in the same change and is recorded in the package README's History. Merging two evals keeps the better slug and repoints the other's citations.
 
 ## Extracting from a source
 

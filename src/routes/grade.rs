@@ -6,17 +6,17 @@ use beet::prelude::*;
 #[derive(Reflect)]
 struct GradeParams {
 	/// The judged eval graded, ie `market.competitors-named`.
-	eval: String,
+	eval: EvalId,
 	/// The level by the eval's own lines, 0 to 3, the lower of two when
 	/// between them.
 	level: u8,
 	/// Where the evidence sits; defaults to the eval's anchor.
-	anchor: Option<String>,
+	anchor: Option<Address>,
 	/// A verbatim quote of at most twenty-five words from the anchor, absent
 	/// only at level 0 when nothing is written there.
-	evidence: Option<String>,
+	evidence: Option<SmolStr>,
 	/// The grader of record, a model or a person.
-	by: String,
+	by: SmolStr,
 }
 
 /// `eval/grade`: writes one [`Grade`] to the results' `grades` table, dated
@@ -62,7 +62,7 @@ impl Grading {
 		documents: &DocumentSet,
 		params: GradeParams,
 	) -> Result<Grade> {
-		let id = EvalId::parse(&params.eval)?;
+		let id = params.eval;
 		let eval = &workspace
 			.eval(&id)
 			.ok_or_else(|| bevyhow!("unknown eval {id}"))?
@@ -76,10 +76,8 @@ impl Grading {
 		if !eval.levels.admits(level) {
 			bevybail!("{id} is binary and takes 0 or 2, not {level}");
 		}
-		let anchor = match params.anchor {
-			Some(anchor) => Address::parse(anchor)?,
-			None => eval.anchor_or_namespace(),
-		};
+		let anchor =
+			params.anchor.unwrap_or_else(|| eval.anchor_or_namespace());
 		let document = documents.get(anchor.document_name());
 		let text = match (document, anchor.section()) {
 			(None, _) => None,
@@ -101,7 +99,7 @@ impl Grading {
 		}
 		let evidence = params
 			.evidence
-			.map(|evidence| evidence.trim().to_string())
+			.map(|evidence| SmolStr::from(evidence.trim()))
 			.filter(|evidence| !evidence.is_empty());
 		match (&evidence, level) {
 			(None, level) if level > EvalLevel::MISSING => {
@@ -135,7 +133,7 @@ impl Grading {
 			anchor,
 			evidence,
 			date: Date::today(),
-			by: params.by.into(),
+			by: params.by,
 		}
 		.xok()
 	}

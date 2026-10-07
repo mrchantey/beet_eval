@@ -7,7 +7,7 @@ use beet::prelude::*;
 struct CellsParams {
 	/// The reader rubric whose blank form is dumped, `<package>/<rubric>`,
 	/// the path after `cells`.
-	rubric: Vec<String>,
+	rubric: RubricRef,
 }
 
 /// `eval/cells <package>/<rubric>`: the cells of a rubric's blank form, one
@@ -25,7 +25,7 @@ pub async fn EvalCells(cx: ActionContext<Request>) -> Result<Response> {
 	let params = cx.input.parse_params::<CellsParams>()?;
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
-	let reference = RubricRef::parse(params.rubric.join("/"))?;
+	let reference = params.rubric;
 	let (package, spec) = FormSource::of(&workspace, &reference)?;
 	let blank = package.store.get(&spec.form).await?;
 	let cells = match FormKind::of(&spec.form)? {

@@ -5,7 +5,7 @@ use beet::prelude::*;
 #[derive(Reflect)]
 struct WorksheetParams {
 	/// One document's worksheet, the `:document` path segment.
-	document: Option<String>,
+	document: Option<SmolStr>,
 }
 
 /// `eval/worksheet [<document>]`: every judged eval anchored in each
@@ -42,10 +42,10 @@ pub async fn EvalWorksheet(cx: ActionContext<Request>) -> Result<Response> {
 	let mut order = outline
 		.documents
 		.iter()
-		.map(|document| document.name.to_string())
+		.map(|document| SmolStr::new(&document.name))
 		.collect::<Vec<_>>();
 	for (anchor, _) in &by_anchor {
-		let document = anchor.document_name().to_string();
+		let document = SmolStr::new(anchor.document_name());
 		if !order.contains(&document) {
 			order.push(document);
 		}

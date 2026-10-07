@@ -84,6 +84,41 @@ pub enum PackageKind {
 	Workspace,
 }
 
+/// A table a package holds rows of, named by the directory its rows sit in:
+/// what `eval/put` writes a row of and `eval/drop` removes one from.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Reflect)]
+pub enum PackageTable {
+	/// `evals/`, [`Eval`] rows.
+	Evals,
+	/// `rubrics/`, [`Rubric`] rows.
+	Rubrics,
+	/// `render/`, a reader package's [`RenderSpec`] rows.
+	Render,
+	/// `actions/`, a document package's [`CoachAction`] rows.
+	Actions,
+}
+
+impl PackageTable {
+	/// The table's directory, ie `evals`.
+	pub fn name(&self) -> SmolStr {
+		match self {
+			Self::Evals => Eval::table_name(),
+			Self::Rubrics => Rubric::table_name(),
+			Self::Render => RenderSpec::table_name(),
+			Self::Actions => CoachAction::table_name(),
+		}
+	}
+}
+
+impl core::fmt::Display for PackageTable {
+	fn fmt(
+		&self,
+		formatter: &mut core::fmt::Formatter<'_>,
+	) -> core::fmt::Result {
+		formatter.write_str(&self.name())
+	}
+}
+
 /// A package read: its manifest, the store it lives in, and its tables.
 #[derive(Debug, Clone)]
 pub struct LoadedPackage {

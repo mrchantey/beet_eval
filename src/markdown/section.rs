@@ -6,7 +6,7 @@ use beet::prelude::*;
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct Section {
 	/// The heading as written, ie `Owner's finances`.
-	pub heading: String,
+	pub heading: SmolStr,
 	/// The heading's slug, the section half of an
 	/// [`Address`](crate::prelude::Address), ie `owners-finances`.
 	pub slug: SmolStr,

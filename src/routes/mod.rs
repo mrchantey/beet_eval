@@ -8,6 +8,7 @@ mod blocks;
 mod build;
 mod cells;
 mod check;
+mod drop;
 #[cfg(test)]
 mod fixture;
 mod grade;
@@ -23,6 +24,7 @@ pub use blocks::*;
 pub use build::*;
 pub use cells::*;
 pub use check::*;
+pub use drop::*;
 #[cfg(test)]
 pub(crate) use fixture::*;
 pub use grade::*;
@@ -56,6 +58,7 @@ pub fn EvalRoutes() -> impl Bundle {
 		EvalBuild,
 		EvalCells,
 		EvalPut,
+		EvalDrop,
 	]
 }
 

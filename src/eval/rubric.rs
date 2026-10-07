@@ -16,11 +16,11 @@ pub struct Rubric {
 	pub id: SmolStr,
 	/// Who reads the form and on what basis, ie `an assessor marking the form
 	/// satisfactory`.
-	pub reader: String,
+	pub reader: SmolStr,
 	/// What the form is, where it goes, what it feeds and what feeds it.
 	pub intro: String,
 	/// Every source the rubric was built from, most authoritative first.
-	pub sources: Vec<String>,
+	pub sources: Vec<SmolStr>,
 	/// The form's headings, in the form's order.
 	pub sections: Vec<RubricSection>,
 }
@@ -48,7 +48,7 @@ pub struct RubricSection {
 	/// else a word for it (`whole` for the whole document).
 	pub label: SmolStr,
 	/// The heading as the form prints it, ie `2.3 Competitor Analysis`.
-	pub title: String,
+	pub title: SmolStr,
 	/// What the section asks in the form's terms and what the reader looks for.
 	pub prose: String,
 	/// The evals the reader holds this section to, each at a level.
@@ -59,7 +59,7 @@ pub struct RubricSection {
 	/// What gets the form sent back, each with its source tags inline.
 	pub sent_back_when: Vec<String>,
 	/// The other sections or forms that must carry the same fact.
-	pub agrees_with: Vec<String>,
+	pub agrees_with: Vec<SmolStr>,
 	/// What the demonstration or a good answer does here.
 	pub example: Option<String>,
 	/// What a stronger answer than the reader's minimum would add.

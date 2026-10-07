@@ -22,7 +22,7 @@ impl TaglineCheckParams {
 		};
 		match (&document.title, &document.tagline) {
 			(None, _) => fail("no level one heading".into()),
-			(Some(_), Some(tagline)) => CheckVerdict::pass(tagline),
+			(Some(_), Some(tagline)) => CheckVerdict::pass(tagline.as_str()),
 			(Some(_), None) => {
 				fail("no emphasised line stands beneath the title".into())
 			}

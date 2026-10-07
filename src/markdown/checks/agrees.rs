@@ -66,7 +66,11 @@ impl AgreesCheckParams {
 		};
 		let undecided = !Ask::find_all(&text).is_empty()
 			&& !Ask::find_all(&section.body).is_empty();
-		match section.body.replace(['*', '_', '`'], "").contains(&text) {
+		match section
+			.body
+			.replace(['*', '_', '`'], "")
+			.contains(text.as_str())
+		{
 			true => CheckVerdict::pass(format!(
 				"\"{text}\" appears under {}",
 				self.section

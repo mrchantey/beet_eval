@@ -17,7 +17,7 @@ impl H1CheckParams {
 		match documents.get(&self.document) {
 			None => fail(format!("{} missing", documents.path_name(&self.document))),
 			Some(document) => match &document.title {
-				Some(title) => CheckVerdict::pass(title),
+				Some(title) => CheckVerdict::pass(title.as_str()),
 				None => fail(
 					"the first line after the frontmatter is not a level one heading"
 						.into(),

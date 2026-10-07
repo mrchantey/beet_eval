@@ -6,7 +6,7 @@ use beet::prelude::*;
 #[derive(Reflect)]
 struct ProjectParams {
 	/// The rubric, `<package>/<rubric>`, the path after `project`.
-	rubric: Vec<String>,
+	rubric: Option<RubricRef>,
 }
 
 /// `eval/project <package>/<rubric>`: the deterministic half of a build, the
@@ -25,7 +25,6 @@ pub async fn EvalProject(cx: ActionContext<Request>) -> Result<Response> {
 	let params = cx.input.parse_params::<ProjectParams>()?;
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
-	let target = params.rubric.join("/");
 	let listing = || {
 		workspace
 			.rubrics()
@@ -33,22 +32,16 @@ pub async fn EvalProject(cx: ActionContext<Request>) -> Result<Response> {
 			.map(|(reference, _)| format!("  {reference}\n"))
 			.collect::<String>()
 	};
-	if target.is_empty() {
+	let Some(reference) = params.rubric else {
 		return Response::ok_text(format!(
 			"name a rubric; the rubrics are:\n{}",
 			listing()
 		))
 		.xok();
-	}
-	let Some((reference, rubric)) =
-		RubricRef::parse(&target).ok().and_then(|reference| {
-			workspace
-				.rubric(&reference)
-				.map(|rubric| (reference, rubric))
-		})
-	else {
+	};
+	let Some(rubric) = workspace.rubric(&reference) else {
 		return refusal(format!(
-			"no rubric {target}; the rubrics are:\n{}",
+			"no rubric {reference}; the rubrics are:\n{}",
 			listing()
 		))
 		.xok();

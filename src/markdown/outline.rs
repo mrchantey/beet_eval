@@ -153,7 +153,7 @@ pub struct DocumentSpec {
 pub struct SectionSpec {
 	/// The heading as every document writes it, ie `Owner's finances`; its
 	/// [`Section::slug`] is the section's address.
-	pub heading: String,
+	pub heading: SmolStr,
 	/// What the section holds, which is also where a grader looks for the evals
 	/// anchored in it.
 	pub holds: String,
@@ -191,7 +191,7 @@ mod test {
 			sections: headings
 				.iter()
 				.map(|heading| SectionSpec {
-					heading: heading.to_string(),
+					heading: SmolStr::new(heading),
 					holds: "What it holds.".into(),
 				})
 				.collect(),

@@ -18,7 +18,7 @@ pub struct Grade {
 	pub anchor: Address,
 	/// A verbatim quote of at most twenty-five words from the anchor; absent
 	/// only when nothing is written there.
-	pub evidence: Option<String>,
+	pub evidence: Option<SmolStr>,
 	/// The day the grade was given, which a document's `updated` is compared
 	/// against to find a stale grade.
 	pub date: Date,

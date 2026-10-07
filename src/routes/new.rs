@@ -6,10 +6,10 @@ use beet::prelude::*;
 #[derive(Reflect)]
 struct NewParams {
 	/// The subject's name, the index's title: the `:name` path segment.
-	name: String,
+	name: SmolStr,
 	/// Who writes the documents, their frontmatter's author: the `:author`
 	/// path segment.
-	author: String,
+	author: SmolStr,
 }
 
 /// `eval/new <name> <author>`: lays out the documents directory from the

@@ -11,6 +11,23 @@ pub struct EvalPlugin;
 
 impl Plugin for EvalPlugin {
 	fn build(&self, app: &mut App) {
+		// the text types read validated wherever they are authored, a flag
+		// or a route segment included
+		LiteralParser::register::<EvalId>(EvalId::literal_parser(
+			"an eval id, ie market.competitors-named",
+		));
+		LiteralParser::register::<Address>(Address::literal_parser(
+			"an address, ie product#pricing",
+		));
+		LiteralParser::register::<RubricRef>(RubricRef::literal_parser(
+			"a rubric, ie course/01-business-plan",
+		));
+		LiteralParser::register::<SourceTag>(SourceTag::literal_parser(
+			"a source tag, ie ref:sba",
+		));
+		LiteralParser::register::<CellRef>(CellRef::literal_parser(
+			"a cell, ie t1r2c3 or Sheet!A1",
+		));
 		app.register_type::<Eval>()
 			.register_type::<Rubric>()
 			.register_type::<Grade>()
@@ -54,6 +71,7 @@ impl Plugin for EvalPlugin {
 			.register_type::<EvalGrade>()
 			.register_type::<EvalBuild>()
 			.register_type::<EvalCells>()
-			.register_type::<EvalPut>();
+			.register_type::<EvalPut>()
+			.register_type::<EvalDrop>();
 	}
 }

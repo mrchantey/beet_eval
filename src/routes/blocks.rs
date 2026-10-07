@@ -6,7 +6,7 @@ use beet::prelude::*;
 #[derive(Reflect)]
 struct BlocksParams {
 	/// The block to print, the `:name` path segment.
-	name: Option<String>,
+	name: Option<SmolStr>,
 	/// Print every block as JSON.
 	all: bool,
 }

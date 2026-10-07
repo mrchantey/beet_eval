@@ -7,7 +7,7 @@ pub struct SectionsCheckParams {
 	/// The document's name.
 	pub document: SmolStr,
 	/// The headings, as written.
-	pub headings: Vec<String>,
+	pub headings: Vec<SmolStr>,
 }
 
 impl SectionsCheckParams {
@@ -24,7 +24,11 @@ impl SectionsCheckParams {
 			.iter()
 			.map(|section| section.heading.as_str())
 			.collect::<Vec<_>>();
-		let want = self.headings.iter().map(String::as_str).collect::<Vec<_>>();
+		let want = self
+			.headings
+			.iter()
+			.map(SmolStr::as_str)
+			.collect::<Vec<_>>();
 		if got == want {
 			return CheckVerdict::pass(format!(
 				"{} sections in order",

@@ -107,7 +107,7 @@ pub enum FillOp {
 	/// ticked, bold and highlighted.
 	Check {
 		/// The label beside the box.
-		label: String,
+		label: SmolStr,
 	},
 	/// Removes every paragraph carrying the text, ie a red instruction
 	/// sentence; a cell keeps one empty paragraph.
@@ -119,9 +119,9 @@ pub enum FillOp {
 	/// so a highlighted placeholder stays highlighted.
 	Replace {
 		/// The text as the file carries it.
-		old: String,
+		old: SmolStr,
 		/// The replacement.
-		new: String,
+		new: SmolStr,
 	},
 }
 

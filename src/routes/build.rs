@@ -6,7 +6,7 @@ use beet::prelude::*;
 struct BuildParams {
 	/// The reader rubric whose form is built, `<package>/<rubric>`, the path
 	/// after `build`.
-	rubric: Vec<String>,
+	rubric: RubricRef,
 }
 
 /// `eval/build <package>/<rubric>`: copies the reader's blank form named by
@@ -24,7 +24,7 @@ pub async fn EvalBuild(cx: ActionContext<Request>) -> Result<Response> {
 	let params = cx.input.parse_params::<BuildParams>()?;
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
-	let reference = RubricRef::parse(params.rubric.join("/"))?;
+	let reference = params.rubric;
 	let (package, spec) = FormSource::of(&workspace, &reference)?;
 	let dist = workspace.dist();
 	let output = RelPath::new(reference.package()).join(spec.output.as_str());

@@ -36,6 +36,27 @@ macro_rules! text_type {
 
 			/// The text as written.
 			pub fn as_str(&self) -> &str { &self.0 }
+
+			/// Teaches every authoring seam, request params included, to read
+			/// this type, validated, from its text or from a greedy route
+			/// capture's segments joined by `/`; `hint` is how `--help` names
+			/// it.
+			pub fn literal_parser(hint: &'static str) -> LiteralParser {
+				LiteralParser::new(|value: &Value| match value {
+					Value::Str(text) => Self::parse(text.as_str()).map(Some),
+					Value::List(segments) => segments
+						.iter()
+						.map(|segment| match segment {
+							Value::Str(segment) => Some(segment.as_str()),
+							_ => None,
+						})
+						.collect::<Option<Vec<_>>>()
+						.map(|segments| Self::parse(segments.join("/")))
+						.transpose(),
+					_ => Ok(None),
+				})
+				.with_hint(hint)
+			}
 		}
 
 		impl TryFrom<SmolStr> for $name {

@@ -24,9 +24,9 @@ pub struct MarkdownDocument {
 	/// The frontmatter, absent when the file has none.
 	pub meta: Option<PageMeta>,
 	/// The level one heading as written, when it opens the body.
-	pub title: Option<String>,
+	pub title: Option<SmolStr>,
 	/// The emphasised line beneath the title, emphasis removed.
-	pub tagline: Option<String>,
+	pub tagline: Option<SmolStr>,
 	/// The paragraph between the head and the first section.
 	pub summary: Option<String>,
 	/// The `##` sections, in order.
@@ -79,11 +79,12 @@ impl MarkdownDocument {
 		// the head: a title as the first block, a tagline straight beneath it
 		let mut head_end = 0;
 		if let Some(TopBlock::Heading { level: 1, range }) = blocks.first() {
-			document.title = Some(Self::heading_text(&body[range.clone()]));
+			document.title =
+				Some(Self::heading_text(&body[range.clone()]).into());
 			head_end = 1;
 			if let Some(TopBlock::Paragraph { range }) = blocks.get(1) {
 				if let Some(tagline) = Self::tagline_of(&body[range.clone()]) {
-					document.tagline = Some(tagline);
+					document.tagline = Some(tagline.into());
 					head_end = 2;
 				}
 			}
@@ -113,7 +114,7 @@ impl MarkdownDocument {
 				starts.get(index + 1).map_or(body.len(), |next| next.start);
 			document.sections.push(Section {
 				slug: Section::slug(&heading),
-				heading,
+				heading: heading.into(),
 				line: lines.line(range.start),
 				body: body[range.end.min(end)..end].trim().to_string(),
 			});
@@ -161,8 +162,8 @@ impl MarkdownDocument {
 		self.title
 			.iter()
 			.chain(&self.tagline)
-			.chain(&self.summary)
-			.cloned()
+			.map(SmolStr::to_string)
+			.chain(self.summary.clone())
 			.chain(self.sections.iter().map(|section| {
 				format!("{}\n\n{}", section.heading, section.body)
 			}))
