@@ -118,7 +118,7 @@ text_type!(
 	/// A place in the subject, `document` or `document#section`, ie
 	/// `legal#risk-register`: a section's slug is its heading lowercased,
 	/// punctuation dropped and spaces turned to hyphens
-	/// ([`Section::slug`]). An eval's anchor, a data block's home, a claim's
+	/// ([`Address::slug`]). An eval's anchor, a data block's home, a claim's
 	/// block and a grade's evidence are all addresses, and promoting a document
 	/// to a directory changes none of them.
 	Address,
@@ -154,6 +154,30 @@ impl Address {
 	pub fn section(&self) -> Option<&str> {
 		self.0.split_once('#').map(|(_, section)| section)
 	}
+
+	/// The addressing rule: a heading lowercased, everything but letters,
+	/// digits, spaces and hyphens dropped, runs of spaces turned to one hyphen
+	/// and runs of hyphens collapsed, ie `Owner's finances` to
+	/// `owners-finances`.
+	pub fn slug(heading: &str) -> SmolStr {
+		heading
+			.to_lowercase()
+			.chars()
+			.filter(|char| {
+				char.is_ascii_lowercase()
+					|| char.is_ascii_digit()
+					|| *char == ' ' || *char == '-'
+			})
+			.collect::<String>()
+			.split_whitespace()
+			.collect::<Vec<_>>()
+			.join("-")
+			.split('-')
+			.filter(|run| !run.is_empty())
+			.collect::<Vec<_>>()
+			.join("-")
+			.into()
+	}
 }
 
 fn is_address_char(char: char) -> bool {
@@ -187,6 +211,15 @@ mod test {
 		for bad in ["legal#", "#risk", "Legal", "legal#risk register", ""] {
 			Address::parse(bad).xpect_err();
 		}
+	}
+
+	#[beet::test]
+	fn slugs_headings() {
+		Address::slug("Owner's finances").xpect_eq("owners-finances");
+		Address::slug("SWOT").xpect_eq("swot");
+		Address::slug("Name and tagline").xpect_eq("name-and-tagline");
+		Address::slug("Licences and codes").xpect_eq("licences-and-codes");
+		Address::slug(" Cash  flow - forecast ").xpect_eq("cash-flow-forecast");
 	}
 
 	#[beet::test]

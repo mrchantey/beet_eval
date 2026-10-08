@@ -35,42 +35,51 @@ impl TitlePart {
 
 impl AgreesCheckParams {
 	/// The verdict on `documents`.
-	pub fn decide(&self, documents: &DocumentSet) -> CheckVerdict {
+	pub fn decide(&self, documents: &mut DocumentSet) -> CheckVerdict {
 		let target = self.section.document_name();
 		let fail = |detail: String| {
 			CheckVerdict::fail(detail, [self.document.as_str(), target])
 		};
 		let source = documents.path_name(&self.document);
-		let Some(document) = documents.get(&self.document) else {
+		let Some(root) =
+			documents.get(&self.document).map(|document| document.root)
+		else {
 			return fail(format!("{source} missing"));
 		};
-		if document.title.is_none() {
+		let (title, tagline) =
+			documents.query(|query| (query.title(root), query.tagline(root)));
+		if title.is_none() {
 			return fail(format!("{source} has no title"));
 		}
 		let text = match self.part {
-			TitlePart::Title => document.title.clone(),
-			TitlePart::Tagline => document.tagline.clone(),
+			TitlePart::Title => title,
+			TitlePart::Tagline => tagline,
 		};
 		let Some(text) = text else {
 			return fail(format!("{source} has no {}", self.part.word()));
 		};
-		let Some(owner) = documents.get(target) else {
+		let Some(owner) = documents.get(target).cloned() else {
 			return fail(format!("{target} missing"));
 		};
 		let slug = self.section.section().unwrap_or_default();
-		let Some(section) = owner.section(slug) else {
+		let Some(body) = documents.query(|query| {
+			query.section(owner.root, slug).map(|section| {
+				section
+					.blocks
+					.iter()
+					.map(|block| query.words(*block))
+					.collect::<Vec<_>>()
+					.join("\n")
+			})
+		}) else {
 			return fail(format!(
 				"no section #{slug} in {}",
-				documents.path_of(owner)
+				documents.path_of(&owner)
 			));
 		};
 		let undecided = !Ask::find_all(&text).is_empty()
-			&& !Ask::find_all(&section.body).is_empty();
-		match section
-			.body
-			.replace(['*', '_', '`'], "")
-			.contains(text.as_str())
-		{
+			&& !Ask::find_all(&body).is_empty();
+		match body.contains(text.as_str()) {
 			true => CheckVerdict::pass(format!(
 				"\"{text}\" appears under {}",
 				self.section

@@ -1,4 +1,3 @@
-use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
@@ -10,33 +9,30 @@ struct CellsParams {
 	rubric: RubricRef,
 }
 
-/// `eval/cells <package>/<rubric>`: the cells of a rubric's blank form, one
-/// `| cell | text |` row each, the map a fill spec is written against. Dumped
-/// from the form on demand and never stored, so it cannot drift from the
-/// file.
-#[action]
+/// `eval/cells <package>/<rubric>`: the cells of a rubric's blank form, the
+/// map a fill spec is written against: every table cell and every unlocked
+/// workbook cell with what a reader reads in it, a table for a markup
+/// `Accept` and the rows for a serde one. Listed from the form on demand and
+/// never stored, so it cannot drift from the file.
+#[action(route = "cells/*rubric")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("cells/*rubric"),
-	ParamsPartial = ParamsPartial::new::<CellsParams>()
-)]
-pub async fn EvalCells(cx: ActionContext<Request>) -> Result<Response> {
+#[require(ParamsPartial = ParamsPartial::new::<CellsParams>())]
+pub async fn EvalCells(
+	cx: ActionContext<Request>,
+) -> Result<DataPage<Vec<CellText>>> {
 	let params = cx.input.parse_params::<CellsParams>()?;
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
-	let reference = params.rubric;
-	let (package, spec) = FormSource::of(&workspace, &reference)?;
-	let blank = package.store.get(&spec.form).await?;
-	let cells = match FormKind::of(&spec.form)? {
-		FormKind::Word => {
-			CellsDump::word(&WordDocument::from_bytes(blank.to_vec())?)
-		}
-		FormKind::Workbook => {
-			CellsDump::workbook(&Workbook::from_bytes(blank.to_vec())?)?
-		}
-	};
-	Response::ok_text(cells.rows()).xok()
+	let (package, spec) = FormSource::of(&workspace, &params.rubric)?;
+	let blank = package.store.blob(spec.form.clone()).get_media().await?;
+	let cells = FormSource::read(&cx.caller, blank, |world, root| {
+		world
+			.with_state::<TableCells, _>(|cells| cells.listing(root))
+			.xok()
+	})
+	.await?;
+	DataPage::new(&cx.caller, CellText::table(&cells), cells).await
 }
 
 #[cfg(test)]
@@ -45,19 +41,19 @@ mod test {
 	use beet::prelude::*;
 
 	#[beet::test]
-	async fn dumps_the_blank_form() {
+	async fn lists_the_blank_form() {
 		Fixture::new()
 			.await
 			.ok("eval/cells acme_course/01-business-plan")
 			.await
 			.xpect_eq(
-				"| t1r1c1 | Business Name |\n| t1r1c2 | (empty) |\n\
+				"| Cell | Text |\n|---|---|\n| t1r1c1 | Business Name |\n| t1r1c2 | (empty) |\n\
 				 | t2r1c1 | Briefly describe your business: / (Please delete this sentence once completed) |\n",
 			);
 	}
 
 	/// The same form read as text through beet's store view, its tables
-	/// numbered as the cells dump numbers them and its red instruction kept.
+	/// numbered as its cells listing numbers them and its red instruction kept.
 	#[beet::test]
 	async fn views_the_blank_form_as_markdown() {
 		let request = Request::from_cli_str(&format!("view {}", Fixture::FORM))

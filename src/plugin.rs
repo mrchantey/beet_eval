@@ -36,7 +36,6 @@ impl Plugin for EvalPlugin {
 			.register_type::<PackageManifest>()
 			.register_type::<Workspace>()
 			.register_type::<Outline>()
-			.register_type::<MarkdownDocument>()
 			.register_type::<RenderSpec>()
 			.register_type::<FillSpec>()
 			.register_type::<Claim>()

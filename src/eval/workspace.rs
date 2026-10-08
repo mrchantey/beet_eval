@@ -258,6 +258,15 @@ impl LoadedWorkspace {
 		})
 	}
 
+	/// The judged evals' ids, in package order and then by id.
+	pub fn judged(&self) -> Vec<EvalId> {
+		self.evals
+			.iter()
+			.filter(|packaged| !packaged.eval.is_checked())
+			.map(|packaged| packaged.eval.id.clone())
+			.collect()
+	}
+
 	/// The eval with `id`.
 	pub fn eval(&self, id: &EvalId) -> Option<&PackagedEval> {
 		self.evals.iter().find(|packaged| &packaged.eval.id == id)

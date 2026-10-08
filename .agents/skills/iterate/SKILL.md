@@ -13,7 +13,7 @@ description: >
 
 One turn is one unit of work: a sitting on one document, one grading pass, or one build. It ends when the owner's input is needed or the unit is done, with the results current and the next step named. Where to start is `eval/next`'s judgement, computed from the last checks, grades, open asks and edit dates, not yours, unless the owner overrides it.
 
-The verbs are beet_eval's, `~/me/beet_eval`, whose `README.md` fixes the words and whose module docs carry the law. A workspace runs them from its root as `just eval <verb>`, a bare verb being `eval/<verb>`; `just eval --help` lists every verb with its flags. The skills named below sit beside this one.
+The verbs are beet_eval's, `~/me/beet_eval`, whose `README.md` fixes the words and whose module docs carry the law. A workspace runs them from its root as `just eval <verb>`, a bare verb being `eval/<verb>`; `just eval --help` lists every verb with its flags. A verb's report answers markdown when its output is piped, and ANSI to a terminal, so where a harness runs commands in one, add `--accept=text/markdown`; `--accept=application/json` answers its stored form. The skills named below sit beside this one.
 
 ## Orient
 
@@ -34,7 +34,7 @@ The verbs are beet_eval's, `~/me/beet_eval`, whose `README.md` fixes the words a
 
 ## Report
 
-9. A numbered list: what `just eval next` said and why, in a line; what was done, with the files touched; the asks waiting on the owner, numbered, each with its default; what `just eval next` says now. Not the tables: `just eval results --format=md` renders them for anyone who wants them.
+9. A numbered list: what `just eval next` said and why, in a line; what was done, with the files touched; the asks waiting on the owner, numbered, each with its default; what `just eval next` says now. Not the tables: `just eval results --accept=text/markdown` answers them for anyone who wants them.
 
 ## Rules
 

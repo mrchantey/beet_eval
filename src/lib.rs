@@ -1,5 +1,5 @@
 //! Evaluates a subject against packages of evals and rubrics: checks, grades,
-//! results and the next unit of work, with markdown documents as the first
+//! results and the next unit of work, with prose documents as the first
 //! subject and Office forms as the renderer. `README.md` fixes the words; the
 //! modules carry the law, in the order a run reads it:
 //!
@@ -13,10 +13,11 @@
 //!   workspaces are stores with a
 //!   [`PackageManifest`](prelude::PackageManifest) or a
 //!   [`Workspace`](prelude::Workspace) manifest.
-//! - [`markdown`]: the first subject, documents as markdown files with
-//!   frontmatter, sections, csv data blocks and asks, laid out by a document
-//!   package's [`Outline`](prelude::Outline), and the params of the check
-//!   kinds that decide their shape.
+//! - [`docs`]: the first subject, documents as markdown or Word files with
+//!   frontmatter, sections, csv data blocks and asks, read through beet's
+//!   media parse and laid out by a document package's
+//!   [`Outline`](prelude::Outline), and the params of the check kinds that
+//!   decide their shape.
 //! - [`form`]: the renderer, a reader package's
 //!   [`RenderSpec`](prelude::RenderSpec) and the
 //!   [`FillSpec`](prelude::FillSpec) a builder writes against it.
@@ -30,10 +31,10 @@
 beet::test_main!();
 
 pub mod coach;
+pub mod docs;
 pub mod eval;
 pub mod form;
 pub mod json_ext;
-pub mod markdown;
 mod plugin;
 pub mod routes;
 mod text_type;
@@ -41,10 +42,10 @@ mod text_type;
 /// Exports the most commonly used items.
 pub mod prelude {
 	pub use crate::coach::*;
+	pub use crate::docs::*;
 	pub use crate::eval::*;
 	pub use crate::form::*;
 	pub use crate::json_ext;
-	pub use crate::markdown::*;
 	pub use crate::plugin::*;
 	pub use crate::routes::*;
 }

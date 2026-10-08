@@ -10,17 +10,20 @@ pub struct TaglineCheckParams {
 
 impl TaglineCheckParams {
 	/// The verdict on `documents`.
-	pub fn decide(&self, documents: &DocumentSet) -> CheckVerdict {
+	pub fn decide(&self, documents: &mut DocumentSet) -> CheckVerdict {
 		let fail = |detail: String| {
 			CheckVerdict::fail(detail, [self.document.as_str()])
 		};
-		let Some(document) = documents.get(&self.document) else {
+		let Some(root) =
+			documents.get(&self.document).map(|document| document.root)
+		else {
 			return fail(format!(
 				"{} missing",
 				documents.path_name(&self.document)
 			));
 		};
-		match (&document.title, &document.tagline) {
+		match documents.query(|query| (query.title(root), query.tagline(root)))
+		{
 			(None, _) => fail("no level one heading".into()),
 			(Some(_), Some(tagline)) => CheckVerdict::pass(tagline.as_str()),
 			(Some(_), None) => {

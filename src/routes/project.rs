@@ -12,8 +12,10 @@ struct ProjectParams {
 /// `eval/project <package>/<rubric>`: the deterministic half of a build, the
 /// brief for one form. For every heading of the rubric, the evals it cites,
 /// where each is anchored, what is written there today, and the heading's
-/// structural lines, written to `results/projections/<package>-<rubric>.md`.
-/// With no rubric named, lists the rubrics.
+/// structural lines: the [`ProjectionReport`], written as markdown to
+/// `results/projections/<package>-<rubric>.md` and answered, its
+/// [`Projection`] for a serde `Accept`. With no rubric named, lists the
+/// rubrics.
 #[action]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
@@ -46,135 +48,213 @@ pub async fn EvalProject(cx: ActionContext<Request>) -> Result<Response> {
 		))
 		.xok();
 	};
-	let documents =
+	let mut documents =
 		DocumentSet::load(&workspace.docs(), workspace.manifest.docs.clone())
 			.await?;
-	let brief =
-		Projection::new(&workspace, &documents, &reference).write(rubric);
+	let projection =
+		Projection::new(&workspace, &mut documents, &reference, rubric);
 	let path = RelPath::new(format!(
 		"projections/{}-{}.md",
 		reference.package(),
 		reference.rubric()
 	));
-	workspace.results().insert(&path, brief.text).await?;
-	Response::ok_text(format!(
-		"{}/{path} written: {} headings\n",
-		workspace.manifest.results, brief.headings
-	))
-	.xok()
+	let report = || rsx! { <ProjectionReport projection=projection.clone()/> };
+	workspace
+		.results()
+		.insert(&path, markdown_of(&cx.caller, report()).await?)
+		.await?;
+	DataPage::new(&cx.caller, report(), projection.clone())
+		.await?
+		.into_response_with_request_parts(
+			cx.caller.clone(),
+			cx.input.parts().clone(),
+		)
+		.await
 }
 
-/// A rubric read through the anchors.
-struct Projection<'a> {
-	workspace: &'a LoadedWorkspace,
-	documents: &'a DocumentSet,
-	reference: &'a RubricRef,
+/// A rubric read through the anchors, the brief a renderer fills a form
+/// from and nothing else.
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize)]
+pub struct Projection {
+	/// The rubric.
+	pub rubric: RubricRef,
+	/// The day it was projected.
+	pub date: Date,
+	/// The documents directory its quotes come from.
+	pub docs: RelPath,
+	/// Every heading citing an eval or carrying a structural line, in order.
+	pub headings: Vec<ProjectedHeading>,
 }
 
-/// A written brief and how many headings it carries.
-struct Brief {
-	text: String,
-	headings: usize,
+/// One heading of a [`Projection`].
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize)]
+pub struct ProjectedHeading {
+	/// The heading as the rubric writes it.
+	pub title: String,
+	/// Its depth below the brief's title, from 2.
+	pub depth: usize,
+	/// The evals it cites.
+	pub citations: Vec<ProjectedCitation>,
+	/// Its structural lines, as written with their sources.
+	pub structural: Vec<String>,
 }
 
-impl<'a> Projection<'a> {
+/// One citation of a [`ProjectedHeading`]: the eval, where it is anchored,
+/// and what is written there.
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize)]
+pub struct ProjectedCitation {
+	/// The cited eval.
+	pub eval: EvalId,
+	/// Its anchor, absent for an eval the workspace does not define.
+	pub anchor: Option<Address>,
+	/// Its statement.
+	pub statement: Option<String>,
+	/// What is written at the anchor, as markdown.
+	pub quote: Option<String>,
+}
+
+impl Projection {
 	fn new(
-		workspace: &'a LoadedWorkspace,
-		documents: &'a DocumentSet,
-		reference: &'a RubricRef,
+		workspace: &LoadedWorkspace,
+		documents: &mut DocumentSet,
+		reference: &RubricRef,
+		rubric: &Rubric,
 	) -> Self {
-		Self {
-			workspace,
-			documents,
-			reference,
-		}
-	}
-
-	fn write(&self, rubric: &Rubric) -> Brief {
-		let mut out = vec![
-			format!("# Projection: {}", self.reference),
-			String::new(),
-			format!(
-				"Written by `eval/project {reference}` on {}: for each heading of the \
-				 rubric `{reference}`, the evals it cites, where each is anchored in \
-				 `{}/`, what is written there, and the heading's structural lines. A \
-				 renderer fills the form from this and nothing else; a structural \
-				 line is checked on the result.",
-				Date::today(),
-				self.workspace.manifest.docs,
-				reference = self.reference,
-			),
-			String::new(),
-		];
-		let mut headings = 0;
+		let mut headings = Vec::new();
 		for section in &rubric.sections {
-			self.section(section, 2, &mut out, &mut headings);
+			Self::section(workspace, documents, section, 2, &mut headings);
 		}
-		Brief {
-			text: format!("{}\n", out.join("\n").trim_end()),
+		Self {
+			rubric: reference.clone(),
+			date: Date::today(),
+			docs: workspace.manifest.docs.clone(),
 			headings,
 		}
 	}
 
-	/// One heading at `depth` hashes and the headings beneath it; a heading
-	/// citing nothing and carrying no structural line is left out.
+	/// One heading at `depth` and the headings beneath it; a heading citing
+	/// nothing and carrying no structural line is left out.
 	fn section(
-		&self,
+		workspace: &LoadedWorkspace,
+		documents: &mut DocumentSet,
 		section: &RubricSection,
 		depth: usize,
-		out: &mut Vec<String>,
-		headings: &mut usize,
+		out: &mut Vec<ProjectedHeading>,
 	) {
 		if !section.citations.is_empty() || !section.structural.is_empty() {
-			*headings += 1;
-			out.extend([
-				format!("{} {}", "#".repeat(depth), section.title),
-				String::new(),
-			]);
-			if !section.citations.is_empty() {
-				out.extend(["Draws on:".to_string(), String::new()]);
-				for citation in &section.citations {
-					self.citation(citation, out);
-				}
-				out.push(String::new());
-			}
-			if !section.structural.is_empty() {
-				out.extend(["Structural:".to_string(), String::new()]);
-				for (index, line) in section.structural.iter().enumerate() {
-					out.push(format!("{}. {}", index + 1, line.written()));
-				}
-				out.push(String::new());
-			}
+			out.push(ProjectedHeading {
+				title: section.title.to_string(),
+				depth,
+				citations: section
+					.citations
+					.iter()
+					.map(|citation| {
+						let Some(packaged) = workspace.eval(&citation.eval)
+						else {
+							return ProjectedCitation {
+								eval: citation.eval.clone(),
+								anchor: None,
+								statement: None,
+								quote: None,
+							};
+						};
+						let anchor = packaged.eval.anchor_or_namespace();
+						ProjectedCitation {
+							eval: citation.eval.clone(),
+							quote: documents
+								.text_at(&anchor)
+								.filter(|text| !text.is_empty()),
+							anchor: Some(anchor),
+							statement: Some(
+								packaged.eval.statement.to_string(),
+							),
+						}
+					})
+					.collect(),
+				structural: section
+					.structural
+					.iter()
+					.map(StructuralLine::written)
+					.collect(),
+			});
 		}
 		for child in &section.sections {
-			self.section(child, depth + 1, out, headings);
+			Self::section(workspace, documents, child, depth + 1, out);
 		}
 	}
+}
 
-	/// A cited eval with the text at its anchor quoted.
-	fn citation(&self, citation: &Citation, out: &mut Vec<String>) {
-		let Some(packaged) = self.workspace.eval(&citation.eval) else {
-			out.push(format!(
-				"- `{}`: an eval the workspace does not define",
-				citation.eval
-			));
-			return;
-		};
-		let anchor = packaged.eval.anchor_or_namespace();
-		out.push(format!(
-			"- `{}` at `{anchor}`: {}",
-			citation.eval, packaged.eval.statement
-		));
-		match self
-			.documents
-			.text_at(&anchor)
-			.filter(|text| !text.is_empty())
-		{
-			Some(text) => {
-				out.extend(text.split('\n').map(|line| format!("  > {line}")))
-			}
-			None => out.push(format!("  > (nothing written at {anchor} yet)")),
-		}
+/// The brief a renderer fills a form from: for each heading of the rubric,
+/// the evals it cites, where each is anchored, what is written there, and
+/// the heading's structural lines.
+#[template]
+pub fn ProjectionReport(
+	#[prop(required)] projection: Projection,
+) -> impl Bundle {
+	let reference = projection.rubric.to_string();
+	let headings = projection
+		.headings
+		.iter()
+		.map(|heading| {
+			let title = Element::new(format!("h{}", heading.depth.min(6)))
+				.with_inner_text(&heading.title);
+			let citations = (!heading.citations.is_empty()).then(|| {
+				let items = heading
+					.citations
+					.iter()
+					.map(|citation| {
+						let said = match (&citation.anchor, &citation.statement) {
+							(Some(anchor), Some(statement)) => rsx! {
+								" at "<code>{anchor.to_string()}</code>{format!(": {statement}")}
+							}
+							.any_bundle(),
+							_ => rsx! { ": an eval the workspace does not define" }.any_bundle(),
+						};
+						let quote = match (&citation.anchor, &citation.quote) {
+							(_, Some(quote)) => {
+								let lines = quote
+									.lines()
+									.filter(|line| !line.trim().is_empty())
+									.map(|line| rsx! { <p>{line.to_string()}</p> })
+									.collect::<Vec<_>>();
+								rsx! { <blockquote>{lines}</blockquote> }.any_bundle()
+							}
+							(Some(anchor), None) => rsx! {
+								<blockquote><p>{format!("(nothing written at {anchor} yet)")}</p></blockquote>
+							}
+							.any_bundle(),
+							(None, None) => rsx! { <></> }.any_bundle(),
+						};
+						rsx! {
+							<p><code>{citation.eval.to_string()}</code>{said}</p>
+							{quote}
+						}
+					})
+					.collect::<Vec<_>>();
+				rsx! { <p>"Draws on:"</p>{items} }
+			});
+			let structural = (!heading.structural.is_empty()).then(|| {
+				let items = heading
+					.structural
+					.iter()
+					.map(|line| rsx! { <li>{line.clone()}</li> })
+					.collect::<Vec<_>>();
+				rsx! { <p>"Structural:"</p><ol>{items}</ol> }
+			});
+			rsx! { <>{title}{citations}{structural}</> }
+		})
+		.collect::<Vec<_>>();
+	rsx! {
+		<h1>{format!("Projection: {reference}")}</h1>
+		<p>
+			"Written by "<code>{format!("eval/project {reference}")}</code>
+			{format!(" on {}: for each heading of the rubric ", projection.date)}
+			<code>{reference.clone()}</code>
+			", the evals it cites, where each is anchored in "
+			<code>{format!("{}/", projection.docs)}</code>
+			", what is written there, and the heading's structural lines. A renderer fills the form from this and nothing else; a structural line is checked on the result."
+		</p>
+		{headings}
 	}
 }
 
@@ -189,17 +269,15 @@ mod test {
 		fixture
 			.ok("eval/project acme_course/01-business-plan")
 			.await
-			.xpect_eq(
-				"results/projections/acme_course-01-business-plan.md written: 2 headings\n",
-			);
+			.xpect_starts_with("# Projection: acme_course/01-business-plan\n");
 		fixture
 			.read("results/projections/acme_course-01-business-plan.md")
 			.await
 			.xpect_contains("## Whole document\n\nStructural:\n\n1. Every red instruction sentence is deleted. [form]\n")
 			.xpect_contains(
-				"## 1.2 Business Description\n\nDraws on:\n\n- `product.origin` at `product#idea`: Where the idea came from",
+				"## 1.2 Business Description\n\nDraws on:\n\n`product.origin` at `product#idea`: Where the idea came from",
 			)
-			.xpect_contains("  > The idea came from our own weekend stall.");
+			.xpect_contains("produced it.\n\n> The idea came from our own weekend stall.");
 		fixture
 			.ok("eval/project")
 			.await

@@ -12,18 +12,23 @@ pub struct SectionsCheckParams {
 
 impl SectionsCheckParams {
 	/// The verdict on `documents`.
-	pub fn decide(&self, documents: &DocumentSet) -> CheckVerdict {
-		let Some(document) = documents.get(&self.document) else {
+	pub fn decide(&self, documents: &mut DocumentSet) -> CheckVerdict {
+		let Some(root) =
+			documents.get(&self.document).map(|document| document.root)
+		else {
 			return CheckVerdict::fail(
 				format!("{} missing", documents.path_name(&self.document)),
 				[self.document.as_str()],
 			);
 		};
-		let got = document
-			.sections
-			.iter()
-			.map(|section| section.heading.as_str())
-			.collect::<Vec<_>>();
+		let headings = documents.query(|query| {
+			query
+				.sections(root)
+				.into_iter()
+				.map(|section| section.heading)
+				.collect::<Vec<_>>()
+		});
+		let got = headings.iter().map(SmolStr::as_str).collect::<Vec<_>>();
 		let want = self
 			.headings
 			.iter()

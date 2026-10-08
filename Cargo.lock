@@ -608,7 +608,6 @@ name = "beet_eval"
 version = "0.1.0"
 dependencies = [
  "beet",
- "pulldown-cmark",
  "serde",
 ]
 
@@ -656,8 +655,6 @@ dependencies = [
  "js-sys",
  "log",
  "md-5",
- "ooxmlsdk",
- "quick-xml",
  "ruzstd",
  "send_wrapper",
  "serde",
@@ -751,6 +748,7 @@ dependencies = [
  "js-sys",
  "libc",
  "material-colors",
+ "ooxmlsdk",
  "pulldown-cmark",
  "resvg",
  "serde",

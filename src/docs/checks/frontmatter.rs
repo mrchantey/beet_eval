@@ -6,8 +6,7 @@ use beet::prelude::*;
 /// The params of [`FrontmatterCheck`].
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct FrontmatterCheckParams {
-	/// The keys each must carry, ie
-	/// [`MarkdownDocument::META_KEYS`](crate::prelude::MarkdownDocument::META_KEYS).
+	/// The keys each must carry, ie [`DocumentSet::META_KEYS`].
 	pub keys: Vec<SmolStr>,
 	/// The documents' names.
 	pub documents: Vec<SmolStr>,
@@ -15,14 +14,18 @@ pub struct FrontmatterCheckParams {
 
 impl FrontmatterCheckParams {
 	/// The verdict on `documents`.
-	pub fn decide(&self, documents: &DocumentSet) -> CheckVerdict {
+	pub fn decide(&self, documents: &mut DocumentSet) -> CheckVerdict {
 		let mut problems = Vec::new();
 		let mut failing = Vec::new();
 		for name in &self.documents {
 			let path = documents.path_name(name);
-			let problem = match documents.get(name) {
+			let document = documents.get(name).cloned();
+			let meta = document.as_ref().and_then(|document| {
+				documents.query(|query| query.meta(document.root).cloned())
+			});
+			let problem = match document {
 				None => Some(format!("{path}: missing")),
-				Some(document) => match &document.meta {
+				Some(document) => match &meta {
 					None => Some(match document.problems.first() {
 						Some(problem) => format!("{path}: {problem}"),
 						None => format!("{path}: no frontmatter"),

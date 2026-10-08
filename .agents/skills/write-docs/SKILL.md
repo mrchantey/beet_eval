@@ -10,11 +10,11 @@ description: >
 
 # write-docs
 
-The owner supplies the claims, the specifics, the decisions and the taste; the agent supplies structure, completeness, consistency and the next question. Read three things before the first sitting: beet_eval's `src/markdown/mod.rs` (`~/me/beet_eval`), the shape of a document, its asks and its writing rules; the document package's `outline.json` and `README.md`, what each document holds and why; and `just eval worksheet <document>`, the bar, every eval anchored there with its level lines.
+The owner supplies the claims, the specifics, the decisions and the taste; the agent supplies structure, completeness, consistency and the next question. Read three things before the first sitting: beet_eval's `src/docs/mod.rs` (`~/me/beet_eval`), the shape of a document, its asks and its writing rules; the document package's `outline.json` and `README.md`, what each document holds and why; and `just eval worksheet <document>`, the bar, every eval anchored there with its level lines.
 
 ## Sources
 
-The workspace package's `assets/`: the founding notes, the interview files from earlier sittings, registrations and quotes as they arrive. `just eval results --format=md` and the `results/grades/` table for where the documents stand. A reader package's assets only for what its form will demand, never as a source of facts about the subject.
+The workspace package's `assets/`: the founding notes, the interview files from earlier sittings, registrations and quotes as they arrive. `just eval results --accept=text/markdown` and the `results/grades/` table for where the documents stand. A reader package's assets only for what its form will demand, never as a source of facts about the subject.
 
 ## Scaffold, once
 

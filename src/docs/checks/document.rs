@@ -10,7 +10,7 @@ pub struct DocumentCheckParams {
 
 impl DocumentCheckParams {
 	/// The verdict on `documents`.
-	pub fn decide(&self, documents: &DocumentSet) -> CheckVerdict {
+	pub fn decide(&self, documents: &mut DocumentSet) -> CheckVerdict {
 		match documents.get(&self.document) {
 			Some(document) => CheckVerdict::pass(documents.path_of(document)),
 			None => {

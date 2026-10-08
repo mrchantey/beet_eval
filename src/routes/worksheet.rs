@@ -10,15 +10,16 @@ struct WorksheetParams {
 
 /// `eval/worksheet [<document>]`: every judged eval anchored in each
 /// document, in the outline's order and then by section, with its statement
-/// and level lines: what a grader grades and a writer writes towards.
-#[action]
+/// and level lines: what a grader grades and a writer writes towards. The
+/// [`WorksheetReport`] for a markup `Accept`, the documents' evals for a
+/// serde one.
+#[action(route = "worksheet/:document?")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("worksheet/:document?"),
-	ParamsPartial = ParamsPartial::new::<WorksheetParams>()
-)]
-pub async fn EvalWorksheet(cx: ActionContext<Request>) -> Result<Response> {
+#[require(ParamsPartial = ParamsPartial::new::<WorksheetParams>())]
+pub async fn EvalWorksheet(
+	cx: ActionContext<Request>,
+) -> Result<DataPage<Vec<WorksheetDocument>>> {
 	let params = cx.input.parse_params::<WorksheetParams>()?;
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
@@ -50,7 +51,7 @@ pub async fn EvalWorksheet(cx: ActionContext<Request>) -> Result<Response> {
 			order.push(document);
 		}
 	}
-	let documents = match params.document {
+	let names = match params.document {
 		Some(document) => vec![document],
 		None => order,
 	};
@@ -58,64 +59,119 @@ pub async fn EvalWorksheet(cx: ActionContext<Request>) -> Result<Response> {
 		by_anchor
 			.iter()
 			.find(|(anchor, _)| anchor.as_str() == address)
-			.map(|(_, evals)| evals.as_slice())
+			.map(|(_, evals)| {
+				evals.iter().map(|eval| (*eval).clone()).collect()
+			})
 			.unwrap_or_default()
 	};
-	let mut out = String::new();
-	for document in &documents {
-		out.push_str(&format!("## {document}\n\n"));
-		let direct = anchored(document);
-		if !direct.is_empty() {
-			for eval in direct {
-				out.push_str(&Worksheet::entry(eval));
-			}
-			out.push('\n');
-		}
-		let headings = outline
-			.documents
-			.iter()
-			.find(|spec| spec.name == document.as_str())
-			.map(|spec| spec.sections.as_slice())
-			.unwrap_or_default();
-		for section in headings {
-			let evals = anchored(&format!(
-				"{document}#{}",
-				Section::slug(&section.heading)
-			));
-			if evals.is_empty() {
-				continue;
-			}
-			out.push_str(&format!("### {}\n\n", section.heading));
-			for eval in evals {
-				out.push_str(&Worksheet::entry(eval));
-			}
-			out.push('\n');
-		}
-	}
-	Response::ok_text(out).xok()
+	let documents = names
+		.iter()
+		.map(|document| WorksheetDocument {
+			document: document.clone(),
+			evals: anchored(document),
+			sections: outline
+				.documents
+				.iter()
+				.find(|spec| spec.name == document.as_str())
+				.map(|spec| spec.sections.as_slice())
+				.unwrap_or_default()
+				.iter()
+				.map(|section| WorksheetSection {
+					heading: section.heading.clone(),
+					evals: anchored(&format!(
+						"{document}#{}",
+						Address::slug(&section.heading)
+					)),
+				})
+				.filter(|section| !section.evals.is_empty())
+				.collect(),
+		})
+		.collect::<Vec<_>>();
+	let report = rsx! { <WorksheetReport documents=documents.clone()/> };
+	DataPage::new(&cx.caller, report, documents).await
 }
 
-/// How the worksheet prints one eval.
-struct Worksheet;
+/// One document of a worksheet: the judged evals anchored at the whole
+/// document, then those of each of its sections.
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
+pub struct WorksheetDocument {
+	/// The document's name.
+	pub document: SmolStr,
+	/// The evals anchored at the whole document.
+	pub evals: Vec<Eval>,
+	/// Each section with an eval anchored there, in the outline's order.
+	pub sections: Vec<WorksheetSection>,
+}
 
-impl Worksheet {
-	fn entry(eval: &Eval) -> String {
-		let mut out = format!(
-			"- **{}** ({}): {}\n",
-			eval.id,
-			eval.levels.word(),
-			eval.statement
-		);
-		if let Levels::Custom { l0, l1, l2, l3 } = &eval.levels {
-			for (level, line) in [l0, l1, l2, l3].into_iter().enumerate() {
-				out.push_str(&format!("  - {level}: {line}\n"));
+/// One section of a worksheet and the judged evals anchored there.
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
+pub struct WorksheetSection {
+	/// The heading as the outline writes it.
+	pub heading: SmolStr,
+	/// The evals, by id.
+	pub evals: Vec<Eval>,
+}
+
+/// The worksheet as a grader reads it: each document a heading, each section
+/// beneath, each eval its id, its kind of levels and its statement, with its
+/// own level lines and note beneath it.
+#[template]
+pub fn WorksheetReport(documents: Vec<WorksheetDocument>) -> impl Bundle {
+	let entries = |evals: &[Eval]| {
+		let items = evals
+			.iter()
+			.map(|eval| {
+				let mut lines = Vec::new();
+				if let Levels::Custom { l0, l1, l2, l3 } = &eval.levels {
+					for (level, line) in
+						[l0, l1, l2, l3].into_iter().enumerate()
+					{
+						lines.push(
+							rsx! { <li>{format!("{level}: {line}")}</li> }
+								.any_bundle(),
+						);
+					}
+				}
+				if let Some(note) = &eval.note {
+					lines.push(
+						rsx! { <li>{format!("Note: {note}")}</li> }
+							.any_bundle(),
+					);
+				}
+				let lines =
+					(!lines.is_empty()).then(|| rsx! { <ul>{lines}</ul> });
+				rsx! {
+					<li>
+						<strong>{eval.id.to_string()}</strong>
+						{format!(" ({}): {}", eval.levels.word(), eval.statement)}
+						{lines}
+					</li>
+				}
+			})
+			.collect::<Vec<_>>();
+		(!items.is_empty()).then(|| rsx! { <ul>{items}</ul> })
+	};
+	let documents = documents
+		.iter()
+		.map(|document| {
+			let sections = document
+				.sections
+				.iter()
+				.map(|section| {
+					rsx! {
+						<h3>{section.heading.to_string()}</h3>
+						{entries(&section.evals)}
+					}
+				})
+				.collect::<Vec<_>>();
+			rsx! {
+				<h2>{document.document.to_string()}</h2>
+				{entries(&document.evals)}
+				{sections}
 			}
-		}
-		if let Some(note) = &eval.note {
-			out.push_str(&format!("  - Note: {note}\n"));
-		}
-		out
-	}
+		})
+		.collect::<Vec<_>>();
+	rsx! { <>{documents}</> }
 }
 
 #[cfg(test)]
@@ -141,7 +197,7 @@ mod test {
 				 ### Pricing\n\n\
 				 - **product.pricing-justified** (generic): Each price is justified by what it costs to deliver and what customers pay elsewhere.\n\
 				 - **product.quote-held** (binary): A supplier's quote is held for every kit the business rents.\n\
-				 \x20 - Note: A judged binary eval: met or not, with no check to decide it.\n\n",
+				 \x20 - Note: A judged binary eval: met or not, with no check to decide it.\n",
 			);
 	}
 }

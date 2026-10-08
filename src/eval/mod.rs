@@ -87,7 +87,7 @@
 //! calls the route with the ref's params as flags, [`CheckRef::call`], and
 //! reads the [`CheckVerdict`] it answers. A new kind is a new route answering
 //! a verdict, nothing else. The document kinds are listed in the
-//! [`checks`](crate::markdown::checks) module.
+//! [`checks`](crate::docs::checks) module.
 //!
 //! ## Rubrics
 //!

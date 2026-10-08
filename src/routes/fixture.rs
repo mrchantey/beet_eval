@@ -5,7 +5,8 @@ use beet::prelude::*;
 
 /// The fixture at `tests/fixtures/acme` copied into a store of its own, its
 /// blank Word form generated through beet's `ooxml`, with a router serving
-/// the verbs, the check kinds, the cells dump and the store view above it.
+/// the verbs, the check kinds, the store's cells and the store view above
+/// it.
 pub(crate) struct Fixture {
 	world: World,
 	router: Entity,
@@ -33,7 +34,7 @@ impl Fixture {
 		store
 			.insert(
 				&RelPath::new(Self::FORM),
-				Self::blank_form().to_bytes().unwrap(),
+				Self::blank_form().bytes().to_vec(),
 			)
 			.await
 			.unwrap();
@@ -47,8 +48,8 @@ impl Fixture {
 			.spawn((ChildOf(router), PathPartial::new("check")))
 			.insert_template(CheckRoutes)
 			.unwrap();
-		world.spawn((ChildOf(router), PathPartial::new("ooxml"), children![
-			OoxmlCells
+		world.spawn((ChildOf(router), PathPartial::new("blob"), children![
+			BlobCells
 		]));
 		world.spawn((ChildOf(router), BlobView));
 		Self {
@@ -58,10 +59,18 @@ impl Fixture {
 		}
 	}
 
-	/// The answer to a command line, ie `eval/next --format=json`: whether
-	/// it succeeded, and its text.
+	/// The answer to a command line, ie `eval/next --accept=application/json`:
+	/// whether it succeeded, and its text. Its `--accept` is the request's
+	/// `Accept`, as the cli server makes it, markdown when unset, as an agent
+	/// reads.
 	pub async fn call(&mut self, command: &str) -> (bool, String) {
-		self.answer(Request::from_cli_str(command)).await
+		let request = Request::from_cli_str(command);
+		let accept = request
+			.get_param("accept")
+			.map(|accept| MediaType::from_accepts(accept))
+			.unwrap_or_else(|| vec![MediaType::Markdown]);
+		self.answer(request.with_header::<header::Accept>(accept))
+			.await
 	}
 
 	/// The answer to `request`, for params a command line cannot spell.
@@ -99,8 +108,8 @@ impl Fixture {
 	/// The blank business plan form: a name cell, a description box sharing
 	/// its cell with its prompt and a red instruction sentence, and a Surveys
 	/// checkbox.
-	pub fn blank_form() -> WordDocument {
-		WordDocument::from_body(
+	pub fn blank_form() -> MediaBytes {
+		OoxmlFile::word(
 			"<w:tbl><w:tr>\
 			 <w:tc><w:p><w:r><w:t>Business Name</w:t></w:r></w:p></w:tc>\
 			 <w:tc><w:p/></w:tc>\

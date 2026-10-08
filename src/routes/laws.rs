@@ -104,7 +104,7 @@ impl Laws {
 				if !document
 					.sections
 					.iter()
-					.any(|section| Section::slug(&section.heading) == slug) =>
+					.any(|section| Address::slug(&section.heading) == slug) =>
 			{
 				Some("names a section the outline does not declare".into())
 			}

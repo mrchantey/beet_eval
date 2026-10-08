@@ -35,11 +35,11 @@ impl NextStep {
 	/// The triage over one run: the documents of the outline in order, each
 	/// weighed by its asks, its shape failures, its gaps to the owner and the
 	/// reader rubrics and its grading, then the unit of work by the order
-	/// above. `built` names the rubrics whose form has a cells dump in the
+	/// above. `built` names the rubrics whose built form has its cells listed in the
 	/// build directory.
 	pub fn compute(
 		workspace: &LoadedWorkspace,
-		documents: &DocumentSet,
+		documents: &mut DocumentSet,
 		verdicts: &[(EvalId, CheckVerdict)],
 		results: &Results,
 		built: &[RubricRef],
@@ -57,12 +57,27 @@ impl NextStep {
 		let anchored_in = |eval: &Eval, name: &str| {
 			eval.anchor_or_namespace().document_name() == name
 		};
-		let documents_rows = outline
+		let asks = documents.asks();
+		// each document's presence and last substantive edit
+		let read = outline
 			.documents
 			.iter()
 			.map(|spec| {
+				let document = documents.get(&spec.name).cloned();
+				let updated = document.as_ref().and_then(|document| {
+					documents.query(|query| {
+						query.meta(document.root).and_then(|meta| meta.updated)
+					})
+				});
+				(document.is_some(), updated)
+			})
+			.collect::<Vec<_>>();
+		let documents_rows = outline
+			.documents
+			.iter()
+			.zip(read)
+			.map(|(spec, (present, updated))| {
 				let name = spec.name.as_str();
-				let document = documents.get(name);
 				let mut owner_gap = 0;
 				let mut reader_gap = 0;
 				for rubric in &results.rubrics {
@@ -103,9 +118,6 @@ impl NextStep {
 						})
 					})
 					.count() as u32;
-				let updated = document
-					.and_then(|document| document.meta.as_ref())
-					.and_then(|meta| meta.updated);
 				let stale = graded > 0
 					&& match (&results.grades, updated) {
 						(Some(grades), Some(updated)) => updated > grades.date,
@@ -113,9 +125,8 @@ impl NextStep {
 					};
 				DocumentRow {
 					document: spec.name.clone(),
-					present: document.is_some(),
-					asks: documents
-						.asks()
+					present,
+					asks: asks
 						.iter()
 						.filter(|(document, _)| {
 							DocumentSet::top_level(document) == name
@@ -309,54 +320,72 @@ impl NextStep {
 			),
 		}
 	}
+}
 
-	/// The step as the triage prints it: the unit of work and why, then the
-	/// document and rubric tables.
-	pub fn to_markdown(&self) -> String {
-		let target = match self.targets.is_empty() {
-			true => String::new(),
-			false => format!(" {}", self.targets.join(", ")),
-		};
-		let mut out = vec![
-			format!("## Next: {}{target}", self.verb.word()),
-			String::new(),
-			self.why.clone(),
-			String::new(),
-			"## Documents".into(),
-			String::new(),
-			"| Document | Present | Asks | Shape failures | Owner gap | Reader gap | Graded | Updated |"
-				.into(),
-			"|---|---|---|---|---|---|---|---|".into(),
-		];
-		for row in &self.documents {
-			out.push(format!(
-				"| {} | {} | {} | {} | {} | {} | {}/{}{} | {} |",
-				row.document,
-				if row.present { "yes" } else { "no" },
-				row.asks,
-				row.shape_failures.len(),
-				row.owner_gap,
-				row.reader_gap,
-				row.graded,
-				row.judged,
-				if row.stale { " stale" } else { "" },
-				row.updated.map(|date| date.to_string()).unwrap_or_default()
-			));
-		}
-		out.extend([
-			String::new(),
-			"## Rubrics".into(),
-			String::new(),
-			"| Rubric | Met | Failing | Awaiting |".into(),
-			"|---|---|---|---|".into(),
-		]);
-		for row in &self.rubrics {
-			out.push(format!(
-				"| {} | {} | {} | {} |",
-				row.rubric, row.met, row.failing, row.awaiting
-			));
-		}
-		format!("{}\n", out.join("\n"))
+/// The step as the triage prints it: the unit of work and why, then the
+/// document and rubric tables.
+#[template]
+pub fn NextReport(#[prop(required)] step: NextStep) -> impl Bundle {
+	let target = match step.targets.is_empty() {
+		true => String::new(),
+		false => format!(" {}", step.targets.join(", ")),
+	};
+	let documents = step
+		.documents
+		.iter()
+		.map(|row| {
+			let present = match row.present {
+				true => "yes",
+				false => "no",
+			};
+			let stale = match row.stale {
+				true => " stale",
+				false => "",
+			};
+			rsx! {
+				<tr>
+					<td>{row.document.to_string()}</td>
+					<td>{present}</td>
+					<td>{row.asks.to_string()}</td>
+					<td>{row.shape_failures.len().to_string()}</td>
+					<td>{row.owner_gap.to_string()}</td>
+					<td>{row.reader_gap.to_string()}</td>
+					<td>{format!("{}/{}{stale}", row.graded, row.judged)}</td>
+					<td>{row.updated.map(|date| date.to_string()).unwrap_or_default()}</td>
+				</tr>
+			}
+		})
+		.collect::<Vec<_>>();
+	let rubrics = step
+		.rubrics
+		.iter()
+		.map(|row| {
+			rsx! {
+				<tr>
+					<td>{row.rubric.to_string()}</td>
+					<td>{row.met.to_string()}</td>
+					<td>{row.failing.to_string()}</td>
+					<td>{row.awaiting.to_string()}</td>
+				</tr>
+			}
+		})
+		.collect::<Vec<_>>();
+	rsx! {
+		<h2>{format!("Next: {}{target}", step.verb.word())}</h2>
+		<p>{step.why.clone()}</p>
+		<h2>"Documents"</h2>
+		<table>
+			<tr>
+				<th>"Document"</th><th>"Present"</th><th>"Asks"</th><th>"Shape failures"</th>
+				<th>"Owner gap"</th><th>"Reader gap"</th><th>"Graded"</th><th>"Updated"</th>
+			</tr>
+			{documents}
+		</table>
+		<h2>"Rubrics"</h2>
+		<table>
+			<tr><th>"Rubric"</th><th>"Met"</th><th>"Failing"</th><th>"Awaiting"</th></tr>
+			{rubrics}
+		</table>
 	}
 }
 

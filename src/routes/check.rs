@@ -14,14 +14,13 @@ struct CheckParams {
 /// params against its route's, citations of known evals at levels they can
 /// reach, and every anchor, block home and agreement against the outline.
 /// Answers with each problem and a count line, exiting 1 on any.
-#[action]
+#[action(route = "check")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("check"),
-	ParamsPartial = ParamsPartial::new::<CheckParams>()
-)]
-pub async fn EvalCheck(cx: ActionContext<Request>) -> Result<Response> {
+#[require(ParamsPartial = ParamsPartial::new::<CheckParams>())]
+pub async fn EvalCheck(
+	cx: ActionContext<Request>,
+) -> Result<DataPage<CheckSummary>> {
 	let params = cx.input.parse_params::<CheckParams>()?;
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	let mut errors = workspace.problems.clone();
@@ -76,31 +75,92 @@ pub async fn EvalCheck(cx: ActionContext<Request>) -> Result<Response> {
 		.iter()
 		.filter(|packaged| packaged.eval.is_checked())
 		.count();
-	let unused = workspace
-		.evals
-		.iter()
-		.filter(|packaged| !cited.contains_key(&packaged.eval.id))
-		.map(|packaged| packaged.eval.id.to_string())
-		.collect::<Vec<_>>();
-	let mut out = errors.clone();
-	out.push(format!(
-		"{} evals ({} judged, {checked} checked) in {} packages, {} citations, {} uncited, {} error(s)",
-		workspace.evals.len(),
-		workspace.evals.len() - checked,
-		workspace.packages.len(),
-		cited.values().sum::<usize>(),
-		unused.len(),
-		errors.len()
-	));
-	if params.unused {
-		out.extend(unused.iter().map(|id| format!("  uncited: {id}")));
+	let summary = CheckSummary {
+		evals: workspace.evals.len(),
+		judged: workspace.evals.len() - checked,
+		checked,
+		packages: workspace.packages.len(),
+		citations: cited.values().sum::<usize>(),
+		uncited: workspace
+			.evals
+			.iter()
+			.filter(|packaged| !cited.contains_key(&packaged.eval.id))
+			.map(|packaged| packaged.eval.id.clone())
+			.collect(),
+		errors,
+	};
+	let status = match summary.errors.is_empty() {
+		true => StatusCode::OK,
+		false => StatusCode::UNPROCESSABLE_CONTENT,
+	};
+	let report =
+		rsx! { <CheckReport summary=summary.clone() unused=params.unused/> };
+	DataPage::new(&cx.caller, report, summary)
+		.await?
+		.with_status(status)
+		.xok()
+}
+
+/// What `eval/check` found: every problem, and what the workspace holds.
+#[derive(Debug, Default, Clone, PartialEq, Reflect, Serialize, Deserialize)]
+pub struct CheckSummary {
+	/// Every law a row breaks, one line each.
+	pub errors: Vec<String>,
+	/// Every eval of every package.
+	pub evals: usize,
+	/// The judged ones.
+	pub judged: usize,
+	/// The checked ones.
+	pub checked: usize,
+	/// The packages.
+	pub packages: usize,
+	/// Every citation of every rubric.
+	pub citations: usize,
+	/// The evals no rubric cites.
+	pub uncited: Vec<EvalId>,
+}
+
+impl CheckSummary {
+	/// The count line, ie `19 evals (5 judged, 14 checked) in 3 packages`.
+	pub fn line(&self) -> String {
+		format!(
+			"{} evals ({} judged, {} checked) in {} packages, {} citations, {} uncited, {} error(s)",
+			self.evals,
+			self.judged,
+			self.checked,
+			self.packages,
+			self.citations,
+			self.uncited.len(),
+			self.errors.len()
+		)
 	}
-	let text = format!("{}\n", out.join("\n"));
-	match errors.is_empty() {
-		true => Response::ok_text(text),
-		false => refusal(text),
+}
+
+/// The check as a person reads it: every problem, the count line, and with
+/// `unused` the evals no rubric cites.
+#[template]
+pub fn CheckReport(summary: CheckSummary, unused: bool) -> impl Bundle {
+	let errors = (!summary.errors.is_empty()).then(|| {
+		let items = summary
+			.errors
+			.iter()
+			.map(|error| rsx! { <li>{error.clone()}</li> })
+			.collect::<Vec<_>>();
+		rsx! { <ul>{items}</ul> }
+	});
+	let uncited = (unused && !summary.uncited.is_empty()).then(|| {
+		let items = summary
+			.uncited
+			.iter()
+			.map(|id| rsx! { <li>{format!("uncited: {id}")}</li> })
+			.collect::<Vec<_>>();
+		rsx! { <ul>{items}</ul> }
+	});
+	rsx! {
+		{errors}
+		<p>{summary.line()}</p>
+		{uncited}
 	}
-	.xok()
 }
 
 #[cfg(test)]

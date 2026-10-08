@@ -98,9 +98,7 @@ impl Outline {
 				 its frontmatter."
 					.into(),
 				CheckRef::new("frontmatter", FrontmatterCheckParams {
-					keys: MarkdownDocument::META_KEYS
-						.map(SmolStr::new)
-						.to_vec(),
+					keys: DocumentSet::META_KEYS.map(SmolStr::new).to_vec(),
 					documents: names.clone(),
 				}),
 			),
@@ -152,7 +150,7 @@ pub struct DocumentSpec {
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct SectionSpec {
 	/// The heading as every document writes it, ie `Owner's finances`; its
-	/// [`Section::slug`] is the section's address.
+	/// [`Address::slug`] is the section's address.
 	pub heading: SmolStr,
 	/// What the section holds, which is also where a grader looks for the evals
 	/// anchored in it.

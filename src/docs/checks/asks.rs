@@ -11,7 +11,7 @@ impl AsksCheckParams {
 
 	/// The verdict on `documents`. An open ask is no shape failure, so the
 	/// verdict lays it at no document; the triage counts asks on its own.
-	pub fn decide(&self, documents: &DocumentSet) -> CheckVerdict {
+	pub fn decide(&self, documents: &mut DocumentSet) -> CheckVerdict {
 		let asks = documents.asks();
 		if asks.is_empty() {
 			return CheckVerdict::pass("no open asks");

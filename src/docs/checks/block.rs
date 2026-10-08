@@ -18,7 +18,7 @@ impl BlockCheckParams {
 	const SHOWN: usize = 4;
 
 	/// The verdict on `documents`.
-	pub fn decide(&self, documents: &DocumentSet) -> CheckVerdict {
+	pub fn decide(&self, documents: &mut DocumentSet) -> CheckVerdict {
 		let home = self.section.document_name();
 		let fail = |detail: String| CheckVerdict::fail(detail, [home]);
 		let columns = match self
@@ -31,11 +31,11 @@ impl BlockCheckParams {
 			Err(err) => return fail(err.to_string()),
 		};
 		let found = documents
-			.blocks()
+			.data_blocks()
 			.into_iter()
 			.filter(|(_, block)| block.name == self.name)
 			.collect::<Vec<_>>();
-		let at = |document: &MarkdownDocument, block: &DataBlock| {
+		let at = |document: &DocumentFile, block: &DataBlock| {
 			format!("{}:{}", documents.path_of(document), block.line)
 		};
 		let (document, block) = match found.as_slice() {
@@ -46,7 +46,7 @@ impl BlockCheckParams {
 					documents.dir()
 				));
 			}
-			[single] => *single,
+			[(document, block)] => (document, block),
 			many => {
 				return fail(format!(
 					"defined {} times: {}",

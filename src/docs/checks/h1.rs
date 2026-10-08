@@ -10,19 +10,24 @@ pub struct H1CheckParams {
 
 impl H1CheckParams {
 	/// The verdict on `documents`.
-	pub fn decide(&self, documents: &DocumentSet) -> CheckVerdict {
+	pub fn decide(&self, documents: &mut DocumentSet) -> CheckVerdict {
 		let fail = |detail: String| {
 			CheckVerdict::fail(detail, [self.document.as_str()])
 		};
-		match documents.get(&self.document) {
-			None => fail(format!("{} missing", documents.path_name(&self.document))),
-			Some(document) => match &document.title {
-				Some(title) => CheckVerdict::pass(title.as_str()),
-				None => fail(
-					"the first line after the frontmatter is not a level one heading"
-						.into(),
-				),
-			},
+		let Some(root) =
+			documents.get(&self.document).map(|document| document.root)
+		else {
+			return fail(format!(
+				"{} missing",
+				documents.path_name(&self.document)
+			));
+		};
+		match documents.query(|query| query.title(root)) {
+			Some(title) => CheckVerdict::pass(title.as_str()),
+			None => fail(
+				"the first block after the frontmatter is not a level one heading"
+					.into(),
+			),
 		}
 	}
 }

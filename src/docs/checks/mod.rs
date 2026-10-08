@@ -1,7 +1,7 @@
 //! The document check kinds, each a route under `check/`: its action here
 //! beside its params type, and `<CheckRoutes/>` mounting them all. A route
 //! reads its params, reads the documents through the workspace store above
-//! it, and answers a [`CheckVerdict`](crate::prelude::CheckVerdict) as JSON;
+//! it, and answers a [`CheckVerdict`] as JSON;
 //! `eval/results` calls the route for every checked eval through the route
 //! tree, and a person may call one directly, ie `check/sections
 //! --document=brand --headings=Voice`. A document is named without its
@@ -25,7 +25,7 @@
 //! the triage counts asks on their own.
 //!
 //! A document package's
-//! [`Outline`](crate::prelude::Outline) generates the
+//! [`Outline`] generates the
 //! `document`, `sections` and `block` evals of its documents and blocks and
 //! the `frontmatter` and `summary` evals over the set; the package writes the
 //! rest as rows. `eval/check` validates every eval's params against its
@@ -82,16 +82,90 @@ impl DocumentSet {
 	/// `decide` reaches answered as JSON.
 	pub async fn answer_check<P: FromReflect + Typed>(
 		cx: &ActionContext<Request>,
-		decide: fn(&P, &DocumentSet) -> CheckVerdict,
+		decide: fn(&P, &mut DocumentSet) -> CheckVerdict,
 	) -> Result<Response> {
 		let params = cx.input.parse_params::<P>()?;
 		let store = LoadedWorkspace::store_of(&cx.caller).await?;
 		let manifest = Workspace::read(&store).await?;
-		let documents = DocumentSet::load(
+		let mut documents = DocumentSet::load(
 			&store.with_subdir(manifest.docs.clone()),
 			manifest.docs,
 		)
 		.await?;
-		Response::ok_json(&decide(&params, &documents))
+		Response::ok_json(&decide(&params, &mut documents))
+	}
+}
+
+#[cfg(test)]
+mod test {
+	use crate::prelude::*;
+	use beet::prelude::*;
+
+	/// Every check's verdict in a run of the fixture.
+	async fn checks(fixture: &mut Fixture) -> Vec<CheckOutcome> {
+		MediaType::Json
+			.deserialize::<Results>(
+				fixture
+					.ok("eval/results --accept=application/json")
+					.await
+					.as_bytes(),
+			)
+			.unwrap()
+			.checks
+	}
+
+	/// The brand document written in Word rather than markdown passes and
+	/// fails every check alike: its title and sections by their heading
+	/// styles, its tagline's agreement by its emphasis, its open ask by its
+	/// words. Only its frontmatter differs, a Word file's being its core
+	/// properties, which this one leaves empty.
+	#[beet::test]
+	async fn checks_a_word_document_like_markdown() {
+		let mut fixture = Fixture::new().await;
+		let markdown = checks(&mut fixture).await;
+		fixture
+			.store
+			.remove(&RelPath::new("docs/brand.md"))
+			.await
+			.unwrap();
+		fixture
+			.store
+			.insert(
+				&RelPath::new("docs/brand.docx"),
+				OoxmlFile::word(
+					"<w:p><w:pPr><w:pStyle w:val=\"Title\"/></w:pPr><w:r><w:t>Brand</w:t></w:r></w:p>\
+					 <w:p><w:r><w:t>The name is Acme Stalls, and the tagline promises a stall that arrives ready to trade.</w:t></w:r></w:p>\
+					 <w:p><w:pPr><w:pStyle w:val=\"Heading2\"/></w:pPr><w:r><w:t>Name and tagline</w:t></w:r></w:p>\
+					 <w:p><w:r><w:t xml:space=\"preserve\">Acme Stalls, </w:t></w:r>\
+					 <w:r><w:rPr><w:i/></w:rPr><w:t>Stalls that come fitted</w:t></w:r><w:r><w:t>.</w:t></w:r></w:p>\
+					 <w:p><w:pPr><w:pStyle w:val=\"Heading2\"/></w:pPr><w:r><w:t>Voice</w:t></w:r></w:p>\
+					 <w:p><w:r><w:t>TODO(ask): how plain or playful the voice is.</w:t></w:r></w:p>",
+				)
+				.unwrap()
+				.bytes()
+				.to_vec(),
+			)
+			.await
+			.unwrap();
+		let word = checks(&mut fixture).await;
+		for (markdown, word) in markdown.iter().zip(&word) {
+			match markdown.eval.slug() {
+				"frontmatter-complete" => {
+					word.detail.clone().xpect_contains(
+						"docs/brand: created, updated, authors",
+					);
+				}
+				_ => {
+					(markdown.eval.clone(), markdown.pass)
+						.xpect_eq((word.eval.clone(), word.pass));
+				}
+			}
+		}
+		word.iter()
+			.find(|check| check.eval.slug() == "no-open-asks")
+			.unwrap()
+			.detail
+			.clone()
+			.xpect_contains("docs/brand.docx:6");
 	}
 }

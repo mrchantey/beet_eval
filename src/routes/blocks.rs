@@ -7,13 +7,12 @@ use beet::prelude::*;
 struct BlocksParams {
 	/// The block to print, the `:name` path segment.
 	name: Option<SmolStr>,
-	/// Print every block as JSON.
-	all: bool,
 }
 
-/// `eval/blocks [<name> | --all]`: lists the named data blocks under the
-/// documents directory, prints one block's body for a calculation or a
-/// renderer, or prints them all as JSON.
+/// `eval/blocks [<name>]`: lists the named data blocks under the documents
+/// directory, the [`BlocksReport`] for a markup `Accept` and every block in
+/// full, its rows parsed, for a serde one; or prints one block's body as
+/// text, for a calculation or a renderer.
 #[action]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
@@ -25,76 +24,63 @@ pub async fn EvalBlocks(cx: ActionContext<Request>) -> Result<Response> {
 	let params = cx.input.parse_params::<BlocksParams>()?;
 	let store = LoadedWorkspace::store_of(&cx.caller).await?;
 	let manifest = Workspace::read(&store).await?;
-	let documents = DocumentSet::load(
+	let mut documents = DocumentSet::load(
 		&store.with_subdir(manifest.docs.clone()),
 		manifest.docs,
 	)
 	.await?;
-	let blocks = documents.blocks();
-	if params.all {
-		return Response::ok_text(format!(
-			"{}\n",
-			BlockDump::json(&documents, &blocks)?
-		))
-		.xok();
-	}
-	match params.name {
-		Some(name) => match blocks.iter().find(|(_, block)| block.name == name)
-		{
+	let blocks = documents.data_blocks();
+	if let Some(name) = params.name {
+		return match blocks.iter().find(|(_, block)| block.name == name) {
 			Some((_, block)) => Response::ok_text(format!("{}\n", block.text)),
 			None => refusal(format!(
 				"no block named {name} under {}/\n",
 				documents.dir()
 			)),
-		},
-		None if blocks.is_empty() => Response::ok_text(format!(
-			"no named blocks under {}/\n",
-			documents.dir()
-		)),
-		None => Response::ok_text(
-			blocks
-				.iter()
-				.map(|(document, block)| {
-					let section = block
-						.section
-						.as_ref()
-						.map(|section| format!("#{section}"))
-						.unwrap_or_default();
-					let size = match block.format {
-						BlockFormat::Csv => {
-							format!("{} rows", block.rows.len())
-						}
-						BlockFormat::Json => "json".into(),
-					};
-					format!(
-						"{}\t{}\t{}:{}{section}\t{size}\n",
-						block.name,
-						block.format.word(),
-						documents.path_of(document),
-						block.line
-					)
-				})
-				.collect::<String>(),
-		),
+		}
+		.xok();
 	}
-	.xok()
+	let dump = BlockDump::new(&documents, &blocks);
+	let report = rsx! { <BlocksReport dump=dump.clone() dir=documents.dir().to_string()/> };
+	DataPage::new(&cx.caller, report, dump)
+		.await?
+		.into_response_with_request_parts(
+			cx.caller.clone(),
+			cx.input.parts().clone(),
+		)
+		.await
 }
 
-/// The blocks as one JSON object by name, in the order they are met.
-struct BlockDump;
+/// Every named block, by name in the order they are met: its file, line,
+/// section and format, and its rows or its JSON.
+#[derive(Debug, Clone, PartialEq, Reflect)]
+pub struct BlockDump(Vec<(SmolStr, BlockEntry)>);
+
+/// One block as the dump carries it.
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize)]
+pub struct BlockEntry {
+	file: String,
+	line: u32,
+	section: Option<SmolStr>,
+	format: SmolStr,
+	header: Vec<String>,
+	rows: Vec<Vec<String>>,
+	#[serde(skip_serializing_if = "Option::is_none")]
+	json: Option<Value>,
+}
 
 impl BlockDump {
-	fn json(
+	fn new(
 		documents: &DocumentSet,
-		blocks: &[(&MarkdownDocument, &DataBlock)],
-	) -> Result<String> {
-		let mut entries = Vec::<(&str, BlockJson)>::new();
+		blocks: &[(DocumentFile, DataBlock)],
+	) -> Self {
+		let mut entries = Vec::<(SmolStr, BlockEntry)>::new();
 		for (document, block) in blocks {
-			let entry = BlockJson {
+			let entry = BlockEntry {
 				file: documents.path_of(document),
 				line: block.line,
 				section: block.section.clone(),
-				format: block.format.word(),
+				format: block.format.word().into(),
 				header: block.header.clone(),
 				rows: block.rows.clone(),
 				json: match block.format {
@@ -107,44 +93,65 @@ impl BlockDump {
 				},
 			};
 			// a name defined twice keeps its first place and its last body
-			match entries
-				.iter_mut()
-				.find(|(name, _)| *name == block.name.as_str())
-			{
+			match entries.iter_mut().find(|(name, _)| *name == block.name) {
 				Some((_, existing)) => *existing = entry,
-				None => entries.push((block.name.as_str(), entry)),
+				None => entries.push((block.name.clone(), entry)),
 			}
 		}
-		let bytes = MediaType::Json
-			.serialize_with_options(&OrderedMap(entries), SerializeOptions {
-				pretty: true,
-			})?;
-		String::from_utf8(bytes)?.xok()
+		Self(entries)
 	}
 }
 
-/// One block as the dump prints it.
-#[derive(Serialize)]
-struct BlockJson {
-	file: String,
-	line: u32,
-	section: Option<SmolStr>,
-	format: &'static str,
-	header: Vec<String>,
-	rows: Vec<Vec<String>>,
-	#[serde(skip_serializing_if = "Option::is_none")]
-	json: Option<Value>,
-}
-
-/// Entries serialized as a map in their own order.
-struct OrderedMap<'a>(Vec<(&'a str, BlockJson)>);
-
-impl Serialize for OrderedMap<'_> {
+/// The dump is a map from name to block, in its own order.
+impl Serialize for BlockDump {
 	fn serialize<S: serde::Serializer>(
 		&self,
 		serializer: S,
 	) -> Result<S::Ok, S::Error> {
 		serializer.collect_map(self.0.iter().map(|(name, entry)| (name, entry)))
+	}
+}
+
+/// The blocks as a table: each block's name, format, where it sits and its
+/// size.
+#[template]
+pub fn BlocksReport(
+	#[prop(required)] dump: BlockDump,
+	dir: String,
+) -> impl Bundle {
+	let rows = dump
+		.0
+		.iter()
+		.map(|(name, entry)| {
+			let section = entry
+				.section
+				.as_ref()
+				.map(|section| format!("#{section}"))
+				.unwrap_or_default();
+			let size = match entry.json {
+				Some(_) => "json".to_string(),
+				None => format!("{} rows", entry.rows.len()),
+			};
+			rsx! {
+				<tr>
+					<td>{name.to_string()}</td>
+					<td>{entry.format.to_string()}</td>
+					<td>{format!("{}:{}{section}", entry.file, entry.line)}</td>
+					<td>{size}</td>
+				</tr>
+			}
+		})
+		.collect::<Vec<_>>();
+	match rows.is_empty() {
+		true => rsx! { <p>{format!("No named blocks under {dir}/.")}</p> }
+			.any_bundle(),
+		false => rsx! {
+			<table>
+				<tr><th>"Block"</th><th>"Format"</th><th>"At"</th><th>"Size"</th></tr>
+				{rows}
+			</table>
+		}
+		.any_bundle(),
 	}
 }
 
@@ -159,13 +166,13 @@ mod test {
 		fixture
 			.ok("eval/blocks")
 			.await
-			.xpect_eq("price-list\tcsv\tdocs/product.md:19#pricing\t2 rows\n");
+			.xpect_eq("| Block | Format | At | Size |\n|---|---|---|---|\n| price-list | csv | docs/product.md:19#pricing | 2 rows |\n");
 		fixture
 			.ok("eval/blocks price-list")
 			.await
 			.xpect_eq("line,price_ex_gst\nSmall stall,120\nLarge stall,180\n");
 		fixture
-			.ok("eval/blocks --all")
+			.ok("eval/blocks --accept=application/json")
 			.await
 			.xpect_starts_with("{\n  \"price-list\": {\n    \"file\": \"docs/product.md\",\n    \"line\": 19,")
 			.xpect_contains("\"rows\": [\n      [\n        \"Small stall\",\n        \"120\"\n      ],");

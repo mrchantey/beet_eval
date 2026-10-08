@@ -34,7 +34,7 @@ The anchor is where the evidence sits, defaulting to the eval's own; the evidenc
 
 ## After grading
 
-7. `just eval results`, then `just eval results --format=md` for the per-rubric failing lists. Report to the owner by rubric: the ids that fail, the level needed and the level reached, in a numbered list, not the table.
+7. `just eval results --accept=text/markdown`, whose answer carries the per-rubric failing lists. Report to the owner by rubric: the ids that fail, the level needed and the level reached, in a numbered list, not the table.
 
 ## Regrading
 

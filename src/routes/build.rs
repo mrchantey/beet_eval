@@ -9,10 +9,12 @@ struct BuildParams {
 	rubric: RubricRef,
 }
 
-/// `eval/build <package>/<rubric>`: copies the reader's blank form named by
-/// the rubric's render spec into the build directory, applies the fill spec
-/// at `dist/<package>/<rubric>.fill.json` when there is one, and dumps the
-/// result's cells beside it, to read against the rubric's structural lines.
+/// `eval/build <package>/<rubric>`: parses the reader's blank form named by
+/// the rubric's render spec, a Word file, a workbook or any document with
+/// tables, applies the fill spec at `dist/<package>/<rubric>.fill.json` when
+/// there is one, renders the result in the form's own format into the build
+/// directory, and writes its [`CellsReport`] beside it, to read against the
+/// rubric's structural lines.
 #[action]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
@@ -31,38 +33,44 @@ pub async fn EvalBuild(cx: ActionContext<Request>) -> Result<Response> {
 	let fill =
 		json_ext::read_optional::<FillSpec>(&dist, &FillSpec::path(&reference))
 			.await?;
-	let blank = package.store.get(&spec.form).await?;
-	let mut log = Vec::new();
-	let cells = match FormKind::of(&spec.form)? {
-		FormKind::Word => {
-			let mut form = WordDocument::from_bytes(blank.to_vec())?;
-			match &fill {
-				Some(fill) => log.extend(fill.apply_word(&mut form)?),
-				None => log.push(FormSource::unfilled(&reference)),
-			}
-			dist.insert(&output, form.to_bytes()?).await?;
-			CellsDump::word(&form)
-		}
-		FormKind::Workbook => {
-			let mut form = Workbook::from_bytes(blank.to_vec())?;
-			match &fill {
-				Some(fill) => log.extend(fill.apply_workbook(&mut form)?),
-				None => log.push(FormSource::unfilled(&reference)),
-			}
-			dist.insert(&output, form.to_bytes()?).await?;
-			CellsDump::workbook(&form)?
-		}
-	};
-	let dump_path = CellsDump::path(&reference);
+	let blank = package.store.blob(spec.form.clone()).get_media().await?;
+	let unfilled = FormSource::unfilled(&reference);
+	let (mut log, built, cells) =
+		FormSource::read(&cx.caller, blank, move |world, root| {
+			let log = match &fill {
+				Some(fill) => fill.apply(world, root)?,
+				None => vec![unfilled],
+			};
+			let media_type = world
+				.entity(root)
+				.get::<OoxmlPackage>()
+				.map(|package| package.media_type().clone())
+				.unwrap_or(MediaType::Markdown);
+			let built = MediaRenderer::default().render(
+				&mut RenderContext::new(root, world)
+					.with_accepts(vec![media_type]),
+			)?;
+			let cells =
+				world.with_state::<TableCells, _>(|cells| cells.listing(root));
+			(log, built, cells).xok()
+		})
+		.await?;
+	dist.insert(&output, built.bytes().to_vec()).await?;
 	let dist_dir = &workspace.manifest.dist;
-	dist.insert(
-		&dump_path,
-		cells.to_markdown(&format!("{dist_dir}/{output}"), &reference),
-	)
-	.await?;
+	let cells_path = FillSpec::cells_path(&reference);
+	let count = cells.len();
+	let report = rsx! {
+		<CellsReport
+			output={format!("{dist_dir}/{output}")}
+			rubric=reference.clone()
+			date=Date::today()
+			cells=cells
+		/>
+	};
+	dist.insert(&cells_path, markdown_of(&cx.caller, report).await?)
+		.await?;
 	log.push(format!(
-		"{dist_dir}/{output} written; {} cells dumped to {dist_dir}/{dump_path}",
-		cells.len()
+		"{dist_dir}/{output} written; {count} cells listed in {dist_dir}/{cells_path}"
 	));
 	Response::ok_text(format!("{}\n", log.join("\n"))).xok()
 }
@@ -99,6 +107,30 @@ impl FormSource {
 			"no fill spec at dist/{}; copied the blank form unfilled",
 			FillSpec::path(reference)
 		)
+	}
+
+	/// Parses a form into the caller's world and runs `func` on its root,
+	/// which is despawned after, whatever `func` answers.
+	pub async fn read<O: 'static + Send + Sync>(
+		caller: &AsyncEntity,
+		form: MediaBytes,
+		func: impl 'static + Send + FnOnce(&mut World, Entity) -> Result<O>,
+	) -> Result<O> {
+		caller
+			.world()
+			.with(move |world: &mut World| -> Result<O> {
+				let root = world.spawn_empty().id();
+				let read = MediaParser::new()
+					.parse(ParseContext::new(
+						&mut world.entity_mut(root),
+						&form,
+					))
+					.map_err(BevyError::from)
+					.and_then(|_| func(world, root));
+				world.entity_mut(root).despawn();
+				read
+			})
+			.await
 	}
 }
 
@@ -144,11 +176,12 @@ mod test {
 			.xpect_eq(
 				"set t1r1c2\nappend t2r1c1\ndelete \"Please delete this sentence\": 1 paragraph(s)\n\
 				 check \"Surveys\": 1\ncheck \"Focus groups\": 0\n  WARNING op 5: no checkbox carries that label\n\
-				 dist/acme_course/01-business-plan.docx written; 3 cells dumped to dist/acme_course/01-business-plan.cells.md\n",
+				 dist/acme_course/01-business-plan.docx written; 3 cells listed in dist/acme_course/01-business-plan.cells.md\n",
 			);
 		fixture
 			.read("dist/acme_course/01-business-plan.cells.md")
 			.await
+			.xpect_contains("| Cell | Text |\n|---|---|\n")
 			.xpect_contains("| t1r1c2 | Acme Stalls |\n| t2r1c1 | Briefly describe your business: / Acme Stalls rents fitted market stalls. |\n");
 		// a built form takes it out of the triage's build queue
 		fixture

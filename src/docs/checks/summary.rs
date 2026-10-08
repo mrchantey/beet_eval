@@ -10,20 +10,30 @@ pub struct SummaryCheckParams {
 
 impl SummaryCheckParams {
 	/// The verdict on `documents`.
-	pub fn decide(&self, documents: &DocumentSet) -> CheckVerdict {
+	pub fn decide(&self, documents: &mut DocumentSet) -> CheckVerdict {
 		let mut problems = Vec::new();
 		let mut failing = Vec::new();
 		for name in &self.documents {
 			let path = documents.path_name(name);
-			let problem = match documents.get(name) {
+			let head =
+				documents
+					.get(name)
+					.map(|document| document.root)
+					.map(|root| {
+						documents.query(|query| {
+							(
+								query.title(root).is_some(),
+								query.summary(root).is_some(),
+							)
+						})
+					});
+			let problem = match head {
 				None => Some(format!("{path}: missing")),
-				Some(document) if document.title.is_none() => {
-					Some(format!("{path}: no title"))
-				}
-				Some(document) if document.summary.is_none() => Some(format!(
+				Some((false, _)) => Some(format!("{path}: no title")),
+				Some((true, false)) => Some(format!(
 					"{path}: no paragraph between the title and the first section"
 				)),
-				Some(_) => None,
+				Some((true, true)) => None,
 			};
 			if let Some(problem) = problem {
 				problems.push(problem);

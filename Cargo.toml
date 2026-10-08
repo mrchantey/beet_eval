@@ -14,7 +14,6 @@ default = []
 cli = [
 	"beet/template_serde",
 	"beet/serde_plain",
-	"beet/markdown",
 	"beet/style",
 	"beet/template",
 ]
@@ -28,10 +27,10 @@ beet = { path = "../worktrees/beet/eval/beet", default-features = false, feature
 	"serde",
 	"json",
 	"router",
+	"rsx",
+	"markdown",
 	"ooxml",
 ] }
-# the page reader: a document's blocks, so a heading in a fence is no heading
-pulldown-cmark = { version = "0.13", default-features = false }
 # the derives behind every row and typed document: their expansions name the
 # `serde` crate directly, which the facade's re-exported traits do not provide
 serde = { version = "1", features = ["derive"] }

@@ -2,8 +2,12 @@
 //! `--help` documents them, resolving the workspace through the store above
 //! it. `README.md` lists them; `<EvalRoutes/>` mounts them all.
 //!
-//! A report verb answers in markdown or, with `--format=json`, the stored
-//! form of what it computed, so an agent reads the same value a person does.
+//! A report verb answers a scene of what it computed, a `#[template]` of HTML
+//! nodes rendered as the request accepts, markdown for an agent, ANSI in a
+//! terminal or HTML in a browser, and for a serde `Accept`, ie
+//! `--accept=application/json`, the stored form of the same value, so an
+//! agent reads what a person does. A file a verb writes, a projection or a
+//! build's cells, is the render of its scene.
 mod blocks;
 mod build;
 mod cells;
@@ -62,18 +66,27 @@ pub fn EvalRoutes() -> impl Bundle {
 	]
 }
 
-/// How a report verb answers.
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Reflect)]
-pub enum ReportFormat {
-	/// Markdown, for a person.
-	#[default]
-	Md,
-	/// The stored form, for a tool.
-	Json,
-}
-
 /// A verb's answer when it found something wrong: the text, and a status a
 /// process exits 1 on.
 fn refusal(text: impl Into<String>) -> Response {
 	Response::status_text(StatusCode::UNPROCESSABLE_CONTENT, text.into())
+}
+
+/// A scene rendered as markdown, for a file a verb writes.
+pub(crate) async fn markdown_of(
+	caller: &AsyncEntity,
+	scene: impl 'static + Send + Sync + Bundle,
+) -> Result<String> {
+	caller
+		.world()
+		.with(move |world: &mut World| -> Result<String> {
+			let entity =
+				world.spawn_template(Snippet::from_bundle(scene))?.id();
+			let text = MarkdownRenderer::new()
+				.render(&mut RenderContext::new(entity, world))
+				.map(|bytes| bytes.to_string());
+			world.entity_mut(entity).despawn();
+			text?.xok()
+		})
+		.await
 }

@@ -3,8 +3,8 @@ use beet::prelude::*;
 
 /// One run over the subject: every check decided, the grades merged, and every
 /// rubric read off the outcome. Written by `eval/results` to
-/// `results/summary.json`, whose `--format=md` renders the same value for a
-/// reader; never edited by hand.
+/// `results/summary.json`, which a markdown `Accept` renders for a reader as
+/// the [`ResultsReport`]; never edited by hand.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct Results {
 	/// The day of the run.
@@ -20,8 +20,8 @@ pub struct Results {
 impl Results {
 	/// Where a workspace keeps the last run, below its results directory.
 	pub const SUMMARY: &str = "summary.json";
-	/// The most ungraded evals the rendering names.
-	const UNGRADED_SHOWN: usize = 30;
+	/// The most ungraded evals the report names.
+	pub const UNGRADED_SHOWN: usize = 30;
 
 	/// One run read off the checks and the grades: each checked eval's
 	/// verdict, the grade rows merged, refusing one whose eval is unknown,
@@ -112,163 +112,6 @@ impl Results {
 		}
 	}
 
-	/// The run for a person, `--format=md`: every check with its detail, the
-	/// state of the grades, and every rubric with its failing citations.
-	/// `evals` gives the judged count and the ungraded list, `manifest` the
-	/// directories the prose names.
-	pub fn to_markdown(
-		&self,
-		evals: &[PackagedEval],
-		manifest: &Workspace,
-	) -> String {
-		let judged = evals
-			.iter()
-			.filter(|packaged| !packaged.eval.is_checked())
-			.map(|packaged| &packaged.eval.id)
-			.collect::<Vec<_>>();
-		let grades_table = format!("{}/grades", manifest.results);
-		let passed = self.checks.iter().filter(|check| check.pass).count();
-		let mut out = vec![
-			"# Results".to_string(),
-			String::new(),
-			format!(
-				"Written by `eval/results` on {} against `{}/`. A checked eval is \
-				 decided here; a judged eval takes its level from the `{grades_table}` \
-				 table when a grader has written one and is otherwise awaiting. Do \
-				 not edit by hand.",
-				self.ran_at, manifest.docs
-			),
-			String::new(),
-			"## Checks".into(),
-			String::new(),
-			"| Eval | Result | Detail |".into(),
-			"|---|---|---|".into(),
-		];
-		for check in &self.checks {
-			out.push(format!(
-				"| `{}` | {} | {} |",
-				check.eval,
-				if check.pass { "pass" } else { "fail" },
-				check.detail.replace('|', "\\|")
-			));
-		}
-		out.extend([
-			String::new(),
-			format!("{passed} of {} checks pass.", self.checks.len()),
-			String::new(),
-			"## Grades".into(),
-			String::new(),
-		]);
-		match &self.grades {
-			None => out.push(format!(
-				"No grades in `{grades_table}`: the {} judged evals await a grader. \
-				 The protocol is the `grade-docs` skill and the worksheet is \
-				 `eval/worksheet`.",
-				judged.len()
-			)),
-			Some(grades) => {
-				let distribution = (0..=3)
-					.map(|level| {
-						grades
-							.rows
-							.iter()
-							.filter(|grade| grade.level.get() == level)
-							.count()
-							.to_string()
-					})
-					.collect::<Vec<_>>()
-					.join("/");
-				out.push(format!(
-					"Graded {} by {}: {} of {} judged evals have a level. \
-					 Distribution 0/1/2/3: {distribution}.",
-					grades.date,
-					grades.by.join(", "),
-					grades.rows.len(),
-					judged.len()
-				));
-				let ungraded = judged
-					.iter()
-					.filter(|id| grades.get(id).is_none())
-					.collect::<Vec<_>>();
-				if !ungraded.is_empty() {
-					let shown = ungraded
-						.iter()
-						.take(Self::UNGRADED_SHOWN)
-						.map(|id| format!("`{id}`"))
-						.collect::<Vec<_>>()
-						.join(", ");
-					let more = match ungraded.len() > Self::UNGRADED_SHOWN {
-						true => format!(
-							", and {} more",
-							ungraded.len() - Self::UNGRADED_SHOWN
-						),
-						false => String::new(),
-					};
-					out.extend([
-						String::new(),
-						format!("Ungraded: {shown}{more}."),
-					]);
-				}
-				if !grades.problems.is_empty() {
-					out.extend([
-						String::new(),
-						format!("Problems in `{grades_table}`:"),
-						String::new(),
-					]);
-					out.extend(
-						grades
-							.problems
-							.iter()
-							.map(|problem| format!("- {problem}")),
-					);
-				}
-			}
-		}
-		out.extend([
-			String::new(),
-			"## Rubrics".into(),
-			String::new(),
-			"| Rubric | Citations | Met | Failing | Awaiting |".into(),
-			"|---|---|---|---|---|".into(),
-		]);
-		let mut detail = Vec::new();
-		for rubric in &self.rubrics {
-			let row = rubric.row();
-			out.push(format!(
-				"| `{}` | {} | {} | {} | {} |",
-				rubric.id,
-				rubric.citations.len(),
-				row.met,
-				row.failing,
-				row.awaiting
-			));
-			detail.extend([format!("### {}", rubric.id), String::new()]);
-			for citation in &rubric.citations {
-				if let CitationStatus::Failing { got } = citation.status {
-					detail.push(format!(
-						"- `{}` needs {}, {}",
-						citation.eval,
-						citation.level,
-						self.failing_detail(&citation.eval, got)
-					));
-				}
-			}
-			if row.awaiting > 0 {
-				detail.push(format!(
-					"- {} citation(s) awaiting a grader.",
-					row.awaiting
-				));
-			}
-			if row.failing == 0 && row.awaiting == 0 {
-				detail.push("All citations met.".into());
-			}
-			detail.push(String::new());
-		}
-		out.push(String::new());
-		out.extend(detail);
-		format!("{}\n", out.join("\n").trim_end())
-	}
-
 	/// Why a failing citation fails: its check, or the grade it reached.
 	fn failing_detail(&self, eval: &EvalId, got: EvalLevel) -> String {
 		match self.checks.iter().find(|check| &check.eval == eval) {
@@ -288,12 +131,9 @@ impl Results {
 		}
 	}
 
-	/// The run's one line: checks passed, grades merged, rubrics read.
-	pub fn line(&self, evals: &[PackagedEval]) -> String {
-		let judged = evals
-			.iter()
-			.filter(|packaged| !packaged.eval.is_checked())
-			.count();
+	/// The run's one line: checks passed, grades merged, rubrics read, of
+	/// `judged` judged evals.
+	pub fn line(&self, judged: usize) -> String {
 		let passed = self.checks.iter().filter(|check| check.pass).count();
 		let grades = match &self.grades {
 			Some(grades) => {
@@ -306,6 +146,184 @@ impl Results {
 			self.checks.len(),
 			self.rubrics.len()
 		)
+	}
+}
+
+/// The run for a person: its line, every check with its detail, the state of
+/// the grades, and every rubric with its failing citations. `judged` lists
+/// the judged evals, for the count and the ungraded list, `manifest` the
+/// directories the prose names, and `written` where the run was kept.
+#[template]
+pub fn ResultsReport(
+	#[prop(required)] results: Results,
+	judged: Vec<EvalId>,
+	manifest: Workspace,
+	written: String,
+) -> impl Bundle {
+	let grades_table = format!("{}/grades", manifest.results);
+	let passed = results.checks.iter().filter(|check| check.pass).count();
+	let checks = results
+		.checks
+		.iter()
+		.map(|check| {
+			let result = match check.pass {
+				true => "pass",
+				false => "fail",
+			};
+			rsx! {
+				<tr>
+					<td><code>{check.eval.to_string()}</code></td>
+					<td>{result}</td>
+					<td>{check.detail.clone()}</td>
+				</tr>
+			}
+		})
+		.collect::<Vec<_>>();
+	let grades = match &results.grades {
+		None => rsx! {
+			<p>
+				"No grades in "<code>{grades_table.clone()}</code>
+				{format!(": the {} judged evals await a grader. The protocol is the ", judged.len())}
+				<code>"grade-docs"</code>" skill and the worksheet is "
+				<code>"eval/worksheet"</code>"."
+			</p>
+		}
+		.any_bundle(),
+		Some(grades) => {
+			let distribution = (0..=3)
+				.map(|level| {
+					grades
+						.rows
+						.iter()
+						.filter(|grade| grade.level.get() == level)
+						.count()
+						.to_string()
+				})
+				.collect::<Vec<_>>()
+				.join("/");
+			let ungraded = judged
+				.iter()
+				.filter(|id| grades.get(id).is_none())
+				.collect::<Vec<_>>();
+			let ungraded = (!ungraded.is_empty()).then(|| {
+				let shown = ungraded
+					.iter()
+					.take(Results::UNGRADED_SHOWN)
+					.map(|id| rsx! { <><code>{id.to_string()}</code>", "</> })
+					.collect::<Vec<_>>();
+				let more = match ungraded.len() > Results::UNGRADED_SHOWN {
+					true => format!(
+						"and {} more",
+						ungraded.len() - Results::UNGRADED_SHOWN
+					),
+					false => String::new(),
+				};
+				rsx! { <p>"Ungraded: "{shown}{more}</p> }
+			});
+			let problems = (!grades.problems.is_empty()).then(|| {
+				let items = grades
+					.problems
+					.iter()
+					.map(|problem| rsx! { <li>{problem.clone()}</li> })
+					.collect::<Vec<_>>();
+				rsx! {
+					<p>"Problems in "<code>{grades_table.clone()}</code>":"</p>
+					<ul>{items}</ul>
+				}
+			});
+			rsx! {
+				<p>{format!(
+					"Graded {} by {}: {} of {} judged evals have a level. Distribution 0/1/2/3: {distribution}.",
+					grades.date,
+					grades.by.join(", "),
+					grades.rows.len(),
+					judged.len()
+				)}</p>
+				{ungraded}
+				{problems}
+			}
+			.any_bundle()
+		}
+	};
+	let rubric_rows = results
+		.rubrics
+		.iter()
+		.map(|rubric| {
+			let row = rubric.row();
+			rsx! {
+				<tr>
+					<td><code>{rubric.id.to_string()}</code></td>
+					<td>{rubric.citations.len().to_string()}</td>
+					<td>{row.met.to_string()}</td>
+					<td>{row.failing.to_string()}</td>
+					<td>{row.awaiting.to_string()}</td>
+				</tr>
+			}
+		})
+		.collect::<Vec<_>>();
+	let rubric_detail = results
+		.rubrics
+		.iter()
+		.map(|rubric| {
+			let row = rubric.row();
+			let mut items = rubric
+				.citations
+				.iter()
+				.filter_map(|citation| match citation.status {
+					CitationStatus::Failing { got } => Some(rsx! {
+						<li>
+							<code>{citation.eval.to_string()}</code>
+							{format!(
+								" needs {}, {}",
+								citation.level,
+								results.failing_detail(&citation.eval, got)
+							)}
+						</li>
+					}
+					.any_bundle()),
+					_ => None,
+				})
+				.collect::<Vec<_>>();
+			if row.awaiting > 0 {
+				items.push(
+					rsx! { <li>{format!("{} citation(s) awaiting a grader.", row.awaiting)}</li> }
+						.any_bundle(),
+				);
+			}
+			let met = (row.failing == 0 && row.awaiting == 0)
+				.then(|| rsx! { <p>"All citations met."</p> });
+			let list = (!items.is_empty()).then(|| rsx! { <ul>{items}</ul> });
+			rsx! {
+				<h3>{rubric.id.to_string()}</h3>
+				{list}
+				{met}
+			}
+		})
+		.collect::<Vec<_>>();
+	rsx! {
+		<h1>"Results"</h1>
+		<p>{format!("{}; {written} written.", results.line(judged.len()))}</p>
+		<p>
+			"Written by "<code>"eval/results"</code>{format!(" on {} against ", results.ran_at)}
+			<code>{format!("{}/", manifest.docs)}</code>
+			". A checked eval is decided here; a judged eval takes its level from the "
+			<code>{grades_table.clone()}</code>
+			" table when a grader has written one and is otherwise awaiting."
+		</p>
+		<h2>"Checks"</h2>
+		<table>
+			<tr><th>"Eval"</th><th>"Result"</th><th>"Detail"</th></tr>
+			{checks}
+		</table>
+		<p>{format!("{passed} of {} checks pass.", results.checks.len())}</p>
+		<h2>"Grades"</h2>
+		{grades}
+		<h2>"Rubrics"</h2>
+		<table>
+			<tr><th>"Rubric"</th><th>"Citations"</th><th>"Met"</th><th>"Failing"</th><th>"Awaiting"</th></tr>
+			{rubric_rows}
+		</table>
+		{rubric_detail}
 	}
 }
 

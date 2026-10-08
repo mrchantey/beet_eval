@@ -1,9 +1,10 @@
 //! The first subject: the documents under a workspace's documents directory,
-//! each a markdown file, being prose for people. A document package's
-//! [`Outline`] says which documents exist and what their sections are; this is
-//! what any one of them looks like, so a reader, a grader and a renderer can
-//! rely on it. Read, a document is a [`MarkdownDocument`], and its frontmatter
-//! is beet's [`PageMeta`](beet::prelude::PageMeta).
+//! prose for people, each a markdown file or a Word file read the same way. A
+//! document package's [`Outline`] says which documents exist and what their
+//! sections are; this is what any one of them looks like, so a reader, a
+//! grader and a renderer can rely on it. Read, a document is a tree in a
+//! [`DocumentSet`], and its frontmatter is beet's
+//! [`PageMeta`](beet::prelude::PageMeta).
 //!
 //! # One file or a directory
 //!
@@ -35,7 +36,7 @@
 //! ```
 //!
 //! 1. **Frontmatter**: `created`, `updated` and `authors`, the
-//!    [`MarkdownDocument::META_KEYS`] of beet's `PageMeta`, and nothing else, since
+//!    [`DocumentSet::META_KEYS`] of beet's `PageMeta`, and nothing else, since
 //!    the title and the summary are the body's. `updated` moves on every
 //!    substantive edit, and is what a reader checks before trusting a figure.
 //! 2. **Title**: the level one heading is the document's name. For the index it
@@ -47,7 +48,8 @@
 //!    nothing else.
 //! 4. **Sections**: `##` headings in the order the outline fixes, every one
 //!    present even when its body is one sentence saying why it does not apply.
-//!    A [`Section`] is an anchor, and anchors do not move. `###` is free below.
+//!    A [`DocumentSection`] is an anchor, and anchors do not move. `###` is
+//!    free below.
 //! 5. **Sources**: a section may end with a `Sources:` line naming where its
 //!    facts came from: an interview, a quote, a register, a page. A number
 //!    without a source is an estimate and says so.
@@ -91,7 +93,7 @@
 //!
 //! A place in the documents is an [`Address`](crate::prelude::Address),
 //! `document` or `document#section`, the section half being
-//! [`Section::slug`] of its heading: `legal#risk-register`,
+//! [`Address::slug`](crate::prelude::Address::slug) of its heading: `legal#risk-register`,
 //! `finance#owners-finances`. An eval's
 //! anchor, a block's home, a claim's block and a grade's evidence are
 //! addresses, and promotion keeps every one stable.
@@ -107,26 +109,28 @@
 //!
 //! # Reading
 //!
-//! A file is read once into a [`MarkdownDocument`], every file of the
-//! documents directory into a [`DocumentSet`]. The structure comes from the
-//! markdown parse, so a heading inside a fence is no heading and a block may
-//! sit in a list; a line's own rules, a tagline's emphasis, a block's info
-//! string and an ask, are read off the source.
+//! Every file of the documents directory is parsed once by beet's media
+//! parse into a document root of a [`DocumentSet`], a markdown file and a
+//! `.docx` alike, since both read into the same HTML terms. What a document
+//! is, its title, tagline, summary, sections, data blocks and asks, is the
+//! traversals of [`ProseQuery`] over that tree, so a heading inside a
+//! fence is no heading, a block may sit in a list, and a Word file's heading
+//! styles, emphasis and tables read as a markdown file's do.
 //!
 //! # Checks
 //!
 //! The kinds deciding a document's shape are routes under `check/`, their
 //! actions and params in [`checks`]; an outline generates the evals restating
 //! it, and a package writes the rest as rows.
+mod ask;
 pub mod checks;
 mod data_block;
-mod document;
 mod document_set;
 mod outline;
-mod section;
+mod prose_query;
+pub use ask::*;
 pub use checks::*;
 pub use data_block::*;
-pub use document::*;
 pub use document_set::*;
 pub use outline::*;
-pub use section::*;
+pub use prose_query::*;

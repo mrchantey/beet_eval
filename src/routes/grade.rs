@@ -23,7 +23,8 @@ struct GradeParams {
 /// today, replacing any earlier grade of the eval. Refused unless the eval
 /// is known and judged, the level is one it admits and at most 1 where an
 /// ask is open, and the evidence, required above 0, is at most twenty-five
-/// words and verbatim from the anchored text, whitespace aside.
+/// words and verbatim from the anchored text, whitespace aside, as it is
+/// written or as a reader reads it, emphasis and all markup aside.
 #[action]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
@@ -35,10 +36,10 @@ pub async fn EvalGrade(cx: ActionContext<Request>) -> Result<Response> {
 	let params = cx.input.parse_params::<GradeParams>()?;
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
-	let documents =
+	let mut documents =
 		DocumentSet::load(&workspace.docs(), workspace.manifest.docs.clone())
 			.await?;
-	let grade = match Grading::check(&workspace, &documents, params) {
+	let grade = match Grading::check(&workspace, &mut documents, params) {
 		Ok(grade) => grade,
 		Err(err) => return refusal(format!("{err}\n")).xok(),
 	};
@@ -59,7 +60,7 @@ struct Grading;
 impl Grading {
 	fn check(
 		workspace: &LoadedWorkspace,
-		documents: &DocumentSet,
+		documents: &mut DocumentSet,
 		params: GradeParams,
 	) -> Result<Grade> {
 		let id = params.eval;
@@ -78,22 +79,50 @@ impl Grading {
 		}
 		let anchor =
 			params.anchor.unwrap_or_else(|| eval.anchor_or_namespace());
-		let document = documents.get(anchor.document_name());
-		let text = match (document, anchor.section()) {
-			(None, _) => None,
-			(Some(document), Some(slug)) => {
-				document.section(slug).map(|section| section.body.clone())
-			}
-			(Some(document), None) => Some(document.text()),
-		};
-		let open_ask = match (document, anchor.section()) {
-			(Some(document), Some(slug)) => document
-				.asks
+		let document = documents.get(anchor.document_name()).cloned();
+		// what is written at the anchor, as markdown and as a reader reads it
+		let texts = document
+			.as_ref()
+			.map(|document| match anchor.section() {
+				Some(slug) => {
+					let words = documents.query(|query| {
+						query.section(document.root, slug).map(|section| {
+							section
+								.blocks
+								.iter()
+								.map(|block| query.words(*block))
+								.collect::<Vec<_>>()
+								.join("\n")
+						})
+					});
+					documents
+						.section_text(document, slug)
+						.into_iter()
+						.chain(words)
+						.collect::<Vec<_>>()
+				}
+				None => {
+					let words = documents.query(|query| {
+						query
+							.blocks(document.root)
+							.iter()
+							.map(|block| query.words(*block))
+							.collect::<Vec<_>>()
+							.join("\n")
+					});
+					vec![documents.text(document), words]
+				}
+			})
+			.unwrap_or_default();
+		let open_ask = document.as_ref().is_some_and(|document| {
+			documents
+				.query(|query| query.asks(document.root))
 				.iter()
-				.any(|ask| ask.section.as_deref() == Some(slug)),
-			(Some(document), None) => !document.asks.is_empty(),
-			(None, _) => false,
-		};
+				.any(|ask| match anchor.section() {
+					Some(slug) => ask.section.as_deref() == Some(slug),
+					None => true,
+				})
+		});
 		if open_ask && level > EvalLevel::STATED {
 			bevybail!("{anchor} has an ask open, so {id} is graded at most 1");
 		}
@@ -116,9 +145,9 @@ impl Grading {
 				let collapse = |text: &str| {
 					text.split_whitespace().collect::<Vec<_>>().join(" ")
 				};
-				let found = text.as_deref().is_some_and(|text| {
-					collapse(text).contains(&collapse(quote))
-				});
+				let found = texts
+					.iter()
+					.any(|text| collapse(text).contains(&collapse(quote)));
 				if !found {
 					bevybail!(
 						"the evidence is not verbatim from {anchor}: \"{quote}\""

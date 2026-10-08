@@ -54,7 +54,7 @@ pub async fn EvalNew(cx: ActionContext<Request>) -> Result<Response> {
 	let mut written = String::new();
 	for spec in &outline.documents {
 		let title = match spec.name.as_str() {
-			"index" => params.name.clone(),
+			"index" => params.name.to_string(),
 			name => {
 				let mut chars = name.chars();
 				chars
@@ -63,59 +63,116 @@ pub async fn EvalNew(cx: ActionContext<Request>) -> Result<Response> {
 					.unwrap_or_default()
 			}
 		};
-		let mut out = vec![
-			"---".to_string(),
-			format!("created: {today}"),
-			format!("updated: {today}"),
-			format!("authors: [{}]", params.author),
-			"---".into(),
-			String::new(),
-			format!("# {title}"),
-			String::new(),
-		];
-		if taglined.contains(&spec.name) {
-			out.extend(["*TODO(ask): the tagline*".to_string(), String::new()]);
-		}
-		out.extend([
-			format!(
-				"TODO(ask): the summary paragraph of {}, its conclusions in a few sentences.",
-				spec.name
-			),
-			String::new(),
-		]);
-		for section in &spec.sections {
-			out.extend([
-				format!("## {}", section.heading),
-				String::new(),
-				format!("TODO(ask): {}.", section.heading),
-				String::new(),
-			]);
-			let address =
-				format!("{}#{}", spec.name, Section::slug(&section.heading));
-			for block in outline
-				.blocks
-				.iter()
-				.filter(|block| block.lives_in.as_str() == address)
-			{
-				out.extend([
-					format!("```csv {}", block.name),
-					block
-						.columns
+		let sections = spec
+			.sections
+			.iter()
+			.map(|section| {
+				let address = format!(
+					"{}#{}",
+					spec.name,
+					Address::slug(&section.heading)
+				);
+				ScaffoldSection {
+					heading: section.heading.clone(),
+					blocks: outline
+						.blocks
 						.iter()
-						.map(|column| column.name.as_str())
-						.collect::<Vec<_>>()
-						.join(","),
-					"```".into(),
-					String::new(),
-				]);
-			}
-		}
+						.filter(|block| block.lives_in.as_str() == address)
+						.map(|block| ScaffoldBlock {
+							name: block.name.clone(),
+							header: block
+								.columns
+								.iter()
+								.map(|column| column.name.as_str())
+								.collect::<Vec<_>>()
+								.join(","),
+						})
+						.collect(),
+				}
+			})
+			.collect::<Vec<_>>();
+		let scaffold = rsx! {
+			<ScaffoldDocument
+				name=spec.name.to_string()
+				title=title
+				tagline={taglined.contains(&spec.name)}
+				sections=sections
+			/>
+		};
+		// the frontmatter is data, the body a render of the scaffold's scene
+		let frontmatter = format!(
+			"---\ncreated: {today}\nupdated: {today}\nauthors: [{}]\n---\n\n",
+			params.author
+		);
+		let body = markdown_of(&cx.caller, scaffold).await?;
 		let path = RelPath::new(format!("{}.md", spec.name));
-		docs.insert(&path, format!("{}\n", out.join("\n").trim_end()))
-			.await?;
+		docs.insert(&path, format!("{frontmatter}{body}")).await?;
 		written.push_str(&format!("{}/{path}\n", workspace.manifest.docs));
 	}
 	Response::ok_text(written).xok()
+}
+
+/// One section of a [`ScaffoldDocument`]: its heading and the empty data
+/// blocks it owns.
+#[derive(Debug, Default, Clone, PartialEq, Reflect)]
+pub struct ScaffoldSection {
+	/// The heading as the outline writes it.
+	pub heading: SmolStr,
+	/// The blocks the outline puts here.
+	pub blocks: Vec<ScaffoldBlock>,
+}
+
+/// An empty data block of a scaffold: its name and its header row.
+#[derive(Debug, Default, Clone, PartialEq, Reflect)]
+pub struct ScaffoldBlock {
+	/// The block's name, ie `price-list`.
+	pub name: SmolStr,
+	/// Its columns' names, comma separated.
+	pub header: String,
+}
+
+/// A document as `eval/new` lays it out: its title, an ask for its tagline
+/// where a check asks for one, an ask for its summary, and every section with
+/// an ask and the empty data blocks it owns, so `check/asks` fails until the
+/// clerk has been through.
+#[template]
+pub fn ScaffoldDocument(
+	name: String,
+	title: String,
+	tagline: bool,
+	sections: Vec<ScaffoldSection>,
+) -> impl Bundle {
+	let tagline =
+		tagline.then(|| rsx! { <p><em>"TODO(ask): the tagline"</em></p> });
+	let sections = sections
+		.iter()
+		.map(|section| {
+			let blocks = section
+				.blocks
+				.iter()
+				.map(|block| {
+					rsx! {
+						<pre>
+							<code {Attribute::bundle("data-info", format!("csv {}", block.name))}>
+								{block.header.clone()}
+							</code>
+						</pre>
+					}
+				})
+				.collect::<Vec<_>>();
+			rsx! {
+				<h2>{section.heading.to_string()}</h2>
+				<p>{format!("TODO(ask): {}.", section.heading)}</p>
+				{blocks}
+			}
+		})
+		.collect::<Vec<_>>();
+	rsx! {
+		<h1>{title}</h1>
+		{tagline}
+		<p>{format!("TODO(ask): the summary paragraph of {name}, its conclusions in a few sentences.")}</p>
+		{sections}
+	}
 }
 
 #[cfg(test)]
@@ -161,7 +218,7 @@ mod test {
 		// the scaffold has every shape but the brand document's name, which
 		// is still an ask under a decided title
 		fixture
-			.ok("eval/results --format=md")
+			.ok("eval/results")
 			.await
 			.xpect_contains("12 of 14 checks pass.")
 			.xpect_contains("| `structure.index-name-agreed` | fail |");
