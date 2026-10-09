@@ -27,9 +27,7 @@ pub async fn EvalCells(
 	let (package, spec) = FormSource::of(&workspace, &params.rubric)?;
 	let blank = package.store.blob(spec.form.clone()).get_media().await?;
 	let cells = FormSource::read(&cx.caller, blank, |world, root| {
-		world
-			.with_state::<TableCells, _>(|cells| cells.listing(root))
-			.xok()
+		CellText::listing(world, root).xok()
 	})
 	.await?;
 	DataPage::new(&cx.caller, CellText::table(&cells), cells).await

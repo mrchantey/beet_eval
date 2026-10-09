@@ -251,8 +251,7 @@ mod test {
 				"delete \"Please delete this sentence\": 1 paragraph(s)".into(),
 				"replace \"(Insert name)\": 1".into(),
 			]);
-			let cells = world
-				.with_state::<TableCells, _>(|cells| cells.listing(root))
+			let cells = CellText::listing(&mut world, root)
 				.into_iter()
 				.map(|cell| cell.to_string())
 				.collect::<Vec<_>>();

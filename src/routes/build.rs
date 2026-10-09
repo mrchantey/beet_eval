@@ -50,8 +50,7 @@ pub async fn EvalBuild(cx: ActionContext<Request>) -> Result<Response> {
 				&mut RenderContext::new(root, world)
 					.with_accepts(vec![media_type]),
 			)?;
-			let cells =
-				world.with_state::<TableCells, _>(|cells| cells.listing(root));
+			let cells = CellText::listing(world, root);
 			(log, built, cells).xok()
 		})
 		.await?;

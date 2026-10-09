@@ -10,7 +10,7 @@ cannot, hence the `<RequireCfg>`.
     just cli --help
     just cli eval/check
     just cli check/sections --document=brand --headings=Voice
-    just cli ooxml/cells assets/forms/plan.docx
+    just cli blob/cells assets/forms/plan.docx --accept=text/markdown
     just cli view assets/decks/week-1.pptx --accept=text/markdown
 -->
 <CliServer {CallOnReady}>
@@ -21,8 +21,9 @@ cannot, hence the `<RequireCfg>`.
 	<!-- the document check kinds, `check/<kind>`, which `eval/results` calls
 	     for every checked eval and a person may call for one -->
 	<Route path="check"><CheckRoutes/></Route>
-	<!-- a form's cells, the map a fill spec is written against -->
-	<Route path="ooxml"><OoxmlCells/></Route>
+	<!-- any store file's addressed cells, the map a fill spec is written
+	     against -->
+	<Route path="blob"><BlobCells/></Route>
 	<!-- any file in the store rendered as the request accepts, ie a Word
 	     file or a slide deck as markdown -->
 	<BlobView/>

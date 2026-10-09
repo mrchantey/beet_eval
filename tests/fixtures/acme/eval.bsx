@@ -4,7 +4,7 @@
 <Router {(RequestLogger, HelpHandler)}>
 	<Route path="eval"><EvalRoutes/></Route>
 	<Route path="check"><CheckRoutes/></Route>
-	<Route path="ooxml"><OoxmlCells/></Route>
+	<Route path="blob"><BlobCells/></Route>
 	<BlobView/>
 </Router>
 </CliServer>
