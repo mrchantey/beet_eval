@@ -683,7 +683,6 @@ dependencies = [
  "bevy",
  "bitflags 2.13.2",
  "extend",
- "pulldown-cmark",
  "serde",
  "serde_json",
  "thiserror 2.0.21",
