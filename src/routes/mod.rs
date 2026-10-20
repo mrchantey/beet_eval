@@ -42,6 +42,7 @@ pub use results::*;
 pub(crate) use run::*;
 pub use worksheet::*;
 
+use beet::exports::bevy::reflect::enums::Enum;
 use beet::prelude::*;
 
 /// `<EvalRoutes/>`: every verb as a child, authored under the `eval` route.
@@ -75,20 +76,26 @@ fn refusal(text: impl Into<String>) -> Response {
 
 /// A scene rendered as markdown, the answer to a request accepting it, for a
 /// file a verb writes, led by the frontmatter its root's metadata declares
-/// when `frontmatter` asks.
+/// in the format `frontmatter` names.
 pub(crate) async fn markdown_of(
 	caller: &AsyncEntity,
 	scene: impl 'static + Send + Sync + Bundle,
-	frontmatter: bool,
+	frontmatter: Option<MediaType>,
 ) -> Result<String> {
 	caller
 		.world()
 		.with(move |world: &mut World| -> Result<String> {
 			let entity =
 				world.spawn_template(Snippet::from_bundle(scene))?.id();
-			let request = RequestParts::get("/")
-				.with_accept(MediaType::Markdown)
-				.with_param("frontmatter", frontmatter.to_string());
+			let request =
+				RequestParts::get("/").with_accept(MediaType::Markdown);
+			// a format is named by its variant, as `--frontmatter=toml` is read
+			let request = match &frontmatter {
+				Some(format) => {
+					request.with_param("frontmatter", format.variant_name())
+				}
+				None => request,
+			};
 			let text = MarkdownRenderer::new()
 				.render(&mut RenderContext::new(world, entity, &request))
 				.map(|bytes| bytes.to_string());

@@ -27,8 +27,8 @@ impl FillSpec {
 
 	/// Applies every op in order to the document under `root`, a form of any
 	/// format read into the world, answering a line per op and a warning for
-	/// one that matched nothing. A cell the form lacks, a locked cell or a
-	/// formula fails the build.
+	/// one that matched nothing. A cell the form lacks or a locked cell fails
+	/// the build.
 	pub fn apply(
 		&self,
 		world: &mut World,
@@ -45,7 +45,7 @@ impl FillSpec {
 				FillOp::Set { cell, text } => {
 					let address = cell.address()?;
 					let written = world.with_state::<DocumentTreeEdit, _>(
-						|mut edit| edit.set_text(root, &address, text),
+						|mut edit| edit.set_cell_text(root, &address, text),
 					)?;
 					log.push(match address {
 						CellAddress::Sheet(_) => {
@@ -62,13 +62,13 @@ impl FillSpec {
 				FillOp::Append { cell, text } => {
 					let address = cell.address()?;
 					world.with_state::<DocumentTreeEdit, _>(|mut edit| {
-						edit.append_text(root, &address, text)
+						edit.append_cell_text(root, &address, text)
 					})?;
 					log.push(format!("append {cell}"));
 				}
 				FillOp::Check { label } => {
 					let count = world.with_state::<DocumentTreeEdit, _>(
-						|mut edit| edit.check_box(root, label),
+						|mut edit| edit.check_labeled_boxes(root, label),
 					)?;
 					log.push(format!("check \"{label}\": {count}"));
 					warn(&mut log, count, "no checkbox carries that label");
@@ -100,9 +100,9 @@ impl FillSpec {
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub enum FillOp {
 	/// Replaces a Word cell's paragraphs with one per line, in the cell's own
-	/// paragraph and run style; writes a workbook value, a number when it
-	/// parses as one, into an unlocked cell, refusing a locked one or a
-	/// formula.
+	/// paragraph and run style; writes a workbook value into an unlocked
+	/// cell, a formula when led by `=`, a number when it parses as one, else
+	/// text, refusing a locked cell.
 	Set {
 		/// The cell.
 		cell: CellRef,

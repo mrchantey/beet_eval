@@ -61,7 +61,7 @@ pub async fn EvalBuild(
 			cells=cells
 		/>
 	};
-	dist.insert(&cells_path, markdown_of(&cx.caller, report, false).await?)
+	dist.insert(&cells_path, markdown_of(&cx.caller, report, None).await?)
 		.await?;
 	log.push(format!(
 		"{dist_dir}/{output} written; {count} cells listed in {dist_dir}/{cells_path}"

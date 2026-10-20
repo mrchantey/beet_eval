@@ -54,7 +54,7 @@ pub async fn EvalProject(
 	let report = || rsx! { <ProjectionReport projection=projection.clone()/> };
 	workspace
 		.results()
-		.insert(&path, markdown_of(&cx.caller, report(), false).await?)
+		.insert(&path, markdown_of(&cx.caller, report(), None).await?)
 		.await?;
 	DataPage::new(&cx.caller, report(), projection.clone())
 		.await?

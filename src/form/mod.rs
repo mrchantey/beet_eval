@@ -27,7 +27,7 @@
 //! 4. The builder reads the dump against the rubric's structural lines one by
 //!    one, fixes the spec and rebuilds until every line holds. A workbook's
 //!    computed tabs are read from a spreadsheet application, since the filler
-//!    keeps formulas but does not calculate them.
+//!    writes formulas but does not calculate them.
 //! 5. The file sent is copied as sent into the workspace package's
 //!    `assets/submissions/`, with the reader's feedback filed beside it when it
 //!    comes.
@@ -46,16 +46,17 @@
 //! | Op | Target | Does |
 //! |---|---|---|
 //! | [`Set`](FillOp::Set) | a table cell | replaces the cell's paragraphs with one per line, in the cell's own style |
-//! | [`Set`](FillOp::Set) | a workbook cell | writes the value, a number when it parses as one, into an unlocked cell, a merged cell's range's first; a locked cell or a formula fails the build |
+//! | [`Set`](FillOp::Set) | a workbook cell | writes the value into an unlocked cell, a merged cell's range's first: a formula when led by `=`, a number when it parses as one, else text; a locked cell fails the build |
 //! | [`Append`](FillOp::Append) | a table cell | adds paragraphs after the cell's own |
 //! | [`Check`](FillOp::Check) | a label | checks the box beside it; a Word form's glyph is ticked, bold and highlighted |
 //! | [`Delete`](FillOp::Delete) | a text | removes every paragraph carrying it; a cell keeps one empty paragraph |
 //! | [`Replace`](FillOp::Replace) | a text | replaces it inside the words that carry it, keeping their look |
 //!
-//! Each op is one of beet's edits, `SetText`, `AppendText`, `CheckBox`,
-//! `RemoveParagraphs` and `ReplaceText`, so one fill spec fills a markdown
-//! form and a Word form alike. A workbook build is marked to recalculate on
-//! open, since the filler keeps formulas but computes none.
+//! Each op is one of beet's `DocumentTreeEdit` edits, `set_cell_text`,
+//! `append_cell_text`, `check_labeled_boxes`, `remove_paragraphs` and
+//! `replace_text`, so one fill spec fills a markdown form and a Word form
+//! alike. A workbook build is marked to recalculate on open, since the filler
+//! writes formulas but computes none.
 mod cells_report;
 mod fill;
 mod render_spec;

@@ -101,8 +101,11 @@ pub async fn EvalNew(
 			/>
 		});
 		let path = RelPath::new(format!("{}.md", spec.name));
-		docs.insert(&path, markdown_of(&cx.caller, scaffold, true).await?)
-			.await?;
+		docs.insert(
+			&path,
+			markdown_of(&cx.caller, scaffold, Some(MediaType::Toml)).await?,
+		)
+		.await?;
 		written.push_str(&format!("{}/{path}\n", workspace.manifest.docs));
 	}
 	Response::ok_text(written).xok()
