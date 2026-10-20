@@ -14,8 +14,18 @@ impl Laws {
 	) -> Vec<String> {
 		let mut problems = Self::eval(eval, outline);
 		if let Some(check) = eval.levels.check() {
-			if let Err(err) = check.validate(caller).await {
-				problems.push(format!("check/{}: {err}", check.route));
+			// a refusal explaining a param runs to a second line, the
+			// param as `--help` lists it, and a problem is one line
+			let refusal = match check.refusal(caller).await {
+				Ok(refusal) => refusal,
+				Err(err) => Some(err.to_string()),
+			};
+			if let Some(refusal) = refusal {
+				problems.push(format!(
+					"check/{}: {}",
+					check.route,
+					refusal.lines().collect::<Vec<_>>().join(" ")
+				));
 			}
 		}
 		problems

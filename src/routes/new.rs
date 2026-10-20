@@ -2,31 +2,25 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// Request params for [`EvalNew`], surfaced in `--help`.
-#[derive(Reflect)]
-struct NewParams {
-	/// The subject's name, the index's title: the `:name` path segment.
-	name: SmolStr,
-	/// Who writes the documents, their frontmatter's author: the `:author`
-	/// path segment.
-	author: SmolStr,
-}
-
 /// `eval/new <name> <author>`: lays out the documents directory from the
 /// outline, one file per document with its frontmatter, title and every
 /// section, an empty data block under each section that owns one, a tagline
 /// line where a check asks for one, and an ask in every body, so `check/asks`
 /// fails until the clerk has been through. Refuses a directory that is not
 /// empty.
-#[action]
+#[action(route = "new/:name/:author")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("new/:name/:author"),
-	ParamsPartial = ParamsPartial::new::<NewParams>()
-)]
-pub async fn EvalNew(cx: ActionContext<Request>) -> Result<Response> {
-	let params = cx.input.parse_params::<NewParams>()?;
+pub async fn EvalNew(
+	/// The subject's name, the index's title: the `:name` path segment.
+	#[param]
+	name: SmolStr,
+	/// Who writes the documents, their frontmatter's author: the `:author`
+	/// path segment.
+	#[param]
+	author: SmolStr,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
 	let docs = workspace.docs();
@@ -54,7 +48,7 @@ pub async fn EvalNew(cx: ActionContext<Request>) -> Result<Response> {
 	let mut written = String::new();
 	for spec in &outline.documents {
 		let title = match spec.name.as_str() {
-			"index" => params.name.to_string(),
+			"index" => name.to_string(),
 			name => {
 				let mut chars = name.chars();
 				chars
@@ -91,22 +85,24 @@ pub async fn EvalNew(cx: ActionContext<Request>) -> Result<Response> {
 				}
 			})
 			.collect::<Vec<_>>();
-		let scaffold = rsx! {
+		// the document's metadata leads its render as its frontmatter
+		let meta = PageMeta {
+			created: Some(today),
+			updated: Some(today),
+			authors: vec![author.clone()],
+			..default()
+		};
+		let scaffold = (meta, rsx! {
 			<ScaffoldDocument
 				name=spec.name.to_string()
 				title=title
 				tagline={taglined.contains(&spec.name)}
 				sections=sections
 			/>
-		};
-		// the frontmatter is data, the body a render of the scaffold's scene
-		let frontmatter = format!(
-			"---\ncreated: {today}\nupdated: {today}\nauthors: [{}]\n---\n\n",
-			params.author
-		);
-		let body = markdown_of(&cx.caller, scaffold).await?;
+		});
 		let path = RelPath::new(format!("{}.md", spec.name));
-		docs.insert(&path, format!("{frontmatter}{body}")).await?;
+		docs.insert(&path, markdown_of(&cx.caller, scaffold, true).await?)
+			.await?;
 		written.push_str(&format!("{}/{path}\n", workspace.manifest.docs));
 	}
 	Response::ok_text(written).xok()
@@ -206,7 +202,7 @@ mod test {
 			.xpect_eq("docs/index.md\ndocs/product.md\ndocs/brand.md\n");
 		let today = Date::today();
 		fixture.read("docs/index.md").await.xpect_eq(format!(
-			"---\ncreated: {today}\nupdated: {today}\nauthors: [Ada Lovelace]\n---\n\n# Acme Stalls\n\n\
+			"+++\ncreated = \"{today}\"\nupdated = \"{today}\"\nauthors = [\"Ada Lovelace\"]\n+++\n\n# Acme Stalls\n\n\
 			 *TODO(ask): the tagline*\n\n\
 			 TODO(ask): the summary paragraph of index, its conclusions in a few sentences.\n\n\
 			 ## Mission\n\nTODO(ask): Mission.\n\n## Documents\n\nTODO(ask): Documents.\n"

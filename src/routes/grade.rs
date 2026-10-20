@@ -2,44 +2,48 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// Request params for [`EvalGrade`], surfaced in `--help`.
-#[derive(Reflect)]
-struct GradeParams {
-	/// The judged eval graded, ie `market.competitors-named`.
-	eval: EvalId,
-	/// The level by the eval's own lines, 0 to 3, the lower of two when
-	/// between them.
-	level: u8,
-	/// Where the evidence sits; defaults to the eval's anchor.
-	anchor: Option<Address>,
-	/// A verbatim quote of at most twenty-five words from the anchor, absent
-	/// only at level 0 when nothing is written there.
-	evidence: Option<SmolStr>,
-	/// The grader of record, a model or a person.
-	by: SmolStr,
-}
-
 /// `eval/grade`: writes one [`Grade`] to the results' `grades` table, dated
 /// today, replacing any earlier grade of the eval. Refused unless the eval
 /// is known and judged, the level is one it admits and at most 1 where an
 /// ask is open, and the evidence, required above 0, is at most twenty-five
 /// words and verbatim from the anchored text, whitespace aside, as it is
 /// written or as a reader reads it, emphasis and all markup aside.
-#[action]
+#[action(route = "grade")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("grade"),
-	ParamsPartial = ParamsPartial::new::<GradeParams>()
-)]
-pub async fn EvalGrade(cx: ActionContext<Request>) -> Result<Response> {
-	let params = cx.input.parse_params::<GradeParams>()?;
+pub async fn EvalGrade(
+	/// The judged eval graded, ie `market.competitors-named`.
+	#[param]
+	eval: EvalId,
+	/// The level by the eval's own lines, 0 to 3, the lower of two when
+	/// between them.
+	#[param]
+	level: u8,
+	/// Where the evidence sits; defaults to the eval's anchor.
+	#[param]
+	anchor: Option<Address>,
+	/// A verbatim quote of at most twenty-five words from the anchor, absent
+	/// only at level 0 when nothing is written there.
+	#[param]
+	evidence: Option<SmolStr>,
+	/// The grader of record, a model or a person.
+	#[param]
+	by: SmolStr,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
 	let mut documents =
 		DocumentSet::load(&workspace.docs(), workspace.manifest.docs.clone())
 			.await?;
-	let grade = match Grading::check(&workspace, &mut documents, params) {
+	let grading = Grading {
+		eval,
+		level,
+		anchor,
+		evidence,
+		by,
+	};
+	let grade = match grading.check(&workspace, &mut documents) {
 		Ok(grade) => grade,
 		Err(err) => return refusal(format!("{err}\n")).xok(),
 	};
@@ -54,16 +58,23 @@ pub async fn EvalGrade(cx: ActionContext<Request>) -> Result<Response> {
 	.xok()
 }
 
-/// The rules a grade is written under.
-struct Grading;
+/// A grade as the grader gave it, before the rules it is written under.
+struct Grading {
+	eval: EvalId,
+	level: u8,
+	anchor: Option<Address>,
+	evidence: Option<SmolStr>,
+	by: SmolStr,
+}
 
 impl Grading {
+	/// The grade, dated today, if it keeps the rules.
 	fn check(
+		self,
 		workspace: &LoadedWorkspace,
 		documents: &mut DocumentSet,
-		params: GradeParams,
 	) -> Result<Grade> {
-		let id = params.eval;
+		let id = self.eval;
 		let eval = &workspace
 			.eval(&id)
 			.ok_or_else(|| bevyhow!("unknown eval {id}"))?
@@ -73,12 +84,11 @@ impl Grading {
 				"{id} is a checked eval; its result comes from the check"
 			);
 		}
-		let level = EvalLevel::new(params.level)?;
+		let level = EvalLevel::new(self.level)?;
 		if !eval.levels.admits(level) {
 			bevybail!("{id} is binary and takes 0 or 2, not {level}");
 		}
-		let anchor =
-			params.anchor.unwrap_or_else(|| eval.anchor_or_namespace());
+		let anchor = self.anchor.unwrap_or_else(|| eval.anchor_or_namespace());
 		let document = documents.get(anchor.document_name()).cloned();
 		// what is written at the anchor, as markdown and as a reader reads it
 		let texts = document
@@ -126,7 +136,7 @@ impl Grading {
 		if open_ask && level > EvalLevel::STATED {
 			bevybail!("{anchor} has an ask open, so {id} is graded at most 1");
 		}
-		let evidence = params
+		let evidence = self
 			.evidence
 			.map(|evidence| SmolStr::from(evidence.trim()))
 			.filter(|evidence| !evidence.is_empty());
@@ -162,7 +172,7 @@ impl Grading {
 			anchor,
 			evidence,
 			date: Date::today(),
-			by: params.by,
+			by: self.by,
 		}
 		.xok()
 	}

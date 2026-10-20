@@ -37,13 +37,12 @@ impl AsksCheckParams {
 
 /// `check/asks`: passes when no ask is open anywhere under the documents
 /// directory, and lists where the open ones are.
-#[action]
+#[action(route = "asks")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("asks"),
-	ParamsPartial = ParamsPartial::new::<AsksCheckParams>()
-)]
-pub async fn AsksCheck(cx: ActionContext<Request>) -> Result<Response> {
-	DocumentSet::answer_check(&cx, AsksCheckParams::decide).await
+pub async fn AsksCheck(
+	params: Params<AsksCheckParams>,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
+	DocumentSet::answer_check(&cx.caller, params, AsksCheckParams::decide).await
 }

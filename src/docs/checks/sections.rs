@@ -66,13 +66,13 @@ impl SectionsCheckParams {
 
 /// `check/sections`: passes when the document's `##` headings are exactly
 /// these, in this order, and names the missing, the extra or the misordered.
-#[action]
+#[action(route = "sections")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("sections"),
-	ParamsPartial = ParamsPartial::new::<SectionsCheckParams>()
-)]
-pub async fn SectionsCheck(cx: ActionContext<Request>) -> Result<Response> {
-	DocumentSet::answer_check(&cx, SectionsCheckParams::decide).await
+pub async fn SectionsCheck(
+	params: Params<SectionsCheckParams>,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
+	DocumentSet::answer_check(&cx.caller, params, SectionsCheckParams::decide)
+		.await
 }

@@ -2,8 +2,8 @@
 //! beside its params type, and `<CheckRoutes/>` mounting them all. A route
 //! reads its params, reads the documents through the workspace store above
 //! it, and answers a [`CheckVerdict`] as JSON;
-//! `eval/results` calls the route for every checked eval through the route
-//! tree, and a person may call one directly, ie `check/sections
+//! `eval/results` calls the route for every checked eval through the router,
+//! as any request, and a person may call one directly, ie `check/sections
 //! --document=brand --headings=Voice`. A document is named without its
 //! extension, `brand` for `brand.md` or `brand/index.md` under the documents
 //! directory, so promotion never breaks a check.
@@ -24,14 +24,20 @@
 //! the triage counts as shape failures; an open ask is laid at none, since
 //! the triage counts asks on their own.
 //!
+//! A route takes its params type whole, `Params<SectionsCheckParams>`, so its
+//! signature is the kind's only declaration: `--help` lists it, a strict
+//! server refuses a flag it lacks, and `eval/check` validates every eval's
+//! [`CheckRef`] against the route's pattern before any run, as a complete
+//! request with no unknown key, no unreadable value and no required param
+//! left out.
+//!
 //! A document package's
 //! [`Outline`] generates the
 //! `document`, `sections` and `block` evals of its documents and blocks and
 //! the `frontmatter` and `summary` evals over the set; the package writes the
-//! rest as rows. `eval/check` validates every eval's params against its
-//! route's `ParamsPartial`, and refuses an anchor, a block's home or a check's
-//! section naming a document or a section the outline does not declare, so
-//! the outline's sections stay the one list of addresses.
+//! rest as rows. `eval/check` also refuses an anchor, a block's home or a
+//! check's section naming a document or a section the outline does not
+//! declare, so the outline's sections stay the one list of addresses.
 mod agrees;
 mod asks;
 mod block;
@@ -52,7 +58,6 @@ pub use summary::*;
 pub use tagline::*;
 
 use crate::prelude::*;
-use beet::exports::bevy::reflect::Typed;
 use beet::prelude::*;
 
 /// `<CheckRoutes/>`: every document check kind as a child route, authored
@@ -77,15 +82,15 @@ pub fn CheckRoutes() -> impl Bundle {
 }
 
 impl DocumentSet {
-	/// Answers a check route's request: its params read, the workspace's
-	/// documents read through the store above the route, and the verdict
-	/// `decide` reaches answered as JSON.
-	pub async fn answer_check<P: FromReflect + Typed>(
-		cx: &ActionContext<Request>,
+	/// Answers a check route's request: the workspace's documents read
+	/// through the store above the route `caller`, and the verdict `decide`
+	/// reaches on them with the route's `params` answered as JSON.
+	pub async fn answer_check<P>(
+		caller: &AsyncEntity,
+		params: Params<P>,
 		decide: fn(&P, &mut DocumentSet) -> CheckVerdict,
 	) -> Result<Response> {
-		let params = cx.input.parse_params::<P>()?;
-		let store = LoadedWorkspace::store_of(&cx.caller).await?;
+		let store = LoadedWorkspace::store_of(caller).await?;
 		let manifest = Workspace::read(&store).await?;
 		let mut documents = DocumentSet::load(
 			&store.with_subdir(manifest.docs.clone()),

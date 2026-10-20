@@ -4,9 +4,10 @@ use crate::prelude::*;
 use beet::prelude::*;
 
 /// The fixture at `tests/fixtures/acme` copied into a store of its own, its
-/// blank Word form generated through beet's `ooxml`, with a router serving
-/// the verbs, the check kinds, the store's cells and the store view above
-/// it.
+/// blank Word form generated through beet's `ooxml`, beneath a cli server
+/// and a router serving the verbs, the check kinds, the store's cells and
+/// the store view, as the fixture's `eval.bsx` mounts them, so a request is
+/// refused as strictly as a command line is.
 pub(crate) struct Fixture {
 	world: World,
 	router: Entity,
@@ -39,7 +40,15 @@ impl Fixture {
 			.await
 			.unwrap();
 		let mut world = (AsyncPlugin, RouterPlugin, EvalPlugin).into_world();
-		let router = world.spawn((store.clone(), Router::with_defaults())).id();
+		let server = world.spawn((CliServer::default(), store.clone())).id();
+		let router = world
+			.spawn((
+				ChildOf(server),
+				Router,
+				RequestLogger::default(),
+				HelpHandler::default(),
+			))
+			.id();
 		world
 			.spawn((ChildOf(router), PathPartial::new("eval")))
 			.insert_template(EvalRoutes)
@@ -48,10 +57,12 @@ impl Fixture {
 			.spawn((ChildOf(router), PathPartial::new("check")))
 			.insert_template(CheckRoutes)
 			.unwrap();
-		world.spawn((ChildOf(router), PathPartial::new("blob"), children![
-			BlobCells
-		]));
-		world.spawn((ChildOf(router), BlobView));
+		world.spawn((
+			ChildOf(router),
+			PathPartial::new("document"),
+			children![DocumentCells],
+		));
+		world.spawn((ChildOf(router), DocumentView));
 		Self {
 			world,
 			router,
@@ -59,26 +70,34 @@ impl Fixture {
 		}
 	}
 
-	/// The answer to a command line, ie `eval/next --accept=application/json`:
-	/// whether it succeeded, and its text. Its `--accept` is the request's
+	/// The request a command line makes, ie
+	/// `eval/next --accept=application/json`: its `--accept` is the request's
 	/// `Accept`, as the cli server makes it, markdown when unset, as an agent
 	/// reads.
-	pub async fn call(&mut self, command: &str) -> (bool, String) {
+	pub fn request(command: &str) -> Request {
 		let request = Request::from_cli_str(command);
 		let accept = request
 			.get_param("accept")
 			.map(|accept| MediaType::from_accepts(accept))
 			.unwrap_or_else(|| vec![MediaType::Markdown]);
-		self.answer(request.with_header::<header::Accept>(accept))
-			.await
+		request.with_header::<header::Accept>(accept)
+	}
+
+	/// The answer to a command line: whether it succeeded, and its text.
+	pub async fn call(&mut self, command: &str) -> (bool, String) {
+		self.answer(Self::request(command)).await
 	}
 
 	/// The answer to `request`, for params a command line cannot spell.
 	pub async fn answer(&mut self, request: Request) -> (bool, String) {
-		let response =
-			self.world.entity_mut(self.router).exchange(request).await;
+		let response = self.exchange(request).await;
 		let ok = response.status().is_ok();
 		(ok, response.text().await.unwrap())
+	}
+
+	/// The response to `request`.
+	pub async fn exchange(&mut self, request: Request) -> Response {
+		self.world.entity_mut(self.router).exchange(request).await
 	}
 
 	/// The answer to a command line that must succeed.
@@ -95,6 +114,20 @@ impl Fixture {
 			(false, text) => text,
 			(true, text) => panic!("`{command}` succeeded: {text}"),
 		}
+	}
+
+	/// Every route the router serves.
+	pub fn routes(&self) -> Vec<ActionNode> {
+		self.tree().flatten_nodes().into_iter().cloned().collect()
+	}
+
+	/// The route `request` reaches.
+	pub fn route_of(&self, request: &Request) -> Option<ActionNode> {
+		self.tree().find(request.path()).cloned()
+	}
+
+	fn tree(&self) -> &RouteTree {
+		RouteTree::of(&self.world, self.router).unwrap()
 	}
 
 	/// The text at `path` in the workspace store.

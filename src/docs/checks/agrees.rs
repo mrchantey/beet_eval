@@ -98,13 +98,13 @@ impl AgreesCheckParams {
 /// when the part is still an open ask and the section carries one too, so an
 /// undecided value is reported by `check/asks` alone. The index is the source
 /// of truth for both.
-#[action]
+#[action(route = "agrees")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("agrees"),
-	ParamsPartial = ParamsPartial::new::<AgreesCheckParams>()
-)]
-pub async fn AgreesCheck(cx: ActionContext<Request>) -> Result<Response> {
-	DocumentSet::answer_check(&cx, AgreesCheckParams::decide).await
+pub async fn AgreesCheck(
+	params: Params<AgreesCheckParams>,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
+	DocumentSet::answer_check(&cx.caller, params, AgreesCheckParams::decide)
+		.await
 }

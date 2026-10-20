@@ -52,13 +52,13 @@ impl SummaryCheckParams {
 
 /// `check/summary`: passes when every document has a paragraph between its
 /// title, or tagline, and its first `##`.
-#[action]
+#[action(route = "summary")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("summary"),
-	ParamsPartial = ParamsPartial::new::<SummaryCheckParams>()
-)]
-pub async fn SummaryCheck(cx: ActionContext<Request>) -> Result<Response> {
-	DocumentSet::answer_check(&cx, SummaryCheckParams::decide).await
+pub async fn SummaryCheck(
+	params: Params<SummaryCheckParams>,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
+	DocumentSet::answer_check(&cx.caller, params, SummaryCheckParams::decide)
+		.await
 }

@@ -1,10 +1,10 @@
 <!-- the acme workspace's own entry: the verbs over this directory, ie
-     `just cli --main=tests/fixtures/acme/eval.bsx eval/next` -->
+     `just cli --entry=tests/fixtures/acme/eval.bsx eval/next` -->
 <CliServer {CallOnReady}>
 <Router {(RequestLogger, HelpHandler)}>
 	<Route path="eval"><EvalRoutes/></Route>
 	<Route path="check"><CheckRoutes/></Route>
-	<Route path="blob"><BlobCells/></Route>
-	<BlobView/>
+	<Route path="document"><DocumentCells/></Route>
+	<DocumentView/>
 </Router>
 </CliServer>

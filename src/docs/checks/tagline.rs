@@ -35,13 +35,13 @@ impl TaglineCheckParams {
 
 /// `check/tagline`: passes when one emphasised line, `*like this*`, stands
 /// alone beneath the title.
-#[action]
+#[action(route = "tagline")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("tagline"),
-	ParamsPartial = ParamsPartial::new::<TaglineCheckParams>()
-)]
-pub async fn TaglineCheck(cx: ActionContext<Request>) -> Result<Response> {
-	DocumentSet::answer_check(&cx, TaglineCheckParams::decide).await
+pub async fn TaglineCheck(
+	params: Params<TaglineCheckParams>,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
+	DocumentSet::answer_check(&cx.caller, params, TaglineCheckParams::decide)
+		.await
 }

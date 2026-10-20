@@ -66,7 +66,8 @@ impl DocumentSet {
 	) -> Result<Self> {
 		sources
 			.sort_by(|(left, _), (right, _)| left.as_str().cmp(right.as_str()));
-		let mut world = (TemplatePlugin, DocumentPlugin).into_world();
+		let mut world =
+			(TemplatePlugin, DocumentPlugin, ParsePlugin).into_world();
 		let mut files = Vec::new();
 		for (path, bytes) in sources {
 			let root = world.spawn_empty().id();
@@ -227,13 +228,19 @@ impl DocumentSet {
 		self.markdown(&blocks).xsome()
 	}
 
-	/// `blocks` rendered as markdown, a blank line between each.
+	/// `blocks` rendered as markdown, a blank line between each, each the
+	/// answer to a request accepting markdown.
 	fn markdown(&mut self, blocks: &[Entity]) -> String {
+		let request = RequestParts::get("/").with_accept(MediaType::Markdown);
 		blocks
 			.iter()
 			.filter_map(|block| {
 				MarkdownRenderer::new()
-					.render(&mut RenderContext::new(*block, &mut self.world))
+					.render(&mut RenderContext::new(
+						&mut self.world,
+						*block,
+						&request,
+					))
 					.ok()
 					.map(|bytes| bytes.to_string().trim().to_string())
 			})

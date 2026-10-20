@@ -3,8 +3,9 @@ use beet::prelude::*;
 
 /// The check route that decides a binary eval, with the params it is called
 /// with. A check kind is a route under `check/` in the engine's router, and a
-/// new kind is a new route, nothing else: `eval/check` validates `params`
-/// against that route's [`ParamsPartial`].
+/// new kind is a new route, nothing else: the route's signature is its only
+/// declaration, and `eval/check` validates `params` against the pattern the
+/// router collects for it ([`refusal`](Self::refusal)).
 ///
 /// ```json
 /// { "route": "sections", "params": { "document": "brand", "headings": ["Name and tagline", "Positioning"] } }
@@ -54,53 +55,60 @@ impl CheckRef {
 		request
 	}
 
-	/// The route deciding the check, found in the route tree above `caller`.
-	pub async fn route_entity(&self, caller: &AsyncEntity) -> Result<Entity> {
-		let path = std::iter::once("check")
+	/// The route's path in the engine's router, `check/<route>`.
+	fn path(&self) -> Vec<SmolStr> {
+		std::iter::once("check")
 			.chain(self.route.as_str().split('/'))
 			.map(SmolStr::new)
-			.collect::<Vec<_>>();
+			.collect()
+	}
+
+	/// Calls the check through the router above `caller`, as any request is
+	/// called, so the router refuses it as it would a person's, and reads
+	/// its verdict.
+	pub async fn call(&self, caller: &AsyncEntity) -> Result<CheckVerdict> {
+		let router = caller
+			.with_state::<AncestorQuery<Entity, With<Router>>, _>(
+				|entity, routers| routers.get(entity).ok(),
+			)
+			.await?
+			.ok_or_else(|| bevyhow!("no router above the caller"))?;
+		let response =
+			caller.world().entity(router).exchange(self.request()).await;
+		match response.status().is_ok() {
+			true => response.json::<CheckVerdict>().await,
+			false => {
+				bevybail!("{}", response.text().await?.trim_end())
+			}
+		}
+	}
+
+	/// Why the route deciding the check would refuse its params as a
+	/// complete request, without calling it: a key the route does not take,
+	/// a value its params type cannot read or a required param left out, each
+	/// as the router's `400` names it, or no route of that name at all.
+	/// `None` when it takes them. The route's pattern is the one the route
+	/// tree above `caller` collects, so `--help` and this refusal read the
+	/// same declaration.
+	pub async fn refusal(
+		&self,
+		caller: &AsyncEntity,
+	) -> Result<Option<String>> {
+		let path = self.path();
+		let request = self.request();
+		let route = self.route.clone();
 		caller
 			.with_state::<AncestorQuery<&RouteTree>, _>(move |entity, trees| {
-				trees
-					.get(entity)
-					.ok()
-					.and_then(|tree| tree.find(&path))
-					.map(|node| node.entity)
-			})
-			.await?
-			.ok_or_else(|| {
-				bevyhow!("no route `check/{}` decides this check", self.route)
-			})
-	}
-
-	/// Calls the check's route and reads its verdict.
-	pub async fn call(&self, caller: &AsyncEntity) -> Result<CheckVerdict> {
-		let route = self.route_entity(caller).await?;
-		caller
-			.world()
-			.entity(route)
-			.call::<Request, Response>(self.request())
-			.await?
-			.json::<CheckVerdict>()
-			.await
-	}
-
-	/// Checks the params against the params the route declares, without
-	/// calling it.
-	pub async fn validate(&self, caller: &AsyncEntity) -> Result {
-		let route = self.route_entity(caller).await?;
-		let request = self.request();
-		caller
-			.world()
-			.entity(route)
-			.get::<ParamsPartial, _>(move |partial| {
-				partial.validate(request.params())
+				match trees.get(entity).ok().and_then(|tree| tree.find(&path)) {
+					Some(node) => node
+						.params
+						.refusal(request.params(), ParamsValidation::Complete),
+					None => Some(format!(
+						"no route `check/{route}` decides this check"
+					)),
+				}
 			})
 			.await
-			.map_err(|_| {
-				bevyhow!("the route `check/{}` declares no params", self.route)
-			})?
 	}
 
 	/// A scalar as a flag's value.

@@ -81,13 +81,17 @@
 //!
 //! ## Check kinds
 //!
-//! A check kind is a route under `check/` in the engine's router, its params a
-//! [`Reflect`](beet::prelude::Reflect) type behind its `ParamsPartial`, against
-//! which `eval/check` validates every [`CheckRef`] without calling it. A run
-//! calls the route with the ref's params as flags, [`CheckRef::call`], and
-//! reads the [`CheckVerdict`] it answers. A new kind is a new route answering
-//! a verdict, nothing else. The document kinds are listed in the
-//! [`checks`](crate::docs::checks) module.
+//! A check kind is a route under `check/` in the engine's router, taking its
+//! params as a [`Reflect`](beet::prelude::Reflect) type in its signature,
+//! `Params<SectionsCheckParams>`, the route's only declaration. `eval/check`
+//! validates every [`CheckRef`] against the pattern the router collects for
+//! that route without calling it, [`CheckRef::refusal`], as a complete
+//! request: no key it does not take, no value it cannot read, no required
+//! param left out. A run calls the route through the router with the ref's
+//! params as flags, [`CheckRef::call`], so it is refused as a person's
+//! request would be, and reads the [`CheckVerdict`] it answers. A new kind is
+//! a new route answering a verdict, nothing else. The document kinds are
+//! listed in the [`checks`](crate::docs::checks) module.
 //!
 //! ## Rubrics
 //!

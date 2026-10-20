@@ -139,13 +139,13 @@ impl BlockCheckParams {
 /// under the documents directory, in the section's document and, when it sits
 /// in that document's own file, under that section, with exactly these
 /// columns, every cell of a typed column of its type.
-#[action]
+#[action(route = "block")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("block"),
-	ParamsPartial = ParamsPartial::new::<BlockCheckParams>()
-)]
-pub async fn BlockCheck(cx: ActionContext<Request>) -> Result<Response> {
-	DocumentSet::answer_check(&cx, BlockCheckParams::decide).await
+pub async fn BlockCheck(
+	params: Params<BlockCheckParams>,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
+	DocumentSet::answer_check(&cx.caller, params, BlockCheckParams::decide)
+		.await
 }

@@ -351,10 +351,10 @@ What `eval/next` answers.
 
 ## The verbs
 
-Each is a route of `beet-eval`, its flags on a params type so `--help` documents them, resolving the workspace through the store above it. A workspace runs them from its own entry, `eval.bsx` at its root, mounting `<EvalRoutes/>` under `eval`, `<CheckRoutes/>` under `check`, beet's `<BlobCells/>` under `blob` and beet's `<BlobView/>`, so the entry's directory, the repo store, is the workspace store; `tests/fixtures/acme/eval.bsx` is one:
+Each is a route of `beet-eval`, taking its flags in its signature so `--help` documents them and the strict cli server refuses any other, resolving the workspace through the store above it. A workspace runs them from its own entry, `eval.bsx` at its root, mounting `<EvalRoutes/>` under `eval`, `<CheckRoutes/>` under `check`, beet's `<DocumentCells/>` under `document` and beet's `<DocumentView/>`, so the entry's directory, the repo store, is the workspace store; `tests/fixtures/acme/eval.bsx` is one:
 
 ```sh
-beet-eval --main=eval.bsx eval/next
+beet-eval --entry=eval.bsx eval/next
 ```
 
 A report answers a scene rendered as the request accepts: ANSI in a terminal, markdown when piped, ie to an agent or a file, HTML in a browser, or with `--accept=application/json` the stored form of what it computed. A verb that finds something wrong answers it and exits 1.
@@ -372,7 +372,7 @@ A report answers a scene rendered as the request accepts: ANSI in a terminal, ma
 - `eval/cells <package>/<rubric>`: the cells of a reader's blank form, the map a fill spec is written against.
 - `eval/build <package>/<rubric>`: parses the reader's blank form, applies the fill spec, renders the result into `dist/` in the form's own format, and writes its cells beside it.
 - `check/<kind>`: one document check kind, called by `eval/results` for every checked eval and directly for one, answering a `CheckVerdict`.
-- `blob/cells <path>`: beet's cells of any file in the store with tables, a Word file, a workbook or a markdown form, the map a fill spec is written against.
+- `document/cells <path>`: beet's cells of any document in the store with tables, a Word file, a workbook or a markdown form, the map a fill spec is written against.
 - `view <path> [--accept=text/markdown]`: beet's view of any file in the store, parsed as its media type and rendered as the request accepts, so a Word file, a workbook or a slide deck reads as markdown: headings, lists, GFM tables headed `<!-- t<n> -->` with the cells' numbers, checkboxes as `[ ]` and `[x]`, and what a form signals by look kept as `<mark>` and `<span style>`.
 
 ## The roles

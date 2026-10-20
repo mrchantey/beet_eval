@@ -34,13 +34,12 @@ impl H1CheckParams {
 
 /// `check/h1`: passes when the first block after the frontmatter is a level
 /// one heading.
-#[action]
+#[action(route = "h1")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("h1"),
-	ParamsPartial = ParamsPartial::new::<H1CheckParams>()
-)]
-pub async fn H1Check(cx: ActionContext<Request>) -> Result<Response> {
-	DocumentSet::answer_check(&cx, H1CheckParams::decide).await
+pub async fn H1Check(
+	params: Params<H1CheckParams>,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
+	DocumentSet::answer_check(&cx.caller, params, H1CheckParams::decide).await
 }

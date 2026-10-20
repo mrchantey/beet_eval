@@ -2,38 +2,33 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// Request params for [`EvalDrop`], surfaced in `--help`.
-#[derive(Reflect)]
-struct DropParams {
-	/// The package whose table holds the row.
-	package: SmolStr,
-	/// The table: `evals`, `rubrics`, `render` or `actions`.
-	table: PackageTable,
-	/// The row's key, its id, ie `market.competitors-named`.
-	key: SmolStr,
-}
-
 /// `eval/drop`: removes one row of a package's table, refused while anything
 /// still names it, an eval a rubric cites or a rubric a render spec builds.
 /// The twin of `eval/put`: how a person or an agent retires a row, the
 /// citations fixed first.
-#[action]
+#[action(route = "drop")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("drop"),
-	ParamsPartial = ParamsPartial::new::<DropParams>()
-)]
-pub async fn EvalDrop(cx: ActionContext<Request>) -> Result<Response> {
-	let params = cx.input.parse_params::<DropParams>()?;
+pub async fn EvalDrop(
+	/// The package whose table holds the row.
+	#[param]
+	package: SmolStr,
+	/// The table: `evals`, `rubrics`, `render` or `actions`.
+	#[param]
+	table: PackageTable,
+	/// The row's key, its id, ie `market.competitors-named`.
+	#[param]
+	key: SmolStr,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
-	let package = workspace.package(&params.package).ok_or_else(|| {
-		bevyhow!("the workspace names no package {}", params.package)
+	let loaded = workspace.package(&package).ok_or_else(|| {
+		bevyhow!("the workspace names no package {}", package)
 	})?;
-	let at = format!("{}/{}/{}", params.package, params.table, params.key);
-	let tables = TableStore::new(package.store.clone());
-	let key = params.key.as_str();
-	let exists = match params.table {
+	let at = format!("{}/{}/{}", package, table, key);
+	let tables = TableStore::new(loaded.store.clone());
+	let key = key.as_str();
+	let exists = match table {
 		PackageTable::Evals => tables.table::<Eval>().exists(key).await?,
 		PackageTable::Rubrics => tables.table::<Rubric>().exists(key).await?,
 		PackageTable::Render => {
@@ -46,7 +41,7 @@ pub async fn EvalDrop(cx: ActionContext<Request>) -> Result<Response> {
 	if !exists {
 		return refusal(format!("{at} is no row\n")).xok();
 	}
-	let named_by = Drop::named_by(&workspace, package, params.table, key);
+	let named_by = Drop::named_by(&workspace, loaded, table, key);
 	if !named_by.is_empty() {
 		return refusal(format!(
 			"{at} is still named by {}\n",
@@ -54,7 +49,7 @@ pub async fn EvalDrop(cx: ActionContext<Request>) -> Result<Response> {
 		))
 		.xok();
 	}
-	match params.table {
+	match table {
 		PackageTable::Evals => tables.table::<Eval>().remove(key).await?,
 		PackageTable::Rubrics => tables.table::<Rubric>().remove(key).await?,
 		PackageTable::Render => {

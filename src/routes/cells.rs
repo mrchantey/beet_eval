@@ -1,14 +1,6 @@
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// Request params for [`EvalCells`], surfaced in `--help`.
-#[derive(Reflect)]
-struct CellsParams {
-	/// The reader rubric whose blank form is dumped, `<package>/<rubric>`,
-	/// the path after `cells`.
-	rubric: RubricRef,
-}
-
 /// `eval/cells <package>/<rubric>`: the cells of a rubric's blank form, the
 /// map a fill spec is written against: every table cell and every unlocked
 /// workbook cell with what a reader reads in it, a table for a markup
@@ -17,14 +9,16 @@ struct CellsParams {
 #[action(route = "cells/*rubric")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(ParamsPartial = ParamsPartial::new::<CellsParams>())]
 pub async fn EvalCells(
+	/// The reader rubric whose blank form is dumped, `<package>/<rubric>`,
+	/// the path after `cells`.
+	#[param]
+	rubric: RubricRef,
 	cx: ActionContext<Request>,
 ) -> Result<DataPage<Vec<CellText>>> {
-	let params = cx.input.parse_params::<CellsParams>()?;
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
-	let (package, spec) = FormSource::of(&workspace, &params.rubric)?;
+	let (package, spec) = FormSource::of(&workspace, &rubric)?;
 	let blank = package.store.blob(spec.form.clone()).get_media().await?;
 	let cells = FormSource::read(&cx.caller, blank, |world, root| {
 		CellText::listing(world, root).xok()

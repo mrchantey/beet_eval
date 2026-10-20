@@ -27,13 +27,13 @@ impl DocumentCheckParams {
 /// `check/document`: passes when the document exists, as `<document>.md` or
 /// `<document>/index.md` under the documents directory, so promotion never
 /// breaks it.
-#[action]
+#[action(route = "document")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("document"),
-	ParamsPartial = ParamsPartial::new::<DocumentCheckParams>()
-)]
-pub async fn DocumentCheck(cx: ActionContext<Request>) -> Result<Response> {
-	DocumentSet::answer_check(&cx, DocumentCheckParams::decide).await
+pub async fn DocumentCheck(
+	params: Params<DocumentCheckParams>,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
+	DocumentSet::answer_check(&cx.caller, params, DocumentCheckParams::decide)
+		.await
 }

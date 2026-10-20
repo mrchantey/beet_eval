@@ -2,26 +2,19 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// Request params for [`EvalBlocks`], surfaced in `--help`.
-#[derive(Reflect)]
-struct BlocksParams {
-	/// The block to print, the `:name` path segment.
-	name: Option<SmolStr>,
-}
-
 /// `eval/blocks [<name>]`: lists the named data blocks under the documents
 /// directory, the [`BlocksReport`] for a markup `Accept` and every block in
 /// full, its rows parsed, for a serde one; or prints one block's body as
 /// text, for a calculation or a renderer.
-#[action]
+#[action(route = "blocks/:name?")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("blocks/:name?"),
-	ParamsPartial = ParamsPartial::new::<BlocksParams>()
-)]
-pub async fn EvalBlocks(cx: ActionContext<Request>) -> Result<Response> {
-	let params = cx.input.parse_params::<BlocksParams>()?;
+pub async fn EvalBlocks(
+	/// The block to print, the `:name` path segment.
+	#[param]
+	name: Option<SmolStr>,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
 	let store = LoadedWorkspace::store_of(&cx.caller).await?;
 	let manifest = Workspace::read(&store).await?;
 	let mut documents = DocumentSet::load(
@@ -30,7 +23,7 @@ pub async fn EvalBlocks(cx: ActionContext<Request>) -> Result<Response> {
 	)
 	.await?;
 	let blocks = documents.data_blocks();
-	if let Some(name) = params.name {
+	if let Some(name) = name {
 		return match blocks.iter().find(|(_, block)| block.name == name) {
 			Some((_, block)) => Response::ok_text(format!("{}\n", block.text)),
 			None => refusal(format!(

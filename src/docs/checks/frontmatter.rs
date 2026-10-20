@@ -75,13 +75,17 @@ impl FrontmatterCheckParams {
 
 /// `check/frontmatter`: passes when every document resolves and its
 /// frontmatter carries every key with a value.
-#[action]
+#[action(route = "frontmatter")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("frontmatter"),
-	ParamsPartial = ParamsPartial::new::<FrontmatterCheckParams>()
-)]
-pub async fn FrontmatterCheck(cx: ActionContext<Request>) -> Result<Response> {
-	DocumentSet::answer_check(&cx, FrontmatterCheckParams::decide).await
+pub async fn FrontmatterCheck(
+	params: Params<FrontmatterCheckParams>,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
+	DocumentSet::answer_check(
+		&cx.caller,
+		params,
+		FrontmatterCheckParams::decide,
+	)
+	.await
 }

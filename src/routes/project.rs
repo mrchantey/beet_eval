@@ -2,13 +2,6 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// Request params for [`EvalProject`], surfaced in `--help`.
-#[derive(Reflect)]
-struct ProjectParams {
-	/// The rubric, `<package>/<rubric>`, the path after `project`.
-	rubric: Option<RubricRef>,
-}
-
 /// `eval/project <package>/<rubric>`: the deterministic half of a build, the
 /// brief for one form. For every heading of the rubric, the evals it cites,
 /// where each is anchored, what is written there today, and the heading's
@@ -16,15 +9,15 @@ struct ProjectParams {
 /// `results/projections/<package>-<rubric>.md` and answered, its
 /// [`Projection`] for a serde `Accept`. With no rubric named, lists the
 /// rubrics.
-#[action]
+#[action(route = "project/*rubric?")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("project/*rubric?"),
-	ParamsPartial = ParamsPartial::new::<ProjectParams>()
-)]
-pub async fn EvalProject(cx: ActionContext<Request>) -> Result<Response> {
-	let params = cx.input.parse_params::<ProjectParams>()?;
+pub async fn EvalProject(
+	/// The rubric, `<package>/<rubric>`, the path after `project`.
+	#[param]
+	rubric: Option<RubricRef>,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
 	let listing = || {
@@ -34,7 +27,7 @@ pub async fn EvalProject(cx: ActionContext<Request>) -> Result<Response> {
 			.map(|(reference, _)| format!("  {reference}\n"))
 			.collect::<String>()
 	};
-	let Some(reference) = params.rubric else {
+	let Some(reference) = rubric else {
 		return Response::ok_text(format!(
 			"name a rubric; the rubrics are:\n{}",
 			listing()
@@ -61,7 +54,7 @@ pub async fn EvalProject(cx: ActionContext<Request>) -> Result<Response> {
 	let report = || rsx! { <ProjectionReport projection=projection.clone()/> };
 	workspace
 		.results()
-		.insert(&path, markdown_of(&cx.caller, report()).await?)
+		.insert(&path, markdown_of(&cx.caller, report(), false).await?)
 		.await?;
 	DataPage::new(&cx.caller, report(), projection.clone())
 		.await?

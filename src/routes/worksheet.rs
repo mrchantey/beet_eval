@@ -1,13 +1,6 @@
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// Request params for [`EvalWorksheet`], surfaced in `--help`.
-#[derive(Reflect)]
-struct WorksheetParams {
-	/// One document's worksheet, the `:document` path segment.
-	document: Option<SmolStr>,
-}
-
 /// `eval/worksheet [<document>]`: every judged eval anchored in each
 /// document, in the outline's order and then by section, with its statement
 /// and level lines: what a grader grades and a writer writes towards. The
@@ -16,11 +9,12 @@ struct WorksheetParams {
 #[action(route = "worksheet/:document?")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(ParamsPartial = ParamsPartial::new::<WorksheetParams>())]
 pub async fn EvalWorksheet(
+	/// One document's worksheet, the `:document` path segment.
+	#[param]
+	document: Option<SmolStr>,
 	cx: ActionContext<Request>,
 ) -> Result<DataPage<Vec<WorksheetDocument>>> {
-	let params = cx.input.parse_params::<WorksheetParams>()?;
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
 	let outline = workspace.outline()?;
@@ -51,7 +45,7 @@ pub async fn EvalWorksheet(
 			order.push(document);
 		}
 	}
-	let names = match params.document {
+	let names = match document {
 		Some(document) => vec![document],
 		None => order,
 	};

@@ -1,32 +1,25 @@
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// Request params for [`EvalBuild`], surfaced in `--help`.
-#[derive(Reflect)]
-struct BuildParams {
-	/// The reader rubric whose form is built, `<package>/<rubric>`, the path
-	/// after `build`.
-	rubric: RubricRef,
-}
-
 /// `eval/build <package>/<rubric>`: parses the reader's blank form named by
 /// the rubric's render spec, a Word file, a workbook or any document with
 /// tables, applies the fill spec at `dist/<package>/<rubric>.fill.json` when
 /// there is one, renders the result in the form's own format into the build
 /// directory, and writes its [`CellsReport`] beside it, to read against the
 /// rubric's structural lines.
-#[action]
+#[action(route = "build/*rubric")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("build/*rubric"),
-	ParamsPartial = ParamsPartial::new::<BuildParams>()
-)]
-pub async fn EvalBuild(cx: ActionContext<Request>) -> Result<Response> {
-	let params = cx.input.parse_params::<BuildParams>()?;
+pub async fn EvalBuild(
+	/// The reader rubric whose form is built, `<package>/<rubric>`, the path
+	/// after `build`.
+	#[param]
+	rubric: RubricRef,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
-	let reference = params.rubric;
+	let reference = rubric;
 	let (package, spec) = FormSource::of(&workspace, &reference)?;
 	let dist = workspace.dist();
 	let output = RelPath::new(reference.package()).join(spec.output.as_str());
@@ -41,14 +34,16 @@ pub async fn EvalBuild(cx: ActionContext<Request>) -> Result<Response> {
 				Some(fill) => fill.apply(world, root)?,
 				None => vec![unfilled],
 			};
+			// the form answers a request accepting its own format
 			let media_type = world
 				.entity(root)
 				.get::<OoxmlPackage>()
 				.map(|package| package.media_type().clone())
 				.unwrap_or(MediaType::Markdown);
-			let built = MediaRenderer::default().render(
-				&mut RenderContext::new(root, world)
-					.with_accepts(vec![media_type]),
+			let built = RenderTargets::render(
+				world,
+				root,
+				&RequestParts::get("/").with_accept(media_type),
 			)?;
 			let cells = CellText::listing(world, root);
 			(log, built, cells).xok()
@@ -66,7 +61,7 @@ pub async fn EvalBuild(cx: ActionContext<Request>) -> Result<Response> {
 			cells=cells
 		/>
 	};
-	dist.insert(&cells_path, markdown_of(&cx.caller, report).await?)
+	dist.insert(&cells_path, markdown_of(&cx.caller, report, false).await?)
 		.await?;
 	log.push(format!(
 		"{dist_dir}/{output} written; {count} cells listed in {dist_dir}/{cells_path}"

@@ -44,11 +44,9 @@ impl FillSpec {
 			match op {
 				FillOp::Set { cell, text } => {
 					let address = cell.address()?;
-					let written = SetText {
-						cell: address.clone(),
-						text: text.clone(),
-					}
-					.apply_to(world, root)?;
+					let written = world.with_state::<DocumentTreeEdit, _>(
+						|mut edit| edit.set_text(root, &address, text),
+					)?;
 					log.push(match address {
 						CellAddress::Sheet(_) => {
 							let written = world
@@ -62,35 +60,32 @@ impl FillSpec {
 					});
 				}
 				FillOp::Append { cell, text } => {
-					AppendText {
-						cell: cell.address()?,
-						text: text.clone(),
-					}
-					.apply_to(world, root)?;
+					let address = cell.address()?;
+					world.with_state::<DocumentTreeEdit, _>(|mut edit| {
+						edit.append_text(root, &address, text)
+					})?;
 					log.push(format!("append {cell}"));
 				}
 				FillOp::Check { label } => {
-					let count = CheckBox {
-						label: label.to_string(),
-					}
-					.apply_to(world, root)?;
+					let count = world.with_state::<DocumentTreeEdit, _>(
+						|mut edit| edit.check_box(root, label),
+					)?;
 					log.push(format!("check \"{label}\": {count}"));
 					warn(&mut log, count, "no checkbox carries that label");
 				}
 				FillOp::Delete { text } => {
-					let count = RemoveParagraphs { text: text.clone() }
-						.apply_to(world, root)?;
+					let count = world.with_state::<DocumentTreeEdit, _>(
+						|mut edit| edit.remove_paragraphs(root, text),
+					)?;
 					log.push(format!(
 						"delete \"{text}\": {count} paragraph(s)"
 					));
 					warn(&mut log, count, "no paragraph carries that text");
 				}
 				FillOp::Replace { old, new } => {
-					let count = ReplaceText {
-						old: old.to_string(),
-						new: new.to_string(),
-					}
-					.apply_to(world, root)?;
+					let count = world.with_state::<DocumentTreeEdit, _>(
+						|mut edit| edit.replace_text(root, old, new),
+					)?;
 					log.push(format!("replace \"{old}\": {count}"));
 					warn(&mut log, count, "no paragraph carries that text");
 				}
@@ -240,7 +235,8 @@ mod test {
 		)
 		.unwrap();
 		let filled = [markdown, word].map(|form| {
-			let mut world = (TemplatePlugin, DocumentPlugin).into_world();
+			let mut world =
+				(TemplatePlugin, DocumentPlugin, ParsePlugin).into_world();
 			let root = world.spawn_empty().id();
 			MediaParser::new()
 				.parse(ParseContext::new(&mut world.entity_mut(root), &form))

@@ -2,20 +2,6 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// Request params for [`EvalPut`], surfaced in `--help`.
-#[derive(Reflect)]
-struct PutParams {
-	/// The package whose table takes the row.
-	package: SmolStr,
-	/// The table: `evals`, `rubrics`, `render` or `actions`.
-	table: PackageTable,
-	/// The row in its stored form, JSON, replacing any of the same key.
-	row: Option<String>,
-	/// The workspace store path of a file holding the row, in place of
-	/// `--row`, for a row too long for a command line.
-	from: Option<RelPath>,
-}
-
 /// `eval/put`: writes one row of a package's table, refused unless it parses
 /// as the table's type and keeps the law `eval/check` holds every row to: an
 /// eval's prose, levels, anchors and check params, an id no other package
@@ -23,27 +9,37 @@ struct PutParams {
 /// person or an agent adds or changes an eval, a rubric, a render spec or a
 /// coach action. The row is given inline with `--row`, or drafted into the
 /// workspace store and named with `--from`.
-#[action]
+#[action(route = "put")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
-#[require(
-	PathPartial = PathPartial::new("put"),
-	ParamsPartial = ParamsPartial::new::<PutParams>()
-)]
-pub async fn EvalPut(cx: ActionContext<Request>) -> Result<Response> {
-	let params = cx.input.parse_params::<PutParams>()?;
+pub async fn EvalPut(
+	/// The package whose table takes the row.
+	#[param]
+	package: SmolStr,
+	/// The table: `evals`, `rubrics`, `render` or `actions`.
+	#[param]
+	table: PackageTable,
+	/// The row in its stored form, JSON, replacing any of the same key.
+	#[param]
+	row: Option<String>,
+	/// The workspace store path of a file holding the row, in place of
+	/// `--row`, for a row too long for a command line.
+	#[param]
+	from: Option<RelPath>,
+	cx: ActionContext<Request>,
+) -> Result<Response> {
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
-	let package = workspace.package(&params.package).ok_or_else(|| {
-		bevyhow!("the workspace names no package {}", params.package)
+	let loaded = workspace.package(&package).ok_or_else(|| {
+		bevyhow!("the workspace names no package {}", package)
 	})?;
-	let tables = TableStore::new(package.store.clone());
-	let row = match (params.row, params.from) {
+	let tables = TableStore::new(loaded.store.clone());
+	let row = match (row, from) {
 		(Some(row), None) => row.into_bytes(),
 		(None, Some(from)) => workspace.store.get(&from).await?.to_vec(),
 		_ => bevybail!("give the row with exactly one of `--row` and `--from`"),
 	};
 	let row = row.as_slice();
-	let problems = match params.table {
+	let problems = match table {
 		PackageTable::Evals => {
 			let eval = MediaType::Json.deserialize::<Eval>(row)?;
 			let mut problems =
@@ -51,7 +47,7 @@ pub async fn EvalPut(cx: ActionContext<Request>) -> Result<Response> {
 					.await;
 			if let Some(other) = workspace
 				.eval(&eval.id)
-				.filter(|existing| existing.package != package.manifest.name)
+				.filter(|existing| existing.package != loaded.manifest.name)
 			{
 				problems.push(format!(
 					"{} is already defined in {}",
@@ -79,10 +75,7 @@ pub async fn EvalPut(cx: ActionContext<Request>) -> Result<Response> {
 		}
 	};
 	match problems.is_empty() {
-		true => Response::ok_text(format!(
-			"put {}/{}\n",
-			params.package, params.table
-		)),
+		true => Response::ok_text(format!("put {}/{}\n", package, table)),
 		false => refusal(format!("{}\n", problems.join("\n"))),
 	}
 	.xok()

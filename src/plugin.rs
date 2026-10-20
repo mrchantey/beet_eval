@@ -49,7 +49,6 @@ impl Plugin for EvalPlugin {
 			.register_type::<AsksCheckParams>()
 			.register_type::<SectionsCheckParams>()
 			.register_type::<BlockCheckParams>()
-			.register_template::<CheckRoutes>()
 			.register_type::<DocumentCheck>()
 			.register_type::<FrontmatterCheck>()
 			.register_type::<H1Check>()
@@ -59,7 +58,6 @@ impl Plugin for EvalPlugin {
 			.register_type::<AsksCheck>()
 			.register_type::<SectionsCheck>()
 			.register_type::<BlockCheck>()
-			.register_template::<EvalRoutes>()
 			.register_type::<EvalCheck>()
 			.register_type::<EvalResults>()
 			.register_type::<EvalNext>()
@@ -72,5 +70,6 @@ impl Plugin for EvalPlugin {
 			.register_type::<EvalCells>()
 			.register_type::<EvalPut>()
 			.register_type::<EvalDrop>();
+		app.install_type::<(CheckRoutes, EvalRoutes)>();
 	}
 }
