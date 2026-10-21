@@ -12,13 +12,16 @@ default = []
 # what makes a flagless `cargo run` fail with cargo's own guidance. `launch` is
 # the entry loader (`router` + `template_serde`), the rest its `--help` render.
 # `aws_sdk` reads a package a workspace names by an `s3://` store uri, ie a
-# course kept in a private bucket, so the library stays free of it.
+# course kept in a private bucket, so the library stays free of it, and `vault`
+# opens the sealed `secrets.toml` a workspace entry's `<Secrets/>` declares,
+# which holds the pair that reads it.
 cli = [
 	"beet/template_serde",
 	"beet/serde_plain",
 	"beet/style",
 	"beet/template",
 	"beet/aws_sdk",
+	"beet/vault",
 ]
 
 [dependencies]

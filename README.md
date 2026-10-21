@@ -245,7 +245,7 @@ A table is one blob per row at `<table>/<key>`, the key being the row's id verba
 
 ### A workspace
 
-`workspace.json`. Its own package sits in the workspace store; any other is a store uri, a relative `fs:` path resolving against the directory the workspace runs from.
+`workspace.json`. Its own package sits in the workspace store; any other is a store uri, a relative `fs:` path resolving against the directory the workspace runs from. A package kept in a private bucket is an `S3` store, read with the pair the workspace entry's `<Secrets/>` opens from its sealed `secrets.toml`.
 
 ```json Workspace
 {
