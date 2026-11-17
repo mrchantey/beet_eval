@@ -59,7 +59,7 @@ impl FrontmatterCheckParams {
 
 	/// Whether the frontmatter gives `key` a value: an option set, a list
 	/// with an item, text that is not empty.
-	fn has_value(meta: &PageMeta, key: &str) -> bool {
+	fn has_value(meta: &DocMeta, key: &str) -> bool {
 		let Some(field) = Struct::field(meta, key) else {
 			return false;
 		};

@@ -1,0 +1,35 @@
+<!--
+The acme workspace's loop under the mock provider: three turns of
+`eval/next`, each unit requested of the role's route, which builds a thread
+for it from the role's template under `templates/`, every agent scripted, so
+a run needs no network:
+
+    just cli --entry=<a copy of this directory>/iterate.bsx iterate
+
+Each role also runs by hand, ie `.. --entry=<copy>/iterate.bsx grade product`,
+a second identical request resuming the stored thread.
+
+Run it against a copy, since the roles write the workspace: the clerk answers
+the pricing ask in `docs/product.md`, the grader grades the product (and is
+refused once, on a write its tools do not hold, and once on a quote the page
+does not hold), and the builder fills the course's business plan into `dist/`.
+A live workspace's entry is this one with `{ModelStreamer{provider:OpenAi}}`
+for each mock and `{UserInput}` for the owner, under a server with a surface
+to type into.
+-->
+<TemplateDir src="templates"/>
+<CliServer {CallOnReady}>
+<Router {(RequestLogger, HelpHandler)}>
+	<Route path="eval"><EvalRoutes/></Route>
+	<Route path="check"><CheckRoutes/></Route>
+	<Route path="document"><DocumentCells/></Route>
+	<!-- the roles: each request a thread of its own for the unit it names -->
+	<Route path="write/:document" {ThreadRoute{template:"ClerkThread"}}/>
+	<Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>
+	<Route path="build/*rubric" {ThreadRoute{template:"BuilderThread"}}/>
+	<!-- the loop: one unit of work a turn, the one `eval/next` names -->
+	<Route path="iterate" {ExchangeSequence}>
+		<RepeatTimes total_times=3 {OutcomeOverload}><NextUnit/></RepeatTimes>
+	</Route>
+</Router>
+</CliServer>

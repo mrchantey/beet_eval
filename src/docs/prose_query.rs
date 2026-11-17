@@ -19,7 +19,7 @@ use beet::prelude::*;
 /// - **Data blocks**: every `pre > code` whose `data-info` names a block,
 ///   `csv price-list`, at any depth.
 /// - **Asks**: every `TODO(ask ..)` in a paragraph's words.
-/// - **Frontmatter**: the root's [`PageMeta`], from a markdown file's
+/// - **Frontmatter**: the root's [`DocMeta`], from a markdown file's
 ///   frontmatter or a Word file's core properties.
 #[derive(SystemParam)]
 pub struct ProseQuery<'w, 's> {
@@ -34,9 +34,9 @@ pub struct ProseQuery<'w, 's> {
 	>,
 	spans: Query<'w, 's, &'static FileSpan>,
 	parents: Query<'w, 's, &'static ChildOf>,
-	metas: Query<'w, 's, &'static PageMeta>,
+	metas: Query<'w, 's, &'static DocMeta>,
 	attributes: AttributeQuery<'w, 's>,
-	text: ReaderText<'w, 's>,
+	text: DocumentText<'w, 's>,
 }
 
 /// One `##` section of a document: its heading, the slug that addresses it,
@@ -61,7 +61,7 @@ impl ProseQuery<'_, '_> {
 	const AROUND: &[&str] = &["header", "footer", "aside", "nav", "template"];
 
 	/// The document's frontmatter.
-	pub fn meta(&self, root: Entity) -> Option<&PageMeta> {
+	pub fn meta(&self, root: Entity) -> Option<&DocMeta> {
 		self.metas.get(root).ok()
 	}
 

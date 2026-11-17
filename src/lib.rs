@@ -25,6 +25,9 @@
 //!   package's coach actions.
 //! - [`routes`]: the verbs, each a route of `beet-eval`, mounted by
 //!   `<EvalRoutes/>` beside the check kinds' `<CheckRoutes/>`.
+//! - [`toolset`]: the verbs as an agent's tools, `<EvalToolset/>`.
+//! - [`iterate`]: the loop as a tree, a dispatch on the next unit of work
+//!   whose cases are the roles' threads.
 // the harness main for `cargo test --lib`; cfg gated so a plain build does not
 // need the facade's `testing` feature
 #[cfg(test)]
@@ -34,10 +37,12 @@ pub mod coach;
 pub mod docs;
 pub mod eval;
 pub mod form;
+pub mod iterate;
 pub mod json_ext;
 mod plugin;
 pub mod routes;
 mod text_type;
+pub mod toolset;
 
 /// Exports the most commonly used items.
 pub mod prelude {
@@ -45,9 +50,11 @@ pub mod prelude {
 	pub use crate::docs::*;
 	pub use crate::eval::*;
 	pub use crate::form::*;
+	pub use crate::iterate::*;
 	pub use crate::json_ext;
 	pub use crate::plugin::*;
 	pub use crate::routes::*;
+	pub use crate::toolset::*;
 }
 
 

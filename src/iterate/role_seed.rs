@@ -1,0 +1,196 @@
+use crate::prelude::*;
+use beet::prelude::*;
+
+/// `<RoleSeed role="clerk"/>`: the seed post holding a role's procedure, the
+/// file `seeds/<role>.md` of the workspace's document package, read once
+/// while the thread builds, so the procedure has one source, every package
+/// ships its own, and an edited procedure is a thread of its own.
+///
+/// The package is the one the workspace manifest names, wherever it lives,
+/// beside the workspace or in a bucket, so an entry names a role and never a
+/// path.
+#[template]
+pub fn RoleSeed(
+	/// The role, ie `clerk`, `grader` or `builder`.
+	#[prop(required)]
+	role: SmolStr,
+) -> impl Bundle {
+	SeedSource::new(
+		format!("<RoleSeed role=\"{role}\">"),
+		Action::new_async(async move |cx: ActionContext| -> Result<String> {
+			let workspace = LoadedWorkspace::of(&cx.caller).await?;
+			let package = workspace.document_package()?;
+			let path = RelPath::new(format!("seeds/{role}.md"));
+			let bytes = package.store.get(&path).await.map_err(|err| {
+				bevyhow!(
+					"the document package {} has no seed for the {role}: {err}",
+					package.manifest.name
+				)
+			})?;
+			String::from_utf8(bytes.to_vec())?.xok()
+		}),
+	)
+}
+
+#[cfg(test)]
+mod test {
+	use crate::prelude::*;
+	use beet::prelude::*;
+
+	/// The texts of every sitting the `role` persisted in `store`, each its
+	/// posts in order, a function call as `call <name>` and its output as
+	/// `output <text>`.
+	async fn sittings(store: &BlobStore, role: &str) -> Vec<Vec<String>> {
+		let records = BlobThreadStore::new(store.with_subdir(RelPath::new(
+			format!("packages/acme/assets/threads/{role}"),
+		)));
+		let mut sittings = Vec::new();
+		for thread in records.threads().await.unwrap_or_default() {
+			let posts = records.thread_posts(thread.id(), None).await.unwrap();
+			sittings.push(
+				posts
+					.iter()
+					.map(|post| match post.as_agent_post() {
+						AgentPost::FunctionCall(call) => {
+							format!("call {}", call.name())
+						}
+						AgentPost::FunctionCallOutput(output) => {
+							format!("output {}", output.output())
+						}
+						_ => post.to_string(),
+					})
+					.collect(),
+			);
+		}
+		sittings
+	}
+
+	/// The clerk's turn: its seed is its procedure from the document package
+	/// and the unit `next` requested of its route, it reads the results, edits the document,
+	/// hears the owner, and leaves `next` on the next unit. One unit a turn:
+	/// no other role ran.
+	#[beet::test(timeout_ms = 120000)]
+	async fn the_clerk_writes_one_unit() {
+		let (store, response) = Fixture::iterate(1).await;
+		response.status().xpect_eq(StatusCode::OK);
+		let clerk = sittings(&store, "clerk").await;
+		clerk.len().xpect_eq(1);
+		let sitting = &clerk[0];
+		sitting[0]
+			.as_str()
+			.xpect_starts_with("You are the clerk of Acme's");
+		sitting[1].xpect_eq("write product");
+		sitting[2].xpect_eq("call results");
+		sitting
+			.iter()
+			.any(|text| text == "call edit-text")
+			.xpect_true();
+		sitting.last().unwrap().xpect_eq("Per weekend, as written.");
+		Fixture::over(store.clone())
+			.read("docs/product.md")
+			.await
+			.xpect_contains("We charge per weekend")
+			.xnot()
+			.xpect_contains("TODO(ask");
+		Fixture::over(store.clone())
+			.ok("eval/next")
+			.await
+			.xpect_starts_with("## Next: grade product");
+		sittings(&store, "grader").await.len().xpect_eq(0);
+		sittings(&store, "builder").await.len().xpect_eq(0);
+	}
+
+	/// The grader's turn: it grades through `grade` alone, is refused a quote
+	/// the page does not hold and a write its router has no route for, and
+	/// leaves the document as it found it with every judged eval graded.
+	#[beet::test(timeout_ms = 120000)]
+	async fn the_grader_grades_one_unit() {
+		let (store, response) = Fixture::iterate(2).await;
+		response.status().xpect_eq(StatusCode::OK);
+		let grader = sittings(&store, "grader").await;
+		grader.len().xpect_eq(1);
+		let outputs = grader[0]
+			.iter()
+			.filter(|text| text.starts_with("output "))
+			.cloned()
+			.collect::<Vec<_>>();
+		// its own router answers the write it has no route for
+		outputs[1]
+			.as_str()
+			.xpect_contains("404 Not Found")
+			.xpect_contains("/write-text");
+		outputs[2]
+			.as_str()
+			.xpect_contains("not verbatim from product#idea");
+		let mut fixture = Fixture::over(store.clone());
+		fixture
+			.read("docs/product.md")
+			.await
+			.xpect_contains("We charge per weekend");
+		let grades =
+			TableStore::new(store.with_subdir(RelPath::new("results")))
+				.table::<Grade>();
+		grades
+			.get("product.origin")
+			.await
+			.unwrap()
+			.level
+			.xpect_eq(EvalLevel::SOUND);
+		grades
+			.get("product.quote-held")
+			.await
+			.unwrap()
+			.level
+			.xpect_eq(EvalLevel::MISSING);
+		fixture
+			.ok("eval/next")
+			.await
+			.xpect_starts_with("## Next: build acme_course/01-business-plan");
+	}
+
+	/// The builder's turn: its fill spec lands in the build directory, the
+	/// only store it can write, and the build lists the filled form's cells.
+	#[beet::test(timeout_ms = 120000)]
+	async fn the_builder_builds_one_unit() {
+		let (store, response) = Fixture::iterate(3).await;
+		response.status().xpect_eq(StatusCode::OK);
+		sittings(&store, "builder").await.len().xpect_eq(1);
+		let fixture = Fixture::over(store.clone());
+		fixture
+			.read("dist/acme_course/01-business-plan.fill.json")
+			.await
+			.xpect_contains("Acme Stalls");
+		store
+			.exists(&RelPath::new("acme_course/01-business-plan.fill.json"))
+			.await
+			.unwrap()
+			.xpect_false();
+		fixture
+			.read("dist/acme_course/01-business-plan.cells.md")
+			.await
+			.xpect_contains("Acme Stalls");
+	}
+
+	/// A role runs by hand through its route, its thread stored under the
+	/// role, and the same request again resumes that thread rather than
+	/// storing another.
+	#[beet::test(timeout_ms = 120000)]
+	async fn a_role_runs_by_hand() {
+		let mut entry = FixtureEntry::new().await;
+		for _ in 0..2 {
+			entry
+				.request(Request::get("grade/product"))
+				.status()
+				.xpect_eq(StatusCode::OK);
+		}
+		let grader = sittings(&entry.store, "grader").await;
+		grader.len().xpect_eq(1);
+		grader[0][1].xpect_eq("grade product");
+		grader[0]
+			.iter()
+			.filter(|text| text.starts_with("1. owner/owner: met."))
+			.count()
+			.xpect_eq(2);
+		sittings(&entry.store, "clerk").await.len().xpect_eq(0);
+	}
+}

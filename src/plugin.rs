@@ -4,8 +4,10 @@ use crate::prelude::*;
 use beet::prelude::*;
 
 /// This crate's types: the rows of every table, the typed documents of every
-/// package and workspace, the check kinds with their params, the verbs, and
-/// the `<CheckRoutes/>` and `<EvalRoutes/>` mounting them.
+/// package and workspace, the check kinds with their params, the verbs, the
+/// `<CheckRoutes/>` and `<EvalRoutes/>` mounting them, the tools of
+/// `<EvalToolset/>`, and the loop's `<NextUnit/>` and `<RoleSeed/>`, over
+/// beet's thread types.
 #[derive(Default)]
 pub struct EvalPlugin;
 
@@ -69,7 +71,28 @@ impl Plugin for EvalPlugin {
 			.register_type::<EvalBuild>()
 			.register_type::<EvalCells>()
 			.register_type::<EvalPut>()
-			.register_type::<EvalDrop>();
-		app.install_type::<(CheckRoutes, EvalRoutes)>();
+			.register_type::<EvalDrop>()
+			.register_type::<Grading>()
+			.register_type::<WorksheetParams>()
+			.register_type::<ProjectParams>()
+			.register_type::<BlocksParams>()
+			.register_type::<BuildParams>()
+			.register_type::<NoArguments>()
+			.register_type::<CheckTool>()
+			.register_type::<ResultsTool>()
+			.register_type::<NextTool>()
+			.register_type::<WorksheetTool>()
+			.register_type::<ProjectTool>()
+			.register_type::<BlocksTool>()
+			.register_type::<GradeTool>()
+			.register_type::<BuildTool>()
+			.register_type::<NextUnit>();
+		app.install_type::<(
+			ThreadPlugin,
+			CheckRoutes,
+			EvalRoutes,
+			EvalToolset,
+			RoleSeed,
+		)>();
 	}
 }

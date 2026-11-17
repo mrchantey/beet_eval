@@ -183,8 +183,8 @@ pub fn ResultsReport(
 		None => rsx! {
 			<p>
 				"No grades in "<code>{grades_table.clone()}</code>
-				{format!(": the {} judged evals await a grader. The protocol is the ", judged.len())}
-				<code>"grade-docs"</code>" skill and the worksheet is "
+				{format!(": the {} judged evals await a grader. The protocol is the grader's seed, ", judged.len())}
+				<code>"seeds/grader.md"</code>" of the document package, and the worksheet is "
 				<code>"eval/worksheet"</code>"."
 			</p>
 		}

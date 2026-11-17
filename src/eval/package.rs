@@ -230,6 +230,7 @@ mod test {
 		BlobStoreProvider::list(&store)
 			.await
 			.unwrap()
+			.xtap(|paths| paths.sort())
 			.xpect_eq(vec![
 				RelPath::new("evals/market.competitors-named"),
 				RelPath::new("evals/product.origin"),

@@ -2,6 +2,13 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
+/// The params of `eval/project` and of the project tool.
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
+pub struct ProjectParams {
+	/// The rubric, `<package>/<rubric>`, the path after `project`; the rubrics listed when absent.
+	pub rubric: Option<RubricRef>,
+}
+
 /// `eval/project <package>/<rubric>`: the deterministic half of a build, the
 /// brief for one form. For every heading of the rubric, the evals it cites,
 /// where each is anchored, what is written there today, and the heading's
@@ -13,11 +20,10 @@ use beet::prelude::*;
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
 pub async fn EvalProject(
-	/// The rubric, `<package>/<rubric>`, the path after `project`.
-	#[param]
-	rubric: Option<RubricRef>,
+	params: Params<ProjectParams>,
 	cx: ActionContext<Request>,
 ) -> Result<Response> {
+	let ProjectParams { rubric } = params.0;
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
 	let listing = || {

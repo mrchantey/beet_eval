@@ -2,6 +2,8 @@
 //! verbs' tests.
 use crate::prelude::*;
 use beet::prelude::*;
+use std::sync::Arc;
+use std::sync::Mutex;
 
 /// The fixture at `tests/fixtures/acme` copied into a store of its own, its
 /// blank Word form generated through beet's `ooxml`, beneath a cli server
@@ -21,24 +23,10 @@ impl Fixture {
 		"packages/acme_course/assets/forms/01-business-plan.docx";
 
 	/// The fixture, freshly copied.
-	pub async fn new() -> Self {
-		let source = BlobStore::new(FsStore::new(
-			AbsPath::new_manifest_rel("tests/fixtures/acme").unwrap(),
-		));
-		let store = BlobStore::temp();
-		for path in source.list().await.unwrap() {
-			store
-				.insert(&path, source.get(&path).await.unwrap())
-				.await
-				.unwrap();
-		}
-		store
-			.insert(
-				&RelPath::new(Self::FORM),
-				Self::blank_form().bytes().to_vec(),
-			)
-			.await
-			.unwrap();
+	pub async fn new() -> Self { Self::over(Self::workspace().await) }
+
+	/// The verbs over `store`, ie a copy a loop has run in.
+	pub fn over(store: BlobStore) -> Self {
 		let mut world = (AsyncPlugin, RouterPlugin, EvalPlugin).into_world();
 		let server = world.spawn((CliServer::default(), store.clone())).id();
 		let router = world
@@ -68,6 +56,39 @@ impl Fixture {
 			router,
 			store,
 		}
+	}
+
+	/// A fresh copy of the fixture's workspace, its blank Word form
+	/// generated.
+	pub async fn workspace() -> BlobStore {
+		let source = BlobStore::new(FsStore::new(
+			AbsPath::new_manifest_rel("tests/fixtures/acme").unwrap(),
+		));
+		let store = BlobStore::temp();
+		for path in source.list().await.unwrap() {
+			store
+				.insert(&path, source.get(&path).await.unwrap())
+				.await
+				.unwrap();
+		}
+		store
+			.insert(
+				&RelPath::new(Self::FORM),
+				Self::blank_form().bytes().to_vec(),
+			)
+			.await
+			.unwrap();
+		store
+	}
+
+	/// `turns` turns of the fixture's loop, its `iterate` route requested of
+	/// a fresh [`FixtureEntry`]: the copy as the roles left it, and the run's
+	/// answer.
+	pub async fn iterate(turns: u32) -> (BlobStore, Response) {
+		let mut entry = FixtureEntry::new().await;
+		entry.set_turns(turns);
+		let response = entry.request(Request::get("iterate"));
+		(entry.store, response)
 	}
 
 	/// The request a command line makes, ie
@@ -156,5 +177,94 @@ impl Fixture {
 			 <w:r><w:t xml:space=\"preserve\"> Surveys</w:t></w:r></w:p>",
 		)
 		.unwrap()
+	}
+}
+
+/// The fixture's `iterate.bsx` built as the binary builds an entry, over a
+/// fresh copy of the workspace, every agent scripted: the loop at `iterate`
+/// and each role at its own route, ie `grade/product`.
+pub(crate) struct FixtureEntry {
+	app: App,
+	router: Entity,
+	/// The workspace store, the copy every role reads and writes.
+	pub store: BlobStore,
+}
+
+impl FixtureEntry {
+	/// The entry over a fresh copy of the workspace, built and disarmed.
+	pub async fn new() -> Self {
+		let store = Fixture::workspace().await;
+		let mut app = App::new();
+		app.add_plugins(MinimalPlugins)
+			.install_type::<(RouterPlugin, EvalPlugin)>();
+		let (formats, prescans) = {
+			let world = app.world_mut();
+			(
+				world.get_resource_or_init::<TemplateFormats>().clone(),
+				world.get_resource_or_init::<PrescanRegistry>().clone(),
+			)
+		};
+		let entry = entry_build::resolve_in_repo_store(
+			store.clone(),
+			&prescans,
+			"iterate.bsx".into(),
+		)
+		.await
+		.unwrap();
+		let sources = entry_build::read_sources(
+			&entry.repo_store,
+			formats,
+			entry.entry_name,
+			entry.prescan,
+		)
+		.await
+		.unwrap();
+		let root = entry_build::build_root(
+			app.world_mut(),
+			entry.repo_store,
+			sources,
+			DisableCallOnReady,
+		)
+		.unwrap();
+		let router = app
+			.world_mut()
+			.run_system_cached_with::<_, Result<Entity>, _, _>(
+				find_router,
+				root,
+			)
+			.unwrap()
+			.unwrap();
+		Self { app, router, store }
+	}
+
+	/// The turns the loop takes, in place of the entry's own count.
+	pub fn set_turns(&mut self, turns: u32) {
+		let world = self.app.world_mut();
+		let repeat = world
+			.query_filtered::<Entity, With<RepeatTimes>>()
+			.single(world)
+			.unwrap();
+		world.entity_mut(repeat).insert(RepeatTimes::new(turns));
+	}
+
+	/// The response to `request`, the app updated until it answers.
+	pub fn request(&mut self, request: Request) -> Response {
+		let answer = Arc::new(Mutex::new(None));
+		let out = answer.clone();
+		self.app
+			.world_mut()
+			.entity_mut(self.router)
+			.run_async_local(|router| async move {
+				let response = router.exchange(request).await;
+				*out.lock().unwrap() = Some(response);
+				Ok(())
+			});
+		for _ in 0..20_000 {
+			self.app.update();
+			if let Some(response) = answer.lock().unwrap().take() {
+				return response;
+			}
+		}
+		panic!("the entry did not answer");
 	}
 }

@@ -1,6 +1,13 @@
 use crate::prelude::*;
 use beet::prelude::*;
 
+/// The params of `eval/build` and of the build tool.
+#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
+pub struct BuildParams {
+	/// The reader rubric whose form is built, `<package>/<rubric>`, the path after `build`.
+	pub rubric: RubricRef,
+}
+
 /// `eval/build <package>/<rubric>`: parses the reader's blank form named by
 /// the rubric's render spec, a Word file, a workbook or any document with
 /// tables, applies the fill spec at `dist/<package>/<rubric>.fill.json` when
@@ -11,12 +18,10 @@ use beet::prelude::*;
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
 pub async fn EvalBuild(
-	/// The reader rubric whose form is built, `<package>/<rubric>`, the path
-	/// after `build`.
-	#[param]
-	rubric: RubricRef,
+	params: Params<BuildParams>,
 	cx: ActionContext<Request>,
 ) -> Result<Response> {
+	let BuildParams { rubric } = params.0;
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
 	let reference = rubric;
@@ -40,7 +45,7 @@ pub async fn EvalBuild(
 				.get::<OoxmlPackage>()
 				.map(|package| package.media_type().clone())
 				.unwrap_or(MediaType::Markdown);
-			let built = RenderTargets::render(
+			let built = DocRenderers::render(
 				world,
 				root,
 				&RequestParts::get("/").with_accept(media_type),
@@ -114,13 +119,12 @@ impl FormSource {
 			.world()
 			.with(move |world: &mut World| -> Result<O> {
 				let root = world.spawn_empty().id();
-				let read = MediaParser::new()
-					.parse(ParseContext::new(
-						&mut world.entity_mut(root),
-						&form,
-					))
-					.map_err(BevyError::from)
-					.and_then(|_| func(world, root));
+				let read = DocParsers::parse(ParseContext::new(
+					&mut world.entity_mut(root),
+					&form,
+				))
+				.map_err(BevyError::from)
+				.and_then(|_| func(world, root));
 				world.entity_mut(root).despawn();
 				read
 			})

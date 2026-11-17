@@ -8,6 +8,7 @@ The document package for a business: the seven documents a business keeps, the e
 - `outline.json`: the seven documents, `index`, `product`, `market`, `brand`, `legal`, `finance` and `team`, their sections in order with what each holds, and the thirteen data blocks they carry with their typed columns. It generates the 29 `structure` evals that restate it: each document present and its sections, each block's home and columns, the frontmatter and the summaries over the set.
 - `evals/`: 137 rows, the 132 judged evals across the six documents other than the index, whose few evals live in the `product` namespace and are anchored at `index`, and five checked ones in `structure` that the outline cannot generate: the index titled and taglined, the brand document agreeing with it on both, and no ask left open.
 - `rubrics/owner`: the owner rubric, level 3 on what matters to running the business and 2 on the knowledge a course asks for, citing every eval in the package once; the default every business workspace runs.
+- `seeds/`: the loop's procedures, `clerk.md`, `grader.md` and `builder.md`, each the system post of its role's thread in a workspace's `iterate.bsx`, addressed to an agent holding the store tools and the verbs as tools, and ending with the shape of its report.
 
 ## Scope by namespace
 
@@ -39,3 +40,4 @@ Reading order is the outline's order and the index declares it, so the files car
 - 2026-10-02: the ten folded into six document files, slugs unchanged. Prefixes moved `idea`, `offer` and `operations` to `product`, `customers` and `marketing` to `market`, `compliance` to `legal` and `founder` to `team`, except `offer.sales-channels-listed` and `offer.payment-options-named`, which went to `market`, and `marketing.tag-line`, which went to `brand`.
 - 2026-10-02: six brand evals added from the literature; seventeen checked evals on the shape of the set, thirteen on the data blocks and four on agreement with the index, summaries and asks; an anchor on every judged eval; the owner rubric written.
 - 2026-10-07: the markdown package converted to tables: the template is `outline.json`, which generates the structure evals restating it, the tag `biz:template` is `biz:outline`, and `references.md` folded into the manifest's sources.
+- 2026-11-16: the loop skills `write-docs`, `grade-docs` and `build-form` became the seeds under `seeds/`.

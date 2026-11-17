@@ -36,16 +36,20 @@ beet = { path = "../worktrees/beet/eval/beet", default-features = false, feature
 	"rsx",
 	"markdown",
 	"ooxml",
+	"thread",
 ] }
 # the derives behind every row and typed document: their expansions name the
 # `serde` crate directly, which the facade's re-exported traits do not provide
 serde = { version = "1", features = ["derive"] }
 
 [dev-dependencies]
-# `fs` for the tests that pin how a table lays out on disk
+# `fs` for the tests that pin how a table lays out on disk, `template_serde`
+# for the loop's, which build the fixture's `iterate.bsx` as the binary builds
+# an entry
 beet = { path = "../worktrees/beet/eval/beet", default-features = false, features = [
 	"testing",
 	"fs",
+	"template_serde",
 ] }
 
 # the beet harness main is `beet::test_main!()` in `lib.rs`

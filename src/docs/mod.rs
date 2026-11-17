@@ -4,7 +4,7 @@
 //! sections are; this is what any one of them looks like, so a reader, a
 //! grader and a renderer can rely on it. Read, a document is a tree in a
 //! [`DocumentSet`], and its frontmatter is beet's
-//! [`PageMeta`](beet::prelude::PageMeta).
+//! [`DocMeta`](beet::prelude::DocMeta).
 //!
 //! # One file or a directory
 //!
@@ -36,7 +36,7 @@
 //! ```
 //!
 //! 1. **Frontmatter**: `created`, `updated` and `authors`, the
-//!    [`DocumentSet::META_KEYS`] of beet's `PageMeta`, and nothing else, since
+//!    [`DocumentSet::META_KEYS`] of beet's `DocMeta`, and nothing else, since
 //!    the title and the summary are the body's. `updated` moves on every
 //!    substantive edit, and is what a reader checks before trusting a figure.
 //! 2. **Title**: the level one heading is the document's name. For the index it

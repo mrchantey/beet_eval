@@ -86,7 +86,7 @@ pub async fn EvalNew(
 			})
 			.collect::<Vec<_>>();
 		// the document's metadata leads its render as its frontmatter
-		let meta = PageMeta {
+		let meta = DocMeta {
 			created: Some(today),
 			updated: Some(today),
 			authors: vec![author.clone()],

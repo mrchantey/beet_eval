@@ -1,0 +1,22 @@
+<!--
+The grader's thread for one document, built per request by `grade/:document`:
+the workspace to read, grades through `grade` alone.
+-->
+<Thread {(Sequence, MountThreadStore{path:"packages/acme/assets/threads/grader"})}>
+	<CreateActor id=1 name="System" kind="System"><RoleSeed role="grader"/></CreateActor>
+	<CreateActor id=2 name="Loop" kind="User"><RequestPost text="grade {document}"/></CreateActor>
+	<RepeatWhileFunctionCallOutput>
+		<CreateActor id=5 name="Grader" kind="Agent" {MockPostStreamer{script:[
+			Call{tool:"worksheet", arguments:{document:"product"}},
+			Call{tool:"write-text", arguments:{path:"docs/product.md", text:"graded"}},
+			Call{tool:"grade", arguments:{eval:"product.origin", level:3, evidence:"we built a rocket", by:"mock grader"}},
+			Call{tool:"grade", arguments:{eval:"product.origin", level:2, evidence:"The idea came from our own weekend stall.", by:"mock grader"}},
+			Call{tool:"grade", arguments:{eval:"product.alternatives-considered", level:2, evidence:"We weighed a mobile service against the stall", by:"mock grader"}},
+			Call{tool:"grade", arguments:{eval:"product.pricing-justified", level:1, evidence:"We charge per weekend", by:"mock grader"}},
+			Call{tool:"grade", arguments:{eval:"product.quote-held", level:0, by:"mock grader"}},
+			Text("1. owner/owner: met.\n2. acme_course/01-business-plan: met."),
+		]}}>
+			<Router><StoreToolset read_only=true/><EvalToolset/></Router>
+		</CreateActor>
+	</RepeatWhileFunctionCallOutput>
+</Thread>

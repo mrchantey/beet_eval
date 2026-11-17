@@ -31,7 +31,7 @@ This page is the one source for the words. The law lives in the module docs, whi
 | package | `PackageManifest`, `PackageKind`, `LoadedPackage`, `PackageTable` | A directory in a store with a manifest. A **document** package says what the documents are, a **reader** package holds what one outside reader needs, a **workspace** package is the subject's own. |
 | workspace | `Workspace`, `PackageSource`, `LoadedWorkspace`, `PackagedEval` | A store holding `docs/`, `results/` and a manifest naming its packages, read for a verb with every package and every eval of all of them. |
 | outline | `Outline`, `DocumentSpec`, `SectionSpec`, `BlockSpec`, `HistoryEntry` | A document package's list of the documents, their sections and the data blocks they carry. It generates the evals that restate it. |
-| document | `DocumentSet`, `DocumentFile`, `DocumentSection`, `ProseQuery` | One of the subject's documents, a markdown or Word file under `docs/` or a directory promoted from one, parsed by beet's media parse into a tree a `DocumentSet` holds: frontmatter, title, tagline, summary and `##` sections, each read by a `ProseQuery` traversal. Its frontmatter is beet's `PageMeta`, carrying `created`, `updated` and `authors`, a Word file's from its core properties. |
+| document | `DocumentSet`, `DocumentFile`, `DocumentSection`, `ProseQuery` | One of the subject's documents, a markdown or Word file under `docs/` or a directory promoted from one, parsed by beet's media parse into a tree a `DocumentSet` holds: frontmatter, title, tagline, summary and `##` sections, each read by a `ProseQuery` traversal. Its frontmatter is beet's `DocMeta`, carrying `created`, `updated` and `authors`, a Word file's from its core properties. |
 | data block | `DataBlock`, `BlockFormat`, `Column`, `ColumnKind` | A fenced `csv` or `json` block named in its info string, defined once across the documents. |
 | ask | `Ask`, `AskKind` | An open question to the owner, inline as `TODO(ask ...)`: a **fact** a source could answer, offered with a default, or a **decision** only the owner can make, challenged by the coach instead. |
 | check kind | `CheckRoutes`, `DocumentCheck`, `FrontmatterCheck`, `H1Check`, `TaglineCheck`, `SummaryCheck`, `AgreesCheck`, `AsksCheck`, `SectionsCheck`, `BlockCheck`, and the params of each, `DocumentCheckParams`, `FrontmatterCheckParams`, `H1CheckParams`, `TaglineCheckParams`, `SummaryCheckParams`, `AgreesCheckParams`, `TitlePart`, `AsksCheckParams`, `SectionsCheckParams`, `BlockCheckParams` | The document check kinds, one route each under `check/`, mounted by `<CheckRoutes/>`. |
@@ -52,6 +52,7 @@ A package and a workspace are stores, addressed by uri and never assumed to be o
   package.json          PackageManifest
   README.md             what the package is and provides, for a person
   outline.json          Outline, a document package's
+  seeds/<role>.md       the clerk's, grader's and builder's procedures, a document package's
   evals/<id>            Eval rows
   rubrics/<id>          Rubric rows
   render/<rubric>       RenderSpec rows, a reader package's
@@ -66,7 +67,7 @@ A package and a workspace are stores, addressed by uri and never assumed to be o
   results/summary.json  Results, the last run
   results/projections/  the briefs eval/project writes
   dist/<package>/       builds: the filled form, its <rubric>.fill.json FillSpec, its <rubric>.cells.md
-  packages/<name>/      the workspace's own package
+  packages/<name>/      the workspace's own package, its loop's sittings under assets/threads/<role>/
 ```
 
 A table is one blob per row at `<table>/<key>`, the key being the row's id verbatim with no extension, pretty-printed JSON, so a tool call writing one row touches one object and a change diffs by field. The JSON is serde's default form of the Rust type: fields by name in sorted order, enum variants by their Rust name (`"Generic"`, `{"Binary": {...}}`), a newtype as its inner value, an absent option as `null`. The schema is derived from the same type by `ValueSchema::of`, so a form can be generated for each and the stored form validates against it. Every example below is tested to deserialize into its type, validate against its schema and serialize back unchanged.
@@ -377,9 +378,14 @@ A report answers a scene rendered as the request accepts: ANSI in a terminal, ma
 
 ## The roles
 
-The loop is a tree: `eval/next` names the unit of work and dispatches to the role whose turn it is, one unit per turn, until it answers done. Each role is an agent actor carrying the routes of its trade as tools and its procedure as its seed post, and every role can be spoken to, turn by turn in text or as a realtime voice session.
+The loop is routes, a workspace's `iterate.bsx`: its `iterate` route takes one unit of work a turn, `<NextUnit/>` asking `eval/next` for it and requesting it of the workspace's router as `<verb>/<first target>`, ie `write/product`, until `next` says `done`. Each role is a route building a thread for the unit it is asked (`<Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>`), so a role also runs by hand, and a verb with no route stops the loop with the router's not-found. A role's thread is a template whose agent holds its tools in a `<Router>` of its own: `<EvalToolset/>`, the verbs `check`, `results`, `next`, `worksheet`, `project`, `blocks`, `grade` and `build`, each forwarding to the workspace's `eval/<verb>`, and beet's store tools. Its seed is its procedure, `<RoleSeed role="clerk"/>` reading `seeds/clerk.md` of the document package, and the unit, `<RequestPost text="write {document}"/>`, both read once as the thread builds, so each unit is a thread of its own, persisted under the workspace package and resumed when the unit comes round again. `tests/fixtures/acme/iterate.bsx` is one, its role threads under `templates/`, every agent scripted:
+
+```sh
+beet-eval --entry=iterate.bsx iterate
+beet-eval --entry=iterate.bsx grade product
+```
 
 - **Clerk**: writes a document from its sources and the owner's answers, drafting what the sources allow and asking what only the owner knows.
-- **Grader**: grades the documents against the worksheet through `eval/grade`, reading a store it cannot write.
-- **Builder**: fills a reader's form, writing the fill spec from the brief and reading the built form's cells against the structural lines.
-- **Coach**: runs a sitting against the claims register, one question per turn by the actions table, ending with one assignment written as the picked claim's test.
+- **Grader**: grades one document a turn against the worksheet through the `grade` tool, its store tools `read_only`, so its router has no `write-text` and it can read the workspace and never write it.
+- **Builder**: fills a reader's form, writing the fill spec from the brief into the build directory, the one store it can write, and reading the built form's cells against the structural lines.
+- **Coach**: the claims register and the actions table it will sit against are typed rows, `Claim` and `CoachAction`; its sitting is not built yet.

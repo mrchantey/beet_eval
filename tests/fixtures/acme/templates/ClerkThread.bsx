@@ -1,0 +1,21 @@
+<!--
+The clerk's thread for one document, built per request by `write/:document`:
+the whole workspace to write, then the owner's answer.
+-->
+<Thread {(Sequence, MountThreadStore{path:"packages/acme/assets/threads/clerk"})}>
+	<CreateActor id=1 name="System" kind="System"><RoleSeed role="clerk"/></CreateActor>
+	<CreateActor id=2 name="Loop" kind="User"><RequestPost text="write {document}"/></CreateActor>
+	<RepeatWhileFunctionCallOutput>
+		<CreateActor id=3 name="Clerk" kind="Agent" {MockPostStreamer{script:[
+			Call{tool:"results", arguments:{}},
+			Call{tool:"edit-text", arguments:{path:"docs/product.md", edits:[{
+				old_text:"TODO(ask decision: monthly or per weekend?)",
+				new_text:"We charge per weekend, so a trader pays only for the weekends they trade.",
+			}]}},
+			Text("1. next said write product: the pricing ask was open.\n2. Wrote the pricing of docs/product.md.\n3. No asks wait on the owner."),
+		]}}>
+			<Router><StoreToolset/><EvalToolset/></Router>
+		</CreateActor>
+	</RepeatWhileFunctionCallOutput>
+	<CreateActor id=4 name="Owner" kind="User" {MockPostStreamer{custom_response:"Per weekend, as written."}}/>
+</Thread>

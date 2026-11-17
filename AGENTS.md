@@ -13,7 +13,8 @@ Downstream deltas from the inherited conventions:
 - Upstream work happens in the `eval` worktree, `../worktrees/beet/eval/beet`, which `Cargo.toml` names, left unstaged there for review. Never edit `/home/pete/me/beet` directly: other agents work in the primary checkout, and a change reaches it only once the operator syncs the trees, so say when a verification needs that.
 - No course material or real business data is committed: tests run on synthetic fixtures under `tests/fixtures/`, and comparisons against a live workspace run from uncommitted captures under `.agents/tmp/`.
 - `.agents/` is gitignored here (skills excepted), so the plan, reports, the `gstack` reference under `.agents/reference/` and the Codex clone under `.agents/tmp/codex/` are local to this checkout.
-- `.agents/skills/` holds the skills a workspace runs, the loop (`iterate`, `write-docs`, `grade-docs`, `build-form`, `write-criteria`, `write-rubric`) and `ingest-source`, written for any workspace and cited by path from each workspace's `AGENTS.md`; a workspace's own specifics live in its own copy, layered over these. They are committed, so they name no course and no business.
+- The loop runs as routes, not as skills: a workspace's `iterate.bsx` asks `eval/next` for each unit and requests it of the clerk's, grader's or builder's route, each building a thread for its unit (`src/iterate/mod.rs`, and the fixture's `tests/fixtures/acme/iterate.bsx` with its role threads under `templates/`), each role's procedure the seed `seeds/<role>.md` of the document package.
+- `.agents/skills/` holds the skills an agent runs beside the loop, `write-criteria`, `write-rubric` and `ingest-source`, written for any workspace and cited by path from each workspace's `AGENTS.md`; a workspace's own specifics live in its own copy, layered over these. They are committed, so they name no course and no business.
 
 ## Commands
 
@@ -42,11 +43,12 @@ Situational cheatsheets, read before touching the subsystem:
 - Actions: one-per-entity, overloads, providers, `#[field]`, facets: `crates/beet_action/README.md`
 - Servers and the lifecycle verbs: `crates/beet_net/README.md`
 - Cloud resources: stacks, grants, buckets, jobs: `crates/beet_infra/README.md` + `.agents/skills/infra-deploy`
-- Deploy credentials, `<stack>/deploy` and `--elevated` (no mint verb; an agent relays a refusal to the operator as it is): `crates/beet_infra/README.md`, "Deploy, and deploy elevated"
+- Deploy credentials, `<stack>/deploy`, a package's `all/deploy` and `--elevated` (no mint verb; an agent relays a refusal to the operator as it is): `crates/beet_infra/README.md`, "Deploy, and deploy elevated"; a repo's own AWS account (`<AwsAccount/>`, `beet aws --account`): "The AWS account"
 - The beet CLI, entries, wasm binaries, making any binary a beet runtime: `crates/beet-cli/README.md` + `crates/beet_router/src/launch/mod.rs`
 - Styling: `crates/beet_ui/src/style/mod.rs`
 - Scene editing (tree, inspector, entity and component pickers): `crates/beet_ui/src/widgets/scene_editor/mod.rs`
 - Rendering (web + charcell): the `beet-rendering` skill
+- Derived files (`Derivation`, `<Derive/>`, `beet check`'s stale or missing one): `crates/beet_net/src/store/derivation.rs` + `Provenance`'s module docs
 - Secrets (the age identity, `secrets.toml`, the `vault`/`secrets` verbs, the `SecretStore` seam every secret a process reads or a deploy mints goes through): `crates/beet_core/src/secrets/mod.rs` + `site/routes/docs/secrets.md`
 - Atproto (records and their primitives, an account's repo as a `Pds`, the converge, `<AtprotoAccount/>`, the live test account): `crates/beet_core/src/atproto/mod.rs` + `crates/beet_net/src/atproto/mod.rs`; the standard.site records: `crates/beet_router/src/router/site/syndication/standard_site/mod.rs`
 
@@ -69,7 +71,7 @@ Situational cheatsheets, read before touching the subsystem:
 - Always use `bevyhow!{}`, `bevybail!{}` unless a consumer needs the error type, then `thiserror` (now no_std). Never wrap errors (`.map_err(|e| bevyhow!("{e}"))?`): `BevyError` implements `From<E: Error>`, just use `?`.
 - Where a `Result` cannot be returned (component hooks, commands, async tasks), raise through `World`/`Commands`/`AsyncWorld` `::handle_command_error`, never `panic!`, `debug_assert!` or a bare `error!`; a hook reaches it via `DeferredWorld::commands()`.
 - Continue `long().method().chains()` rather than storing temporaries; the `xtend.rs` blanket traits assist: `.xmap()` is `.map()` for any type, `bar(bazz).xmap(foo)` not `foo(bar(bazz))`, `.xok(foo)` not `Ok(foo)`.
-- Getters/setters: prefer the `#[derive(Get,Set,SetWith)]` macros over manual implementation; adjust the macros to suit new usecases if required.
+- Getters/setters: prefer the `#[derive(Get,Set,SetWith)]` macros over manual implementation; adjust the macros to suit new usecases if required. A validated string newtype over `SmolStr` derives `StringPrimitive`, its `parse` the one way in.
 - Utility modules have the `_ext` suffix, are reexported as `pub mod`, and callers keep the qualifier: `async_ext::do_async_thing().await`.
 - Free items: a top-level `pub fn`/`pub const`/`pub static` is permitted only in a `*_ext` module, a sanctioned namespace module (ie `js_runtime::cwd()`), a `#[template]` constructor, or generated code; everything else is an associated item on its type, or not pub. Bevy systems and observers stay free fns but private, registered by their plugin. Visibility is private until needed, for types as well as functions. Audit recipe: the `beet-audit-free-fns` skill.
 - git: never create branches or make commits unless explicitly told to, whatever the checkout state; keep things as unstaged changes.

@@ -33,26 +33,9 @@ impl CheckRef {
 	/// The request calling the route: each param a flag in kebab case, a list
 	/// repeating its flag.
 	pub fn request(&self) -> Request {
-		let mut request = Request::get(format!("/check/{}", self.route));
-		if let Value::Map(map) = &self.params {
-			for (key, value) in map.0.iter() {
-				let flag = key.replace('_', "-");
-				match value {
-					Value::List(items) => {
-						for item in items {
-							request.insert_param(
-								flag.clone(),
-								Self::flag_value(item),
-							);
-						}
-					}
-					value => {
-						request.insert_param(flag, Self::flag_value(value))
-					}
-				}
-			}
-		}
-		request
+		RouteCall::new(format!("/check/{}", self.route))
+			.with_params(&self.params)
+			.into_request()
 	}
 
 	/// The route's path in the engine's router, `check/<route>`.
@@ -67,14 +50,10 @@ impl CheckRef {
 	/// called, so the router refuses it as it would a person's, and reads
 	/// its verdict.
 	pub async fn call(&self, caller: &AsyncEntity) -> Result<CheckVerdict> {
-		let router = caller
-			.with_state::<AncestorQuery<Entity, With<Router>>, _>(
-				|entity, routers| routers.get(entity).ok(),
-			)
-			.await?
-			.ok_or_else(|| bevyhow!("no router above the caller"))?;
-		let response =
-			caller.world().entity(router).exchange(self.request()).await;
+		let response = RouteCall::new(format!("/check/{}", self.route))
+			.with_params(&self.params)
+			.exchange(caller)
+			.await?;
 		match response.status().is_ok() {
 			true => response.json::<CheckVerdict>().await,
 			false => {
@@ -109,15 +88,6 @@ impl CheckRef {
 				}
 			})
 			.await
-	}
-
-	/// A scalar as a flag's value.
-	fn flag_value(value: &Value) -> String {
-		match value {
-			Value::Str(text) => text.to_string(),
-			Value::Null => String::new(),
-			other => other.to_string(),
-		}
 	}
 }
 

@@ -55,7 +55,7 @@ mod test {
 			.answer(request)
 			.await
 			.1
-			.xpect_contains("<!-- t1 -->\n\n| Business Name |  |\n|---|---|\n")
+			.xpect_contains("t1\n\n| Business Name |  |\n|---|---|\n")
 			.xpect_contains(
 				"Briefly describe your business:<br><span style=\"color: #FF0000\">(Please delete this sentence once completed)</span>",
 			);

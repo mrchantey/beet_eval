@@ -34,7 +34,7 @@ pub struct DocumentFile {
 }
 
 impl DocumentSet {
-	/// The [`PageMeta`] keys every document's frontmatter carries, in the order
+	/// The [`DocMeta`] keys every document's frontmatter carries, in the order
 	/// a document writes them.
 	pub const META_KEYS: [&str; 3] = ["created", "updated", "authors"];
 
@@ -72,13 +72,11 @@ impl DocumentSet {
 		for (path, bytes) in sources {
 			let root = world.spawn_empty().id();
 			let mut problems = Vec::new();
-			match MediaParser::scan_root_declarations(
-				&bytes,
-				&type_ext::short_name::<PageMeta>(),
-			)
-			.and_then(|declarations| {
-				declarations.get::<PageMeta>(Self::meta_registry())
-			}) {
+			match DocParsers::of(&world)?
+				.declarations(&bytes, &TypeName::of::<DocMeta>().short())
+				.and_then(|declarations| {
+					declarations.get::<DocMeta>(Self::meta_registry())
+				}) {
 				Ok(Some(meta)) => {
 					world.entity_mut(root).insert(meta);
 				}
@@ -86,12 +84,11 @@ impl DocumentSet {
 				Err(err) => problems
 					.push(format!("the frontmatter does not parse: {err}")),
 			}
-			MediaParser::new()
-				.parse(
-					ParseContext::new(&mut world.entity_mut(root), &bytes)
-						.with_path(WsPath::new(path.as_str())),
-				)
-				.map_err(|err| bevyhow!("{dir}/{path}: {err}"))?;
+			DocParsers::parse(
+				ParseContext::new(&mut world.entity_mut(root), &bytes)
+					.with_path(WsPath::new(path.as_str())),
+			)
+			.map_err(|err| bevyhow!("{dir}/{path}: {err}"))?;
 			files.push(DocumentFile {
 				name: Self::name_of(&path),
 				file: path,
@@ -102,13 +99,13 @@ impl DocumentSet {
 		Self { dir, world, files }.xok()
 	}
 
-	/// The registry frontmatter is read against, holding [`PageMeta`].
+	/// The registry frontmatter is read against, holding [`DocMeta`].
 	fn meta_registry() -> &'static TypeRegistry {
 		static REGISTRY: std::sync::OnceLock<TypeRegistry> =
 			std::sync::OnceLock::new();
 		REGISTRY.get_or_init(|| {
 			let mut registry = TypeRegistry::default();
-			registry.register::<PageMeta>();
+			registry.register::<DocMeta>();
 			registry
 		})
 	}

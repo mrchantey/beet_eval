@@ -47,16 +47,16 @@ impl FillSpec {
 					let written = world.with_state::<DocumentTreeEdit, _>(
 						|mut edit| edit.set_cell_text(root, &address, text),
 					)?;
-					log.push(match address {
-						CellAddress::Sheet(_) => {
+					log.push(match address.grid {
+						CellGrid::Named(_) => {
 							let written = world
 								.entity(written)
-								.get::<SheetCellAddress>()
+								.get::<CellAddress>()
 								.map(ToString::to_string)
 								.unwrap_or_else(|| cell.to_string());
 							format!("set {written} = {text}")
 						}
-						CellAddress::Table(_) => format!("set {cell}"),
+						CellGrid::Ordinal(_) => format!("set {cell}"),
 					});
 				}
 				FillOp::Append { cell, text } => {
@@ -153,19 +153,12 @@ impl FillOp {
 }
 
 text_type!(
-	/// A cell of a form, as the blank form's cells name it: a table cell, a
-	/// [`TableCellAddress`] `t<table>r<row>c<cell>` counted from 1 in
-	/// document order, ie `t3r2c1`, or a workbook cell, a
-	/// [`SheetCellAddress`] `<sheet>!<column><row>`, ie `Start Here!D3`.
+	/// A cell of a form, as the blank form's cells name it, a
+	/// [`CellAddress`]: a table cell `t<table>r<row>c<cell>` counted from 1 in
+	/// document order, ie `t3r2c1`, or a workbook cell
+	/// `<sheet>!<column><row>`, ie `Start Here!D3`.
 	CellRef,
-	|text| match TableCellAddress::parse(&text).is_ok()
-		|| SheetCellAddress::parse(&text).is_ok()
-	{
-		true => OK,
-		false => bevybail!(
-			"`{text}` is not a cell, expected `t<n>r<n>c<n>` or `<sheet>!<A1>`"
-		),
-	}
+	|text| CellAddress::parse(&text).map(|_| ())
 );
 
 impl CellRef {
@@ -190,9 +183,8 @@ mod test {
 			.unwrap()
 			.address()
 			.unwrap()
-			.xpect_eq(CellAddress::Sheet(
-				SheetCellAddress::parse("Start Here!D3").unwrap(),
-			));
+			.grid
+			.xpect_eq(CellGrid::Named("Start Here".into()));
 		for bad in ["t0r1c1", "t1r1", "Sheet!3", "!A1", "Sheet!A01", "A1"] {
 			CellRef::parse(bad).xpect_err();
 		}
@@ -238,9 +230,11 @@ mod test {
 			let mut world =
 				(TemplatePlugin, DocumentPlugin, ParsePlugin).into_world();
 			let root = world.spawn_empty().id();
-			MediaParser::new()
-				.parse(ParseContext::new(&mut world.entity_mut(root), &form))
-				.unwrap();
+			DocParsers::parse(ParseContext::new(
+				&mut world.entity_mut(root),
+				&form,
+			))
+			.unwrap();
 			spec.apply(&mut world, root).unwrap().xpect_eq(vec![
 				"set t1r1c2".to_string(),
 				"check \"Surveys\": 1".into(),
@@ -252,7 +246,7 @@ mod test {
 				.map(|cell| cell.to_string())
 				.collect::<Vec<_>>();
 			let text =
-				world.with_state::<ReaderText, _>(|text| text.text(root));
+				world.with_state::<DocumentText, _>(|text| text.text(root));
 			(cells, text)
 		});
 		filled[0].0.clone().xpect_eq(filled[1].0.clone());
