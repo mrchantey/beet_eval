@@ -3,18 +3,24 @@ use beet::prelude::*;
 
 /// Where the subject needs work next: one unit of work, why, and the tables the
 /// choice was made from. `eval/next` computes it from the same run as
-/// [`Results`], in this order:
+/// [`Results`] and the claims register, in this order:
 ///
 /// 1. [`Scaffold`](NextVerb::Scaffold) when no document of the outline exists.
 /// 2. [`Write`](NextVerb::Write) the first missing document, then the document
 ///    failing the most shape checks: shape before substance.
-/// 3. [`Grade`](NextVerb::Grade) every document written with no asks open but
+/// 3. [`Write`](NextVerb::Write) the first document holding a decision ask
+///    whose section no claim's block names, so the clerk raises it as a
+///    claim: a decision is the coach's to challenge, and the coach only ever
+///    holds claims.
+/// 4. [`Coach`](NextVerb::Coach) the claim [`Claim::pick`] picks, when the
+///    register holds a fatal claim at evidence 0 or 1.
+/// 5. [`Grade`](NextVerb::Grade) every document written with no asks open but
 ///    ungraded, or graded before its last `updated`.
-/// 4. [`Build`](NextVerb::Build) the first reader rubric fully met, with a
+/// 6. [`Build`](NextVerb::Build) the first reader rubric fully met, with a
 ///    [`RenderSpec`] and nothing built for it.
-/// 5. [`Write`](NextVerb::Write) the document with the most open asks and the
+/// 7. [`Write`](NextVerb::Write) the document with the most open asks and the
 ///    widest gap to the owner rubric, weighing an ask as two levels.
-/// 6. [`Done`](NextVerb::Done) when nothing is left.
+/// 8. [`Done`](NextVerb::Done) when nothing is left.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct NextStep {
 	/// The unit of work.
@@ -58,6 +64,7 @@ impl NextStep {
 			eval.anchor_or_namespace().document_name() == name
 		};
 		let asks = documents.asks();
+		let claims = workspace.claims();
 		// each document's presence and last substantive edit
 		let read = outline
 			.documents
@@ -123,13 +130,28 @@ impl NextStep {
 						(Some(grades), Some(updated)) => updated > grades.date,
 						_ => false,
 					};
+				let open = asks
+					.iter()
+					.filter(|(document, _)| {
+						DocumentSet::top_level(document) == name
+					})
+					.map(|(_, ask)| ask)
+					.collect::<Vec<_>>();
+				let decisions = open
+					.iter()
+					.filter(|ask| ask.kind == AskKind::Decision)
+					.collect::<Vec<_>>();
 				DocumentRow {
 					document: spec.name.clone(),
 					present,
-					asks: asks
+					asks: open.len() as u32,
+					decisions: decisions.len() as u32,
+					unclaimed: decisions
 						.iter()
-						.filter(|(document, _)| {
-							DocumentSet::top_level(document) == name
+						.filter(|ask| {
+							!claims.iter().any(|claim| {
+								claim.rests_in(name, ask.section.as_deref())
+							})
 						})
 						.count() as u32,
 					shape_failures: verdicts
@@ -158,6 +180,7 @@ impl NextStep {
 			workspace,
 			docs,
 			&documents_rows,
+			&claims,
 			results,
 			built,
 			&document_package,
@@ -178,6 +201,7 @@ impl NextStep {
 		workspace: &LoadedWorkspace,
 		docs: &RelPath,
 		rows: &[DocumentRow],
+		claims: &[&Claim],
 		results: &Results,
 		built: &[RubricRef],
 		document_package: &str,
@@ -222,6 +246,32 @@ impl NextStep {
 						.map(EvalId::to_string)
 						.collect::<Vec<_>>()
 						.join(", ")
+				),
+			);
+		}
+		if let Some(row) = rows.iter().find(|row| row.unclaimed > 0) {
+			return (
+				NextVerb::Write,
+				vec![row.document.clone()],
+				format!(
+					"{docs}/{} holds {} decision ask(s) no claim names: raise each \
+					 as a claim for the coach with `eval/put`.",
+					row.document, row.unclaimed
+				),
+			);
+		}
+		if let Some(claim) = Claim::pick(claims.iter().copied())
+			.filter(|claim| claim.needs_coaching())
+		{
+			return (
+				NextVerb::Coach,
+				vec![claim.id.clone()],
+				format!(
+					"{} is fatal at evidence {} ({}): {}",
+					claim.id,
+					claim.evidence,
+					claim.evidence.word(),
+					claim.claim
 				),
 			);
 		}
@@ -347,6 +397,7 @@ pub fn NextReport(#[prop(required)] step: NextStep) -> impl Bundle {
 					<td>{row.document.to_string()}</td>
 					<td>{present}</td>
 					<td>{row.asks.to_string()}</td>
+					<td>{format!("{}/{}", row.decisions, row.unclaimed)}</td>
 					<td>{row.shape_failures.len().to_string()}</td>
 					<td>{row.owner_gap.to_string()}</td>
 					<td>{row.reader_gap.to_string()}</td>
@@ -376,7 +427,7 @@ pub fn NextReport(#[prop(required)] step: NextStep) -> impl Bundle {
 		<h2>"Documents"</h2>
 		<table>
 			<tr>
-				<th>"Document"</th><th>"Present"</th><th>"Asks"</th><th>"Shape failures"</th>
+				<th>"Document"</th><th>"Present"</th><th>"Asks"</th><th>"Decisions/unclaimed"</th><th>"Shape failures"</th>
 				<th>"Owner gap"</th><th>"Reader gap"</th><th>"Graded"</th><th>"Updated"</th>
 			</tr>
 			{documents}
@@ -431,6 +482,10 @@ pub struct DocumentRow {
 	pub present: bool,
 	/// The asks open in it and its children.
 	pub asks: u32,
+	/// Of those, the decisions, which only the owner can answer.
+	pub decisions: u32,
+	/// Of those, the ones whose section no claim's block names.
+	pub unclaimed: u32,
 	/// The failing checks that concern its shape.
 	pub shape_failures: Vec<EvalId>,
 	/// The levels still missing to the owner rubric, over the evals anchored

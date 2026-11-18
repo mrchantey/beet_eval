@@ -13,6 +13,8 @@ Run it against a copy, since the roles write the workspace: the clerk answers
 the pricing ask in `docs/product.md`, the grader grades the product (and is
 refused once, on a write its tools do not hold, and once on a quote the page
 does not hold), and the builder fills the course's business plan into `dist/`.
+The coach holds a sitting on a claim once the register holds a fatal one at
+evidence 0 or 1, ie `.. --entry=<copy>/iterate.bsx coach <claim id>`.
 A live workspace's entry is this one with `{ModelStreamer{provider:OpenAi}}`
 for each mock and `{UserInput}` for the owner, under a server with a surface
 to type into.
@@ -27,6 +29,7 @@ to type into.
 	<Route path="write/:document" {ThreadRoute{template:"ClerkThread"}}/>
 	<Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>
 	<Route path="build/*rubric" {ThreadRoute{template:"BuilderThread"}}/>
+	<Route path="coach/:claim" {ThreadRoute{template:"CoachThread"}}/>
 	<!-- the loop: one unit of work a turn, the one `eval/next` names -->
 	<Route path="iterate" {ExchangeSequence}>
 		<RepeatTimes total_times=3 {OutcomeOverload}><NextUnit/></RepeatTimes>

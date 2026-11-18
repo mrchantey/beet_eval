@@ -24,6 +24,7 @@ mod project;
 mod put;
 mod results;
 mod route_call;
+mod rows;
 mod run;
 mod worksheet;
 pub use blocks::*;
@@ -41,6 +42,7 @@ pub use project::*;
 pub use put::*;
 pub use results::*;
 pub(crate) use route_call::*;
+pub use rows::*;
 pub(crate) use run::*;
 pub use worksheet::*;
 
@@ -65,6 +67,7 @@ pub fn EvalRoutes() -> impl Bundle {
 		EvalGrade,
 		EvalBuild,
 		EvalCells,
+		EvalRows,
 		EvalPut,
 		EvalDrop,
 	]
@@ -128,6 +131,7 @@ mod test {
 			"eval/grade --eval=product.alternatives-considered --level=2 --anchor=product#idea --by=x --evidence=We\\ weighed\\ a\\ mobile\\ service",
 			"eval/build acme_course/01-business-plan",
 			"eval/cells acme_course/01-business-plan",
+			"eval/rows --package=acme_biz --table=evals --key=product.origin",
 			"eval/put --package=acme_biz --table=evals --from=packages/acme_biz/evals/product.origin --row=",
 			"eval/drop --package=acme_course --table=render --key=01-business-plan",
 			"check/document --document=brand",

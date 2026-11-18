@@ -13,7 +13,7 @@ pub async fn EvalDrop(
 	/// The package whose table holds the row.
 	#[param]
 	package: SmolStr,
-	/// The table: `evals`, `rubrics`, `render` or `actions`.
+	/// The table the row is removed from.
 	#[param]
 	table: PackageTable,
 	/// The row's key, its id, ie `market.competitors-named`.
@@ -37,6 +37,7 @@ pub async fn EvalDrop(
 		PackageTable::Actions => {
 			tables.table::<CoachAction>().exists(key).await?
 		}
+		PackageTable::Claims => tables.table::<Claim>().exists(key).await?,
 	};
 	if !exists {
 		return refusal(format!("{at} is no row\n")).xok();
@@ -58,6 +59,7 @@ pub async fn EvalDrop(
 		PackageTable::Actions => {
 			tables.table::<CoachAction>().remove(key).await?
 		}
+		PackageTable::Claims => tables.table::<Claim>().remove(key).await?,
 	}
 	Response::ok_text(format!("dropped {at}\n")).xok()
 }
@@ -93,7 +95,9 @@ impl Drop {
 					format!("{}/render/{}", package.manifest.name, spec.rubric)
 				})
 				.collect(),
-			PackageTable::Render | PackageTable::Actions => Vec::new(),
+			PackageTable::Render
+			| PackageTable::Actions
+			| PackageTable::Claims => Vec::new(),
 		}
 	}
 }

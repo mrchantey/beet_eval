@@ -1,0 +1,21 @@
+{
+  "ask": "What do they do about this today, even badly, and what does that cost them in hours or dollars?",
+  "bad": "Owner: nobody does anything about it. Coach: great, the field is open.",
+  "good": "Owner: nobody does anything about it. Coach: if nobody does anything, it may not hurt enough to pay for. Who last tried, and what did it cost them?",
+  "id": "status-quo",
+  "push_until": "The owner names the current workaround, who does it, and what it costs them each week.",
+  "red_flags": [
+    "Nobody does anything about it.",
+    "There is no solution, that is the opportunity.",
+    "They would if they knew about us."
+  ],
+  "serves": [
+    "market#competitors",
+    "product#value-proposition"
+  ],
+  "sources": [
+    "gstack:office-hours",
+    "ref:fitzpatrick-2013"
+  ],
+  "statement": "The customer's current workaround, and its cost, is known."
+}

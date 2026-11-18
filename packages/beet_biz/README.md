@@ -8,7 +8,8 @@ The document package for a business: the seven documents a business keeps, the e
 - `outline.json`: the seven documents, `index`, `product`, `market`, `brand`, `legal`, `finance` and `team`, their sections in order with what each holds, and the thirteen data blocks they carry with their typed columns. It generates the 29 `structure` evals that restate it: each document present and its sections, each block's home and columns, the frontmatter and the summaries over the set.
 - `evals/`: 137 rows, the 132 judged evals across the six documents other than the index, whose few evals live in the `product` namespace and are anchored at `index`, and five checked ones in `structure` that the outline cannot generate: the index titled and taglined, the brand document agreeing with it on both, and no ask left open.
 - `rubrics/owner`: the owner rubric, level 3 on what matters to running the business and 2 on the knowledge a course asks for, citing every eval in the package once; the default every business workspace runs.
-- `seeds/`: the loop's procedures, `clerk.md`, `grader.md` and `builder.md`, each the system post of its role's thread in a workspace's `iterate.bsx`, addressed to an agent holding the store tools and the verbs as tools, and ending with the shape of its report.
+- `seeds/`: the loop's procedures, `clerk.md`, `grader.md`, `builder.md` and `coach.md`, each the system post of its role's thread in a workspace's `iterate.bsx`, addressed to an agent holding the store tools and the verbs as tools, and ending with the shape of its report; the coach's ends on its assignment and holds the phrases it never says.
+- `actions/`: the coach's eleven moves, `demand`, `status-quo`, `sharpen`, `evidence`, `wedge`, `watch`, `steelman`, `premortem`, `diagnose`, `one-sale` and `assign`, each with its ask, when to stop pushing, its red flags and a bad and a good exchange, in the shape of gstack's office-hours startup diagnostic and grounded in the customer-development literature its sources name.
 
 ## Scope by namespace
 
@@ -26,7 +27,7 @@ An eval that fits none of these is a reason to discuss the outline, not to add a
 
 ## Source tags
 
-`biz:outline` is this package's own `outline.json`, and every `ref:<slug>` an entry of the manifest's sources naming the work and the idea taken from it. Every other tag an eval carries, `[template]`, `[guide bold]`, `[A2.3]`, `[mc:<topic>/<slug>]`, `[bdj-part-4]`, `[demo]` and the rest, is a source in the Sarina Russo course, defined in that reader package's manifest. The evals were extracted from that course's forms and recordings and keep their provenance; they are written so that any business can be held to them.
+`biz:outline` is this package's own `outline.json`, `gstack:office-hours` the startup diagnostic the coach actions take their shape from, and every `ref:<slug>` an entry of the manifest's sources naming the work and the idea taken from it. Every other tag an eval carries, `[template]`, `[guide bold]`, `[A2.3]`, `[mc:<topic>/<slug>]`, `[bdj-part-4]`, `[demo]` and the rest, is a source in the Sarina Russo course, defined in that reader package's manifest. The evals were extracted from that course's forms and recordings and keep their provenance; they are written so that any business can be held to them.
 
 ## The layout
 

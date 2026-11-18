@@ -1,0 +1,20 @@
+{
+  "ask": "What is the smallest version of this someone would pay real money for this week, before anything else is built?",
+  "bad": "Owner: it only works once the whole service is running. Coach: then let's plan the full launch.",
+  "good": "Owner: it only works once the whole service is running. Coach: if nothing smaller is worth paying for, the value is not clear yet. What one thing would someone pay for on Saturday?",
+  "id": "wedge",
+  "push_until": "The owner describes one offer they could deliver within days, to a named buyer, at a price.",
+  "red_flags": [
+    "We need the whole thing before anyone can use it.",
+    "A smaller version would not be different enough."
+  ],
+  "serves": [
+    "product#products-and-services",
+    "product#action-plan"
+  ],
+  "sources": [
+    "gstack:office-hours",
+    "ref:maurya-2012"
+  ],
+  "statement": "The smallest offer someone would pay for this week is named."
+}

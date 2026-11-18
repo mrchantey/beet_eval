@@ -28,15 +28,25 @@ impl AsksCheckParams {
 			false => "",
 		};
 		positions.truncate(Self::SHOWN);
+		let decisions = asks
+			.iter()
+			.filter(|(_, ask)| ask.kind == AskKind::Decision)
+			.count();
 		CheckVerdict::fail(
-			format!("{} open: {}{more}", asks.len(), positions.join(", ")),
+			format!(
+				"{} open ({} fact, {decisions} decision): {}{more}",
+				asks.len(),
+				asks.len() - decisions,
+				positions.join(", ")
+			),
 			Vec::<SmolStr>::new(),
 		)
 	}
 }
 
 /// `check/asks`: passes when no ask is open anywhere under the documents
-/// directory, and lists where the open ones are.
+/// directory, and lists where the open ones are, the facts and the decisions
+/// counted apart.
 #[action(route = "asks")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]

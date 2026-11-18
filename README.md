@@ -37,11 +37,11 @@ This page is the one source for the words. The law lives in the module docs, whi
 | check kind | `CheckRoutes`, `DocumentCheck`, `FrontmatterCheck`, `H1Check`, `TaglineCheck`, `SummaryCheck`, `AgreesCheck`, `AsksCheck`, `SectionsCheck`, `BlockCheck`, and the params of each, `DocumentCheckParams`, `FrontmatterCheckParams`, `H1CheckParams`, `TaglineCheckParams`, `SummaryCheckParams`, `AgreesCheckParams`, `TitlePart`, `AsksCheckParams`, `SectionsCheckParams`, `BlockCheckParams` | The document check kinds, one route each under `check/`, mounted by `<CheckRoutes/>`. |
 | render spec | `RenderSpec` | How a reader package renders one form: the reader's own blank form, a Word file, a workbook or any document with tables, the output's name, and the form's quirks. |
 | fill spec | `FillSpec`, `FillOp`, `CellRef`, `CellsReport` | What a builder writes for one form: the operations that fill the blank form, by cell, each one of beet's edits, and the cells of the result it reads back. |
-| claim | `Claim`, `Stakes`, `ClaimStatus` | A row of the workspace package's claims register: something the plan rests on that might be false, with its evidence 0 to 3, its stakes, its test and its status. |
+| claim | `Claim`, `Evidence`, `Stakes`, `ClaimStatus` | A row of the workspace package's claims register: something the plan rests on that might be false, with its evidence on the ladder 0 asserted, 1 heard, 2 observed, 3 committed, its stakes, its test and its status. The coach holds the one `Claim::pick` picks: highest stakes, then least evidence, then open first. |
 | action | `CoachAction` | One of the coach's moves, a row of a document package's actions table: the ask, when to stop pushing, the red flags, and a bad and a good exchange. |
-| verb | `EvalRoutes`, `EvalCheck`, `EvalResults`, `EvalNext`, `EvalBlocks`, `EvalWorksheet`, `EvalProject`, `EvalNew`, `EvalGrade`, `EvalPut`, `EvalDrop`, `EvalCells`, `EvalBuild` | One route of `beet-eval` under `eval/`, mounted by `<EvalRoutes/>`. |
-| report | `ResultsReport`, `NextReport`, `WorksheetReport`, `WorksheetDocument`, `WorksheetSection`, `BlocksReport`, `BlockDump`, `BlockEntry`, `ProjectionReport`, `Projection`, `ProjectedHeading`, `ProjectedCitation`, `CheckReport`, `CheckSummary`, `ScaffoldDocument`, `ScaffoldSection`, `ScaffoldBlock` | A verb's answer as a scene, a `#[template]` of HTML nodes beet renders as the request accepts, beside the data it shows, which a serde `Accept` answers instead; a file a verb writes is the scene's markdown. |
-| clerk, grader, builder, coach | | The four agent roles, below. |
+| verb | `EvalRoutes`, `EvalCheck`, `EvalResults`, `EvalNext`, `EvalBlocks`, `EvalWorksheet`, `EvalProject`, `EvalNew`, `EvalGrade`, `EvalRows`, `EvalPut`, `EvalDrop`, `EvalCells`, `EvalBuild` | One route of `beet-eval` under `eval/`, mounted by `<EvalRoutes/>`. |
+| report | `ResultsReport`, `NextReport`, `WorksheetReport`, `WorksheetDocument`, `WorksheetSection`, `BlocksReport`, `BlockDump`, `BlockEntry`, `RowsReport`, `TableRow`, `ProjectionReport`, `Projection`, `ProjectedHeading`, `ProjectedCitation`, `CheckReport`, `CheckSummary`, `ScaffoldDocument`, `ScaffoldSection`, `ScaffoldBlock` | A verb's answer as a scene, a `#[template]` of HTML nodes beet renders as the request accepts, beside the data it shows, which a serde `Accept` answers instead; a file a verb writes is the scene's markdown. |
+| clerk, grader, builder, coach | `EvalToolset`, `RoleSeed`, `NextUnit`, `AssignmentWritten` | The four agent roles, below. |
 
 ## Layout
 
@@ -52,7 +52,7 @@ A package and a workspace are stores, addressed by uri and never assumed to be o
   package.json          PackageManifest
   README.md             what the package is and provides, for a person
   outline.json          Outline, a document package's
-  seeds/<role>.md       the clerk's, grader's and builder's procedures, a document package's
+  seeds/<role>.md       the clerk's, grader's, builder's and coach's procedures, a document package's
   evals/<id>            Eval rows
   rubrics/<id>          Rubric rows
   render/<rubric>       RenderSpec rows, a reader package's
@@ -67,7 +67,7 @@ A package and a workspace are stores, addressed by uri and never assumed to be o
   results/summary.json  Results, the last run
   results/projections/  the briefs eval/project writes
   dist/<package>/       builds: the filled form, its <rubric>.fill.json FillSpec, its <rubric>.cells.md
-  packages/<name>/      the workspace's own package, its loop's sittings under assets/threads/<role>/
+  packages/<name>/      the workspace's own package, its claims register, its loop's sittings under assets/threads/<role>/
 ```
 
 A table is one blob per row at `<table>/<key>`, the key being the row's id verbatim with no extension, pretty-printed JSON, so a tool call writing one row touches one object and a change diffs by field. The JSON is serde's default form of the Rust type: fields by name in sorted order, enum variants by their Rust name (`"Generic"`, `{"Binary": {...}}`), a newtype as its inner value, an absent option as `null`. The schema is derived from the same type by `ValueSchema::of`, so a form can be generated for each and the stored form validates against it. Every example below is tested to deserialize into its type, validate against its schema and serialize back unchanged.
@@ -315,6 +315,7 @@ What `eval/next` answers.
   "documents": [
     {
       "asks": 3,
+      "decisions": 1,
       "document": "brand",
       "graded": 0,
       "judged": 9,
@@ -323,6 +324,7 @@ What `eval/next` answers.
       "reader_gap": 4,
       "shape_failures": ["structure.index-tagline-agreed"],
       "stale": false,
+      "unclaimed": 0,
       "updated": "2026-10-04"
     }
   ],
@@ -360,7 +362,7 @@ beet-eval --entry=eval.bsx eval/next
 
 A report answers a scene rendered as the request accepts: ANSI in a terminal, markdown when piped, ie to an agent or a file, HTML in a browser, or with `--accept=application/json` the stored form of what it computed. A verb that finds something wrong answers it and exits 1.
 
-- `eval/check [--unused]`: every table's rows, global ids, the prose rules, each check's params against its route's, citations and anchors against the outline; `--unused` lists the evals no rubric cites.
+- `eval/check [--unused]`: every table's rows, global ids, the prose rules, each check's params against its route's, citations, and every anchor, action's served section and claim's block against the outline; `--unused` lists the evals no rubric cites.
 - `eval/results`: runs every check, merges the grades, reads every rubric, writes `results/summary.json`, and answers the run, its line first.
 - `eval/next`: the next step, with the document and rubric tables behind it.
 - `eval/blocks [<name>]`: lists the data blocks, every block in full as JSON, or prints one's body as text.
@@ -368,7 +370,8 @@ A report answers a scene rendered as the request accepts: ANSI in a terminal, ma
 - `eval/project <package>/<rubric>`: the brief for one form, each heading's evals, the text at their anchors and its structural lines, answered and written to `results/projections/`.
 - `eval/new <name> <author>`: scaffolds `docs/` from the outline, every body an ask; refuses a non-empty `docs/`.
 - `eval/grade --eval --level --by [--anchor] [--evidence]`: writes one grade, refused unless the level is one the eval admits, at most 1 where an ask is open, and the evidence is verbatim from its anchor.
-- `eval/put --package --table (--row | --from)`: writes one row of a package's table, given inline or drafted into the workspace store and named by its path, refused unless it keeps the law `eval/check` holds every row to.
+- `eval/rows --package --table [--key]`: a table's rows, or one row by its key, each with its fields, and for a serde `Accept` the rows in their stored form; how the claims register is read.
+- `eval/put --package --table (--row | --from)`: writes one row of a package's table, `evals`, `rubrics`, `render`, `actions` or `claims`, given inline, an object in a JSON body or its JSON text on a command line, or drafted into the workspace store and named by its path, refused unless it keeps the law `eval/check` holds every row to.
 - `eval/drop --package --table --key`: removes one row of a package's table, refused while a rubric cites the eval or a render spec builds the rubric.
 - `eval/cells <package>/<rubric>`: the cells of a reader's blank form, the map a fill spec is written against.
 - `eval/build <package>/<rubric>`: parses the reader's blank form, applies the fill spec, renders the result into `dist/` in the form's own format, and writes its cells beside it.
@@ -378,14 +381,15 @@ A report answers a scene rendered as the request accepts: ANSI in a terminal, ma
 
 ## The roles
 
-The loop is routes, a workspace's `iterate.bsx`: its `iterate` route takes one unit of work a turn, `<NextUnit/>` asking `eval/next` for it and requesting it of the workspace's router as `<verb>/<first target>`, ie `write/product`, until `next` says `done`. Each role is a route building a thread for the unit it is asked (`<Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>`), so a role also runs by hand, and a verb with no route stops the loop with the router's not-found. A role's thread is a template whose agent holds its tools in a `<Router>` of its own: `<EvalToolset/>`, the verbs `check`, `results`, `next`, `worksheet`, `project`, `blocks`, `grade` and `build`, each forwarding to the workspace's `eval/<verb>`, and beet's store tools. Its seed is its procedure, `<RoleSeed role="clerk"/>` reading `seeds/clerk.md` of the document package, and the unit, `<RequestPost text="write {document}"/>`, both read once as the thread builds, so each unit is a thread of its own, persisted under the workspace package and resumed when the unit comes round again. `tests/fixtures/acme/iterate.bsx` is one, its role threads under `templates/`, every agent scripted:
+The loop is routes, a workspace's `iterate.bsx`: its `iterate` route takes one unit of work a turn, `<NextUnit/>` asking `eval/next` for it and requesting it of the workspace's router as `<verb>/<first target>`, ie `write/product` or `coach/buyers-pay-monthly`, until `next` says `done`. Each role is a route building a thread for the unit it is asked (`<Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>`), so a role also runs by hand, and a verb with no route stops the loop with the router's not-found. A role's thread is a template whose agent holds its tools in a `<Router>` of its own: `<EvalToolset/>`, the verbs `eval/check`, `eval/results`, `eval/next`, `eval/worksheet`, `eval/project`, `eval/blocks`, `eval/grade` and `eval/build` as beet `<HostTool>`s, each named as a person runs it and forwarding to the workspace's verb, and beet's store tools. Its seed is its procedure, `<RoleSeed role="clerk"/>` reading `seeds/clerk.md` of the document package, and the unit, `<RequestPost text="write {document}"/>`, both read once as the thread builds, so each unit is a thread of its own, persisted under the workspace package and resumed when the unit comes round again. `tests/fixtures/acme/iterate.bsx` is one, its role threads under `templates/`, every agent scripted:
 
 ```sh
 beet-eval --entry=iterate.bsx iterate
 beet-eval --entry=iterate.bsx grade product
+beet-eval --entry=coach.bsx coach per-weekend
 ```
 
-- **Clerk**: writes a document from its sources and the owner's answers, drafting what the sources allow and asking what only the owner knows.
-- **Grader**: grades one document a turn against the worksheet through the `grade` tool, its store tools `read_only`, so its router has no `write-text` and it can read the workspace and never write it.
+- **Clerk**: writes a document from its sources and the owner's answers, drafting what the sources allow and asking what only the owner knows. A decision ask whose section no claim names is raised as a claim through `eval/put` on the claims register, which `next` sends it to do before anything is coached.
+- **Grader**: grades one document a turn against the worksheet through `eval/grade`, its store tools `read_only`, so its router has no `write-text` and it can read the workspace and never write it.
 - **Builder**: fills a reader's form, writing the fill spec from the brief into the build directory, the one store it can write, and reading the built form's cells against the structural lines.
-- **Coach**: the claims register and the actions table it will sit against are typed rows, `Claim` and `CoachAction`; its sitting is not built yet.
+- **Coach**: holds one claim a sitting, `<Route path="coach/:claim" {ThreadRoute{template:"CoachThread"}}/>`, which `next` names when the register holds a fatal claim at evidence 0 or 1. Its seed is its procedure, `seeds/coach.md` with the phrases it never says, then the answers of `eval/rows` for the actions table, the register and the claim held, `<RoutePost path="eval/rows?package=..&table=claims&key={claim}"/>`, whose `test` is the last sitting's assignment. It asks one question a turn, gives a decision no default, keeps the register through `eval/put` pinned to the claims table, `<HostTool path="eval/put" params="package=..&table=claims"/>`, and writes its notes under the workspace package's `assets/`. The sitting is control flow: a `<Repeat>` of the coach's turn, `<AssignmentWritten/>` and the owner's turn, under a `<Fallback>` ending in `<EndWith/>`, so the assignment written to the claim's `test` ends it as a pass.

@@ -5,10 +5,12 @@ use beet::prelude::*;
 /// `eval/put`: writes one row of a package's table, refused unless it parses
 /// as the table's type and keeps the law `eval/check` holds every row to: an
 /// eval's prose, levels, anchors and check params, an id no other package
-/// defines, a rubric's citations of known evals at levels they reach. How a
-/// person or an agent adds or changes an eval, a rubric, a render spec or a
-/// coach action. The row is given inline with `--row`, or drafted into the
-/// workspace store and named with `--from`.
+/// defines, a rubric's citations of known evals at levels they reach, a coach
+/// action's served sections and a claim's slug and block. How a person or an
+/// agent adds or changes an eval, a rubric, a render spec, a coach action or
+/// a claim. The row is given inline with `--row`, an object in a JSON body or
+/// its JSON text on a command line, or drafted into the workspace store and
+/// named with `--from`.
 #[action(route = "put")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
@@ -16,12 +18,12 @@ pub async fn EvalPut(
 	/// The package whose table takes the row.
 	#[param]
 	package: SmolStr,
-	/// The table: `evals`, `rubrics`, `render` or `actions`.
+	/// The table the row is written to.
 	#[param]
 	table: PackageTable,
-	/// The row in its stored form, JSON, replacing any of the same key.
+	/// The row in its stored form, replacing any of the same key.
 	#[param]
-	row: Option<String>,
+	row: Option<Value>,
 	/// The workspace store path of a file holding the row, in place of
 	/// `--row`, for a row too long for a command line.
 	#[param]
@@ -34,17 +36,21 @@ pub async fn EvalPut(
 	})?;
 	let tables = TableStore::new(loaded.store.clone());
 	let row = match (row, from) {
-		(Some(row), None) => row.into_bytes(),
-		(None, Some(from)) => workspace.store.get(&from).await?.to_vec(),
+		// a command line's text that is no JSON object, refused as the JSON
+		// it fails to be
+		(Some(Value::Str(text)), None) => {
+			MediaType::Json.deserialize::<Value>(text.as_bytes())?
+		}
+		(Some(row), None) => row,
+		(None, Some(from)) => MediaType::Json
+			.deserialize::<Value>(&workspace.store.get(&from).await?)?,
 		_ => bevybail!("give the row with exactly one of `--row` and `--from`"),
 	};
-	let row = row.as_slice();
+	let outline = workspace.outline().ok();
 	let problems = match table {
 		PackageTable::Evals => {
-			let eval = MediaType::Json.deserialize::<Eval>(row)?;
-			let mut problems =
-				Laws::eval_row(&cx.caller, &eval, workspace.outline().ok())
-					.await;
+			let eval = row.into_serde::<Eval>()?;
+			let mut problems = Laws::eval_row(&cx.caller, &eval, outline).await;
 			if let Some(other) = workspace
 				.eval(&eval.id)
 				.filter(|existing| existing.package != loaded.manifest.name)
@@ -57,21 +63,26 @@ pub async fn EvalPut(
 			Put::finish(problems, tables.table::<Eval>().push(eval)).await?
 		}
 		PackageTable::Rubrics => {
-			let rubric = MediaType::Json.deserialize::<Rubric>(row)?;
+			let rubric = row.into_serde::<Rubric>()?;
 			let problems = Laws::rubric(&workspace, &rubric);
 			Put::finish(problems, tables.table::<Rubric>().push(rubric)).await?
 		}
 		PackageTable::Render => {
-			let spec = MediaType::Json.deserialize::<RenderSpec>(row)?;
+			let spec = row.into_serde::<RenderSpec>()?;
 			let problems = Laws::prose(&spec);
 			Put::finish(problems, tables.table::<RenderSpec>().push(spec))
 				.await?
 		}
 		PackageTable::Actions => {
-			let action = MediaType::Json.deserialize::<CoachAction>(row)?;
-			let problems = Laws::prose(&action);
+			let action = row.into_serde::<CoachAction>()?;
+			let problems = Laws::action(&action, outline);
 			Put::finish(problems, tables.table::<CoachAction>().push(action))
 				.await?
+		}
+		PackageTable::Claims => {
+			let claim = row.into_serde::<Claim>()?;
+			let problems = Laws::claim(&claim, outline);
+			Put::finish(problems, tables.table::<Claim>().push(claim)).await?
 		}
 	};
 	match problems.is_empty() {
@@ -157,5 +168,48 @@ mod test {
 			.refused("eval/put --package=acme_biz --table=evals")
 			.await
 			.xpect_contains("exactly one of `--row` and `--from`");
+	}
+
+	/// A claim put as an agent puts it, its row an object in a JSON body, is
+	/// held to the claim law: a slug id, one sentence, and a block the outline
+	/// declares; a claim the law refuses is never written, and `eval/drop`
+	/// retires one.
+	#[beet::test]
+	async fn puts_claims_that_keep_the_law() {
+		let mut fixture = Fixture::new().await;
+		let put = |id: &str, block: &str, evidence: u8| {
+			Fixture::request("eval/put")
+				.with_body(format!(
+					r#"{{"package":"acme","table":"claims","row":{{
+						"id":"{id}","claim":"Traders pay per weekend.",
+						"block":"{block}","evidence":{evidence},"stakes":"Fatal",
+						"status":"Open","test":"","sources":[]}}}}"#
+				))
+				.with_content_type(MediaType::Json)
+		};
+		fixture
+			.answer(put("per-weekend", "product#pricing", 1))
+			.await
+			.xpect_eq((true, "put acme/claims\n".to_string()));
+		let (ok, text) = fixture
+			.answer(put("Per Weekend", "product#nowhere", 1))
+			.await;
+		ok.xpect_false();
+		text.xpect_contains("must be a slug").xpect_contains(
+			"block product#nowhere: names a section the outline does not declare",
+		);
+		let (ok, text) =
+			fixture.answer(put("too-sure", "product#pricing", 4)).await;
+		ok.xpect_false();
+		text.xpect_contains("evidence 4 is not 0 to 3");
+		fixture
+			.ok("eval/rows --package=acme --table=claims")
+			.await
+			.xpect_contains("1 row")
+			.xpect_contains("### per-weekend");
+		fixture
+			.ok("eval/drop --package=acme --table=claims --key=per-weekend")
+			.await
+			.xpect_eq("dropped acme/claims/per-weekend\n");
 	}
 }

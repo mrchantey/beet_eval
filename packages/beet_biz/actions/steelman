@@ -1,0 +1,20 @@
+{
+  "ask": "What is the best argument that this is wrong, the one a sharp competitor or a sceptical lender would make?",
+  "bad": "Owner: nobody else does this. Coach: being first is a real advantage.",
+  "good": "Owner: nobody else does this. Coach: then the strongest case against you is that nobody wants it. Make that case as a lender would, then tell me what would prove it wrong.",
+  "id": "steelman",
+  "push_until": "The owner states the argument so its holder would accept it, and names the evidence that would settle it.",
+  "red_flags": [
+    "There is no real competition.",
+    "Nobody would argue with that.",
+    "They just do not get it."
+  ],
+  "serves": [
+    "market#competitive-advantage",
+    "market#swot"
+  ],
+  "sources": [
+    "gstack:office-hours"
+  ],
+  "statement": "The strongest case against the claim is stated as its holder would make it, and answered."
+}

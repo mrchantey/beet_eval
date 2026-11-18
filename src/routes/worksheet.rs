@@ -1,13 +1,6 @@
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// The params of `eval/worksheet` and of the worksheet tool.
-#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
-pub struct WorksheetParams {
-	/// One document's worksheet, the `:document` path segment; every document's when absent.
-	pub document: Option<SmolStr>,
-}
-
 /// `eval/worksheet [<document>]`: every judged eval anchored in each
 /// document, in the outline's order and then by section, with its statement
 /// and level lines: what a grader grades and a writer writes towards. The
@@ -17,10 +10,11 @@ pub struct WorksheetParams {
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
 pub async fn EvalWorksheet(
-	params: Params<WorksheetParams>,
+	/// One document's worksheet, the `:document` path segment; every document's when absent.
+	#[param]
+	document: Option<SmolStr>,
 	cx: ActionContext<Request>,
 ) -> Result<DataPage<Vec<WorksheetDocument>>> {
-	let WorksheetParams { document } = params.0;
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
 	let outline = workspace.outline()?;

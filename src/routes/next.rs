@@ -55,9 +55,11 @@ mod test {
 			.ok("eval/next")
 			.await
 			.xpect_starts_with(
-				"## Next: write product\n\n1 ask(s) open and an owner gap of 11, reader gap 4, the most of any document.\n",
+				"## Next: write product\n\ndocs/product holds 1 decision ask(s) no claim names: raise each as a claim for the coach with `eval/put`.\n",
 			)
-			.xpect_contains("| product | yes | 1 | 0 | 11 | 4 | 0/4 | 2026-10-04 |");
+			.xpect_contains(
+				"| product | yes | 1 | 1/1 | 0 | 11 | 4 | 0/4 | 2026-10-04 |",
+			);
 		let step = MediaType::Json
 			.deserialize::<NextStep>(
 				fixture

@@ -1,0 +1,20 @@
+{
+  "ask": "Have you sat beside someone while they dealt with this, without helping? What did they do that surprised you?",
+  "bad": "Owner: we ran a survey and 80 percent said it was a problem. Coach: that is strong validation.",
+  "good": "Owner: we ran a survey and 80 percent said it was a problem. Coach: a survey records what people say. Whose shoulder will you stand behind this week, saying nothing, to see what they actually do?",
+  "id": "watch",
+  "push_until": "The owner names an occasion and one thing the customer did that the owner did not expect.",
+  "red_flags": [
+    "We sent a survey.",
+    "We ran a demo.",
+    "Nothing surprised us."
+  ],
+  "serves": [
+    "market#discovery"
+  ],
+  "sources": [
+    "gstack:office-hours",
+    "ref:blank-2005"
+  ],
+  "statement": "The owner has watched a customer deal with the problem without helping."
+}

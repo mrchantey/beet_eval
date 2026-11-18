@@ -21,8 +21,8 @@
 //! - [`form`]: the renderer, a reader package's
 //!   [`RenderSpec`](prelude::RenderSpec) and the
 //!   [`FillSpec`](prelude::FillSpec) a builder writes against it.
-//! - [`coach`]: the workspace package's claims register and the document
-//!   package's coach actions.
+//! - [`coach`]: the workspace package's claims register, the document
+//!   package's coach actions, and the end of a coach's sitting.
 //! - [`routes`]: the verbs, each a route of `beet-eval`, mounted by
 //!   `<EvalRoutes/>` beside the check kinds' `<CheckRoutes/>`.
 //! - [`toolset`]: the verbs as an agent's tools, `<EvalToolset/>`.

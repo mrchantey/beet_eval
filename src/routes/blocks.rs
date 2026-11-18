@@ -2,13 +2,6 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// The params of `eval/blocks` and of the blocks tool.
-#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
-pub struct BlocksParams {
-	/// The block to print, the `:name` path segment; every block listed when absent.
-	pub name: Option<SmolStr>,
-}
-
 /// `eval/blocks [<name>]`: lists the named data blocks under the documents
 /// directory, the [`BlocksReport`] for a markup `Accept` and every block in
 /// full, its rows parsed, for a serde one; or prints one block's body as
@@ -17,10 +10,11 @@ pub struct BlocksParams {
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
 pub async fn EvalBlocks(
-	params: Params<BlocksParams>,
+	/// The block to print, the `:name` path segment; every block listed when absent.
+	#[param]
+	name: Option<SmolStr>,
 	cx: ActionContext<Request>,
 ) -> Result<Response> {
-	let BlocksParams { name } = params.0;
 	let store = LoadedWorkspace::store_of(&cx.caller).await?;
 	let manifest = Workspace::read(&store).await?;
 	let mut documents = DocumentSet::load(

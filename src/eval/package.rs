@@ -85,7 +85,8 @@ pub enum PackageKind {
 }
 
 /// A table a package holds rows of, named by the directory its rows sit in:
-/// what `eval/put` writes a row of and `eval/drop` removes one from.
+/// what `eval/rows` lists, `eval/put` writes a row of and `eval/drop` removes
+/// one from.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Reflect)]
 pub enum PackageTable {
 	/// `evals/`, [`Eval`] rows.
@@ -96,6 +97,8 @@ pub enum PackageTable {
 	Render,
 	/// `actions/`, a document package's [`CoachAction`] rows.
 	Actions,
+	/// `claims/`, a workspace package's [`Claim`] rows, its register.
+	Claims,
 }
 
 impl PackageTable {
@@ -106,6 +109,7 @@ impl PackageTable {
 			Self::Rubrics => Rubric::table_name(),
 			Self::Render => RenderSpec::table_name(),
 			Self::Actions => CoachAction::table_name(),
+			Self::Claims => Claim::table_name(),
 		}
 	}
 }
@@ -136,6 +140,8 @@ pub struct LoadedPackage {
 	pub render: Vec<RenderSpec>,
 	/// Its `actions` rows.
 	pub actions: Vec<CoachAction>,
+	/// Its `claims` rows, a workspace package's register.
+	pub claims: Vec<Claim>,
 	/// A document package's outline.
 	pub outline: Option<Outline>,
 }
@@ -169,6 +175,7 @@ impl LoadedPackage {
 			rubrics: Self::rows(&store, &name, &mut problems).await?,
 			render: Self::rows(&store, &name, &mut problems).await?,
 			actions: Self::rows(&store, &name, &mut problems).await?,
+			claims: Self::rows(&store, &name, &mut problems).await?,
 			manifest,
 			store,
 			source,

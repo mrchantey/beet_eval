@@ -1,0 +1,21 @@
+{
+  "ask": "When did someone last do this, rather than say they would? What happened, and what did it cost them?",
+  "bad": "Owner: they said they'd definitely use it. Coach: so that is a yes from the customer.",
+  "good": "Owner: they said they'd definitely use it. Coach: that is a promise about the future, and it cost them nothing. When did they last pay to solve this, and how?",
+  "id": "evidence",
+  "push_until": "The owner recounts one past occasion with who, when and what was spent, or admits there is none.",
+  "red_flags": [
+    "They said they would definitely buy it.",
+    "Usually they would.",
+    "I think most people would."
+  ],
+  "serves": [
+    "market#discovery",
+    "market#research"
+  ],
+  "sources": [
+    "ref:fitzpatrick-2013",
+    "ref:seibel"
+  ],
+  "statement": "The claim's evidence is placed on the ladder by what someone did, never by what they said they would do."
+}

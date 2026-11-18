@@ -5,7 +5,8 @@ use beet::prelude::*;
 /// `eval/check`: every table of every package against the law: rows that
 /// parse, ids unique across the workspace, the prose rules, each check's
 /// params against its route's, citations of known evals at levels they can
-/// reach, and every anchor, block home and agreement against the outline.
+/// reach, and every anchor, block home, agreement, action's served section
+/// and claim's block against the outline.
 /// Answers with each problem and a count line, exiting 1 on any.
 #[action(route = "check")]
 #[derive(Default, Component, Reflect)]
@@ -56,10 +57,18 @@ pub async fn EvalCheck(
 			}
 		}
 		for action in &package.actions {
-			for problem in Laws::prose(action) {
+			for problem in Laws::action(action, outline) {
 				errors.push(format!(
 					"{}/actions/{}: {problem}",
 					package.manifest.name, action.id
+				));
+			}
+		}
+		for claim in &package.claims {
+			for problem in Laws::claim(claim, outline) {
+				errors.push(format!(
+					"{}/claims/{}: {problem}",
+					package.manifest.name, claim.id
 				));
 			}
 		}

@@ -12,15 +12,38 @@ use beet::prelude::*;
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
 pub async fn EvalGrade(
-	grading: Params<Grading>,
+	/// The judged eval graded, ie `market.competitors-named`.
+	#[param]
+	eval: EvalId,
+	/// The level by the eval's own lines, 0 to 3, the lower of two when
+	/// between them.
+	#[param]
+	level: u8,
+	/// Where the evidence sits; defaults to the eval's anchor.
+	#[param]
+	anchor: Option<Address>,
+	/// A verbatim quote of at most twenty-five words from the anchor, absent
+	/// only at level 0 when nothing is written there.
+	#[param]
+	evidence: Option<SmolStr>,
+	/// The grader of record, a model or a person.
+	#[param]
+	by: SmolStr,
 	cx: ActionContext<Request>,
 ) -> Result<Response> {
+	let grading = Grading {
+		eval,
+		level,
+		anchor,
+		evidence,
+		by,
+	};
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
 	let mut documents =
 		DocumentSet::load(&workspace.docs(), workspace.manifest.docs.clone())
 			.await?;
-	let grade = match grading.0.check(&workspace, &mut documents) {
+	let grade = match grading.check(&workspace, &mut documents) {
 		Ok(grade) => grade,
 		Err(err) => return refusal(format!("{err}\n")).xok(),
 	};
@@ -35,23 +58,14 @@ pub async fn EvalGrade(
 	.xok()
 }
 
-/// A grade as the grader gives it, before the rules it is written under: the
-/// params of `eval/grade` and the input of the grade tool, so a person and an
-/// agent grade through one declaration. [`EvalGrade`] stamps its date.
-#[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
-pub struct Grading {
-	/// The judged eval graded, ie `market.competitors-named`.
-	pub eval: EvalId,
-	/// The level by the eval's own lines, 0 to 3, the lower of two when
-	/// between them.
-	pub level: u8,
-	/// Where the evidence sits; defaults to the eval's anchor.
-	pub anchor: Option<Address>,
-	/// A verbatim quote of at most twenty-five words from the anchor, absent
-	/// only at level 0 when nothing is written there.
-	pub evidence: Option<SmolStr>,
-	/// The grader of record, a model or a person.
-	pub by: SmolStr,
+/// A grade as the grader gives it, before the rules it is written under,
+/// which [`EvalGrade`] checks and stamps with its date.
+struct Grading {
+	eval: EvalId,
+	level: u8,
+	anchor: Option<Address>,
+	evidence: Option<SmolStr>,
+	by: SmolStr,
 }
 
 impl Grading {

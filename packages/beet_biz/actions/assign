@@ -1,0 +1,20 @@
+{
+  "ask": "What is the one thing you will do before we next sit that would move this claim up a rung, and by when?",
+  "bad": "Owner: I'll do some more research on the market. Coach: great, let's catch up when you've done that.",
+  "good": "Owner: I'll do some more research on the market. Coach: research is a direction, not a test. Which three people will you ask this week to pay for a first month, and what answer would count?",
+  "id": "assign",
+  "push_until": "The owner commits to one action with a person, a day and the result that would count, and it is written to the claim's test.",
+  "red_flags": [
+    "I'll do some research.",
+    "I'll think about it.",
+    "A few things."
+  ],
+  "serves": [
+    "product#action-plan"
+  ],
+  "sources": [
+    "gstack:office-hours",
+    "ref:fitzpatrick-2013"
+  ],
+  "statement": "The sitting ends with one test, written to the claim, that would move its evidence a rung."
+}

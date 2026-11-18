@@ -7,12 +7,12 @@ the build directory alone to write.
 	<CreateActor id=2 name="Loop" kind="User"><RequestPost text="build {rubric}"/></CreateActor>
 	<RepeatWhileFunctionCallOutput>
 		<CreateActor id=6 name="Builder" kind="Agent" {MockPostStreamer{script:[
-			Call{tool:"project", arguments:{rubric:"acme_course/01-business-plan"}},
+			Call{tool:"eval/project", arguments:{rubric:"acme_course/01-business-plan"}},
 			Call{tool:"write-text", arguments:{
 				path:"acme_course/01-business-plan.fill.json",
 				text:"{\"ops\":[{\"Set\":{\"cell\":\"t1r1c2\",\"text\":\"Acme Stalls\"}},{\"Check\":{\"label\":\"Surveys\"}}]}",
 			}},
-			Call{tool:"build", arguments:{rubric:"acme_course/01-business-plan"}},
+			Call{tool:"eval/build", arguments:{rubric:"acme_course/01-business-plan"}},
 			Text("1. The name cell holds Acme Stalls and Surveys is ticked."),
 		]}}>
 			<Router>

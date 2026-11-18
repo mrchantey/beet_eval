@@ -56,7 +56,9 @@ mod test {
 			.unwrap()
 			.detail
 			.clone()
-			.xpect_eq("2 open: docs/brand.md:17, docs/product.md:17");
+			.xpect_eq(
+				"2 open (1 fact, 1 decision): docs/brand.md:17, docs/product.md:17",
+			);
 		summary.rubrics[0].id.to_string().xpect_eq("acme_biz/owner");
 		fixture
 			.ok("eval/results")

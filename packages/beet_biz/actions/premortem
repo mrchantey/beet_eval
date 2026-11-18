@@ -1,0 +1,20 @@
+{
+  "ask": "Imagine it is a year from now and the business has failed. What is the most likely story of how it happened?",
+  "bad": "Owner: I can't see it failing if we work hard. Coach: that commitment will carry you.",
+  "good": "Owner: I can't see it failing if we work hard. Coach: it is a year on and it has failed anyway. Tell me the story: which week did it start to go wrong, and why?",
+  "id": "premortem",
+  "push_until": "The owner tells a specific failure story and names the claim it turns on, which goes into the register.",
+  "red_flags": [
+    "It won't fail.",
+    "Only if the economy collapses.",
+    "Bad luck."
+  ],
+  "serves": [
+    "legal#risk-register",
+    "finance#cash-flow"
+  ],
+  "sources": [
+    "ref:klein-2007"
+  ],
+  "statement": "The most likely way the plan fails is told as a story before it happens."
+}

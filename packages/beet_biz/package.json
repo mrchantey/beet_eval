@@ -5,15 +5,22 @@
   "outline": "outline.json",
   "sources": {
     "biz:outline": "This package's own `outline.json`.",
+    "gstack:office-hours": "Garry Tan, gstack, the office-hours skill's startup diagnostic: six forcing questions, each with what to push until and the answers that are red flags, the shape of this package's coach actions, and the phrases a coach never says.",
     "ref:aaker-1996": "David A. Aaker, Building Strong Brands, Free Press, 1996. The brand identity system, and identity as something planned rather than found.",
+    "ref:blank-2005": "Steven Gary Blank, The Four Steps to the Epiphany, 2005. Customer discovery and validation: every fact in a plan is a hypothesis until customers confirm it, outside the building.",
     "ref:business-gov-au": "Australian Government, business.gov.au, the business plan template and guide, the Australian form of the same outline.",
+    "ref:fitzpatrick-2013": "Rob Fitzpatrick, The Mom Test: How to Talk to Customers and Learn If Your Business Is a Good Idea When Everyone Is Lying to You, 2013. Ask about their life and the past rather than the idea and the future; compliments and promises are no data, and commitment is paid in time, reputation or money.",
     "ref:ip-australia": "IP Australia, Australian Trade Mark Search, and the Australian Securities and Investments Commission's Business Names Register. The two searches a name is cleared against.",
+    "ref:klein-2007": "Gary Klein, Performing a Project Premortem, Harvard Business Review, September 2007. Imagine the project has failed, then explain why, so doubts surface while they are still cheap.",
     "ref:mark-pearson-2001": "Margaret Mark and Carol S. Pearson, The Hero and the Outlaw: Building Extraordinary Brands Through the Power of Archetypes, McGraw-Hill, 2001. The twelve archetypes and the discipline of choosing one.",
+    "ref:martin-lafley-2013": "A. G. Lafley and Roger L. Martin, Playing to Win: How Strategy Really Works, Harvard Business Review Press, 2013. Where to play and how to win, tested by asking what would have to be true.",
+    "ref:maurya-2012": "Ash Maurya, Running Lean: Iterate from Plan A to a Plan That Works, O'Reilly, 2012. The riskiest assumption tested first, problem interviews before solutions, and paying customers as the proof.",
     "ref:neumeier-2006": "Marty Neumeier, Zag: The Number One Strategy of High-Performance Brands, New Riders, 2006. The onliness statement: what the business alone is, for whom, and why.",
     "ref:nielsen-norman-2016": "Kate Moran, The Four Dimensions of Tone of Voice, Nielsen Norman Group, 2016. Funny to serious, formal to casual, respectful to irreverent, enthusiastic to matter-of-fact.",
     "ref:ries-trout-1981": "Al Ries and Jack Trout, Positioning: The Battle for Your Mind, McGraw-Hill, 1981. Positioning as the place a brand holds in the customer's mind against alternatives.",
     "ref:romaniuk-2018": "Jenni Romaniuk, Building Distinctive Brand Assets, Oxford University Press, 2018. Which assets are worth owning and how recognition is measured.",
     "ref:sba": "US Small Business Administration, Write your business plan, the traditional business plan outline the template's documents follow.",
+    "ref:seibel": "Michael Seibel, How to Talk to Users, Y Combinator. Ask about the last time the problem happened and what they did about it, and never pitch while learning.",
     "ref:sharp-2010": "Byron Sharp, How Brands Grow: What Marketers Don't Know, Oxford University Press, 2010. Distinctiveness over differentiation; consistency as the mechanism of recognition.",
     "ref:wheeler-2024": "Alina Wheeler and Rob Meyerson, Designing Brand Identity, sixth edition, Wiley, 2024. The practitioner's process from research to a brand sheet, and what a reproducible identity specifies."
   }

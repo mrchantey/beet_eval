@@ -10,6 +10,7 @@
 //! <Route path="write/:document" {ThreadRoute{template:"ClerkThread"}}/>
 //! <Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>
 //! <Route path="build/*rubric" {ThreadRoute{template:"BuilderThread"}}/>
+//! <Route path="coach/:claim" {ThreadRoute{template:"CoachThread"}}/>
 //! ```
 //!
 //! A role's thread is a template, built afresh for each request:
@@ -46,6 +47,10 @@
 //!   resolves.
 //! - **A builder writes only the build**: its store tools sit under a
 //!   `DirPath("dist")`, the build directory.
+//! - **The coach holds claims, never asks**: a decision ask whose section no
+//!   claim names is the clerk's to raise as a claim, and the coach's sitting
+//!   on a claim ends once its assignment is written to the claim's `test`,
+//!   [`AssignmentWritten`].
 //! - **Every role runs by hand**: a role is a route, so
 //!   `beet-eval --entry=iterate.bsx grade product` runs one unit.
 mod next_unit;

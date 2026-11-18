@@ -247,6 +247,16 @@ impl LoadedWorkspace {
 		}
 	}
 
+	/// The claims register: every claim of every workspace package, in
+	/// package order.
+	pub fn claims(&self) -> Vec<&Claim> {
+		self.packages
+			.iter()
+			.filter(|package| package.manifest.kind == PackageKind::Workspace)
+			.flat_map(|package| package.claims.iter())
+			.collect()
+	}
+
 	/// The document package's outline.
 	pub fn outline(&self) -> Result<&Outline> {
 		let package = self.document_package()?;

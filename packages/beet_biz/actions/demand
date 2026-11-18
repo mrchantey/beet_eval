@@ -1,0 +1,21 @@
+{
+  "ask": "What is the strongest evidence that someone wants this, not that they are interested, but that they would be upset if it disappeared tomorrow?",
+  "bad": "Owner: everyone I've shown it to loves the idea. Coach: that is a great sign, love is a start.",
+  "good": "Owner: everyone I've shown it to loves the idea. Coach: loving an idea is free. Has anyone paid, asked when it starts, or chased you when it was late? Name one.",
+  "id": "demand",
+  "push_until": "The owner names a person and something that person did: paid, came back, built their week around it, or chased the owner when it was late.",
+  "red_flags": [
+    "People say it is interesting.",
+    "We have a waitlist.",
+    "Everyone I have shown it to loves it."
+  ],
+  "serves": [
+    "market#discovery",
+    "market#customers"
+  ],
+  "sources": [
+    "gstack:office-hours",
+    "ref:fitzpatrick-2013"
+  ],
+  "statement": "Someone wants the offer enough to scramble if it vanished, shown by what they did rather than what they said."
+}

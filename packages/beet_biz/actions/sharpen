@@ -1,0 +1,20 @@
+{
+  "ask": "Name the person who needs this most: who are they, what does the problem cost them, and what happens to them if it is never solved?",
+  "bad": "Owner: our customers are small businesses. Coach: good, that is a big market.",
+  "good": "Owner: our customers are small businesses. Coach: that is a filter, not a person. Which business on which street, and who there loses sleep over this?",
+  "id": "sharpen",
+  "push_until": "The owner gives a name, or a role at a place they could walk into tomorrow, and a consequence that person would recognise.",
+  "red_flags": [
+    "Small businesses.",
+    "Anyone who goes to markets.",
+    "Everyone needs this."
+  ],
+  "serves": [
+    "market#customers"
+  ],
+  "sources": [
+    "gstack:office-hours",
+    "ref:seibel"
+  ],
+  "statement": "The customer is one person with a role and a consequence, never a category."
+}

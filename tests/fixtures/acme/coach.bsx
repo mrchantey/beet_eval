@@ -1,0 +1,19 @@
+<!--
+The acme workspace's coach: one sitting on one claim of the register, the
+coach scripted under the mock provider:
+
+    just cli --entry=<a copy of this directory>/coach.bsx coach <claim id>
+
+Its thread is `templates/CoachThread.bsx`, stored under the workspace
+package's `assets/threads/coach`. A live workspace's entry is this one with
+`{ModelStreamer{provider:OpenAi}}` for the coach and `{UserInput}` for the
+owner, under a server with a surface to type into.
+-->
+<TemplateDir src="templates"/>
+<CliServer {CallOnReady}>
+<Router {(RequestLogger, HelpHandler)}>
+	<Route path="eval"><EvalRoutes/></Route>
+	<Route path="check"><CheckRoutes/></Route>
+	<Route path="coach/:claim" {ThreadRoute{template:"CoachThread"}}/>
+</Router>
+</CliServer>

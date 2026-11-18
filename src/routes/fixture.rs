@@ -180,9 +180,10 @@ impl Fixture {
 	}
 }
 
-/// The fixture's `iterate.bsx` built as the binary builds an entry, over a
-/// fresh copy of the workspace, every agent scripted: the loop at `iterate`
-/// and each role at its own route, ie `grade/product`.
+/// One of the fixture's entries built as the binary builds it, over a fresh
+/// copy of the workspace, every agent scripted: `iterate.bsx`, the loop at
+/// `iterate` and each role at its own route, ie `grade/product`, or
+/// `coach.bsx`, the coach's sitting at `coach/<claim id>`.
 pub(crate) struct FixtureEntry {
 	app: App,
 	router: Entity,
@@ -191,8 +192,12 @@ pub(crate) struct FixtureEntry {
 }
 
 impl FixtureEntry {
-	/// The entry over a fresh copy of the workspace, built and disarmed.
-	pub async fn new() -> Self {
+	/// `iterate.bsx` over a fresh copy of the workspace, built and disarmed.
+	pub async fn new() -> Self { Self::of("iterate.bsx").await }
+
+	/// The entry `name` over a fresh copy of the workspace, built and
+	/// disarmed.
+	pub async fn of(name: &str) -> Self {
 		let store = Fixture::workspace().await;
 		let mut app = App::new();
 		app.add_plugins(MinimalPlugins)
@@ -207,7 +212,7 @@ impl FixtureEntry {
 		let entry = entry_build::resolve_in_repo_store(
 			store.clone(),
 			&prescans,
-			"iterate.bsx".into(),
+			name.into(),
 		)
 		.await
 		.unwrap();

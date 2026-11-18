@@ -42,6 +42,45 @@ impl Laws {
 		problems
 	}
 
+	/// A coach action's prose and the addresses it serves.
+	pub fn action(
+		action: &CoachAction,
+		outline: Option<&Outline>,
+	) -> Vec<String> {
+		let mut problems = Self::prose(action);
+		if let Some(outline) = outline {
+			for address in &action.serves {
+				if let Some(problem) = Self::address(outline, address) {
+					problems.push(format!("serves {address}: {problem}"));
+				}
+			}
+		}
+		problems
+	}
+
+	/// A claim's prose, its id one slug and the block it rests in.
+	pub fn claim(claim: &Claim, outline: Option<&Outline>) -> Vec<String> {
+		let mut problems = Self::prose(claim);
+		if !Claim::is_id(&claim.id) {
+			problems.push(format!(
+				"the id {} must be a slug of lowercase letters, digits and dashes",
+				claim.id
+			));
+		}
+		if !Self::one_sentence(&claim.claim) {
+			problems.push(
+				"the claim must be exactly one sentence ending in a full stop"
+					.into(),
+			);
+		}
+		if let Some(outline) = outline
+			&& let Some(problem) = Self::address(outline, &claim.block)
+		{
+			problems.push(format!("block {}: {problem}", claim.block));
+		}
+		problems
+	}
+
 	/// An eval's prose, levels and anchors.
 	fn eval(eval: &Eval, outline: Option<&Outline>) -> Vec<String> {
 		let mut problems = Self::prose(eval);

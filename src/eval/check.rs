@@ -30,12 +30,12 @@ impl CheckRef {
 		.xok()
 	}
 
-	/// The request calling the route: each param a flag in kebab case, a list
-	/// repeating its flag.
+	/// The request calling the route, its params sent as a JSON body, which
+	/// the route reads as it reads flags.
 	pub fn request(&self) -> Request {
-		RouteCall::new(format!("/check/{}", self.route))
-			.with_params(&self.params)
-			.into_request()
+		Request::get(format!("/check/{}", self.route).as_str())
+			.with_body(self.params.to_json_string())
+			.with_content_type(MediaType::Json)
 	}
 
 	/// The route's path in the engine's router, `check/<route>`.
@@ -50,10 +50,7 @@ impl CheckRef {
 	/// called, so the router refuses it as it would a person's, and reads
 	/// its verdict.
 	pub async fn call(&self, caller: &AsyncEntity) -> Result<CheckVerdict> {
-		let response = RouteCall::new(format!("/check/{}", self.route))
-			.with_params(&self.params)
-			.exchange(caller)
-			.await?;
+		let response = RouteCall::from(self.request()).exchange(caller).await?;
 		match response.status().is_ok() {
 			true => response.json::<CheckVerdict>().await,
 			false => {
@@ -74,20 +71,29 @@ impl CheckRef {
 		caller: &AsyncEntity,
 	) -> Result<Option<String>> {
 		let path = self.path();
-		let request = self.request();
 		let route = self.route.clone();
-		caller
+		let Some(pattern) = caller
 			.with_state::<AncestorQuery<&RouteTree>, _>(move |entity, trees| {
-				match trees.get(entity).ok().and_then(|tree| tree.find(&path)) {
-					Some(node) => node
-						.params
-						.refusal(request.params(), ParamsValidation::Complete),
-					None => Some(format!(
-						"no route `check/{route}` decides this check"
-					)),
-				}
+				trees
+					.get(entity)
+					.ok()
+					.and_then(|tree| tree.find(&path))
+					.map(|node| node.params.clone())
 			})
-			.await
+			.await?
+		else {
+			return Some(format!(
+				"no route `check/{route}` decides this check"
+			))
+			.xok();
+		};
+		let mut request = self.request();
+		request
+			.merge_body_params(|key| pattern.repeats(key))
+			.await?;
+		pattern
+			.refusal(request.params(), ParamsValidation::Complete)
+			.xok()
 	}
 }
 

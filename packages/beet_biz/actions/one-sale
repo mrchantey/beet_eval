@@ -1,0 +1,21 @@
+{
+  "ask": "Who will you ask to pay the listed price this week, and what will you say?",
+  "bad": "Owner: I'll give the first few away free for feedback. Coach: good idea, feedback is valuable.",
+  "good": "Owner: I'll give the first few away free for feedback. Coach: free tells you nothing about the price. Who will you ask this week to pay the listed price, and what will you say?",
+  "id": "one-sale",
+  "push_until": "The owner names the buyer, the price, the day and the words of the ask.",
+  "red_flags": [
+    "Once it is ready.",
+    "I will give it away free first to get feedback.",
+    "I don't want to be pushy."
+  ],
+  "serves": [
+    "product#pricing",
+    "finance#sales-projection"
+  ],
+  "sources": [
+    "ref:fitzpatrick-2013",
+    "ref:maurya-2012"
+  ],
+  "statement": "One sale is asked for at the listed price before more is built."
+}

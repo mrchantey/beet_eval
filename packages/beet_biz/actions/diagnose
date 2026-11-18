@@ -1,0 +1,20 @@
+{
+  "ask": "For this to work, what has to be true about customers, price and cost that you have not yet seen with your own eyes?",
+  "bad": "Owner: if we get the customers, the rest follows. Coach: then focus on getting customers.",
+  "good": "Owner: if we get the customers, the rest follows. Coach: what has to be true for that: how many a week, at what price, at what cost to reach each one? Which of those have you seen?",
+  "id": "diagnose",
+  "push_until": "The owner lists the conditions, each one written to the register as a claim with its stakes.",
+  "red_flags": [
+    "It all just works.",
+    "The numbers will sort themselves out."
+  ],
+  "serves": [
+    "finance#break-even",
+    "product#pricing"
+  ],
+  "sources": [
+    "ref:martin-lafley-2013",
+    "ref:blank-2005"
+  ],
+  "statement": "What would have to be true for the plan to work is listed, each condition a claim in the register."
+}

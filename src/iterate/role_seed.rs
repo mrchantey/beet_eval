@@ -11,7 +11,7 @@ use beet::prelude::*;
 /// path.
 #[template]
 pub fn RoleSeed(
-	/// The role, ie `clerk`, `grader` or `builder`.
+	/// The role, ie `clerk`, `grader`, `builder` or `coach`.
 	#[prop(required)]
 	role: SmolStr,
 ) -> impl Bundle {
@@ -38,7 +38,7 @@ mod test {
 	use beet::prelude::*;
 
 	/// The texts of every sitting the `role` persisted in `store`, each its
-	/// posts in order, a function call as `call <name>` and its output as
+	/// posts in order, a function call as `call <tool path>` and its output as
 	/// `output <text>`.
 	async fn sittings(store: &BlobStore, role: &str) -> Vec<Vec<String>> {
 		let records = BlobThreadStore::new(store.with_subdir(RelPath::new(
@@ -51,9 +51,10 @@ mod test {
 				posts
 					.iter()
 					.map(|post| match post.as_agent_post() {
-						AgentPost::FunctionCall(call) => {
-							format!("call {}", call.name())
-						}
+						AgentPost::FunctionCall(call) => format!(
+							"call {}",
+							FunctionToolDefinition::decode_name(call.name())
+						),
 						AgentPost::FunctionCallOutput(output) => {
 							format!("output {}", output.output())
 						}
@@ -80,7 +81,7 @@ mod test {
 			.as_str()
 			.xpect_starts_with("You are the clerk of Acme's");
 		sitting[1].xpect_eq("write product");
-		sitting[2].xpect_eq("call results");
+		sitting[2].xpect_eq("call eval/results");
 		sitting
 			.iter()
 			.any(|text| text == "call edit-text")
