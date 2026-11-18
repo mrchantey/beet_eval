@@ -1,6 +1,6 @@
 # beet_eval
 
-beet_eval evaluates a subject against packages of evals and rubrics: mechanical checks, grades with verbatim evidence, results every rubric reads, and the next unit of work. Markdown documents are the first subject and Office forms the renderer, with agents writing, grading and building through its routes. `README.md` fixes the words and the module docs carry the law; the library holds the data model while `.agents/plans/master-plan.md` builds the rest, so read that plan before any work here.
+beet_eval evaluates a subject against packages of evals and rubrics: mechanical checks, grades with verbatim evidence, results every rubric reads, and the next unit of work. Markdown documents are the first subject and Office forms the renderer, with agents writing, grading and building through its routes. `README.md` fixes the words and the module docs carry the law; the library holds the data model while the master plan builds the rest. The plan lives in beet's `eval` worktree, `~/me/worktrees/beet/eval/beet/.agents/plans/master-plan.md`, and its phases run from there, so read that plan before any work here.
 
 ## Context
 
@@ -12,7 +12,7 @@ Downstream deltas from the inherited conventions:
 - Tests use `#[beet::test]` and `beet::test_main!()`, the facade re-exports of the beet_core harness; the `test_main!` invocation is `#[cfg(test)]` gated so a plain build does not need the facade's `testing` feature.
 - Upstream work happens in the `eval` worktree, `../worktrees/beet/eval/beet`, which `Cargo.toml` names, left unstaged there for review. Never edit `/home/pete/me/beet` directly: other agents work in the primary checkout, and a change reaches it only once the operator syncs the trees, so say when a verification needs that.
 - No course material or real business data is committed: tests run on synthetic fixtures under `tests/fixtures/`, and comparisons against a live workspace run from uncommitted captures under `.agents/tmp/`.
-- `.agents/` is gitignored here (skills excepted), so the plan, reports, the `gstack` reference under `.agents/reference/` and the Codex clone under `.agents/tmp/codex/` are local to this checkout.
+- `.agents/` is gitignored here (skills excepted) and holds only this repository's skills. The plan, its reports and scratch, the `gstack` reference and the Codex clone live under the `eval` worktree's `.agents/`.
 - The loop runs as routes, not as skills: a workspace's `iterate.bsx` asks `eval/next` for each unit and requests it of the clerk's, grader's or builder's route, each building a thread for its unit (`src/iterate/mod.rs`, and the fixture's `tests/fixtures/acme/iterate.bsx` with its role threads under `templates/`), each role's procedure the seed `seeds/<role>.md` of the document package.
 - `.agents/skills/` holds the skills an agent runs beside the loop, `write-criteria`, `write-rubric` and `ingest-source`, written for any workspace and cited by path from each workspace's `AGENTS.md`; a workspace's own specifics live in its own copy, layered over these. They are committed, so they name no course and no business.
 
