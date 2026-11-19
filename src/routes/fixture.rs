@@ -85,8 +85,7 @@ impl Fixture {
 	/// a fresh [`FixtureEntry`]: the copy as the roles left it, and the run's
 	/// answer.
 	pub async fn iterate(turns: u32) -> (BlobStore, Response) {
-		let mut entry = FixtureEntry::new().await;
-		entry.set_turns(turns);
+		let mut entry = FixtureEntry::looping(turns).await;
 		let response = entry.request(Request::get("iterate"));
 		(entry.store, response)
 	}
@@ -159,6 +158,52 @@ impl Fixture {
 		.unwrap()
 	}
 
+	/// Every thread `role` keeps under the workspace package's
+	/// `assets/threads/<role>` in `store`, with its posts in order, oldest
+	/// thread first.
+	pub async fn threads(
+		store: &BlobStore,
+		role: &str,
+	) -> Vec<(Thread, Vec<Post>)> {
+		let records = BlobThreadStore::new(store.with_subdir(RelPath::new(
+			format!("packages/acme/assets/threads/{role}"),
+		)));
+		let mut threads = records.threads().await.unwrap_or_default();
+		threads.sort_by_key(|thread| (thread.created(), thread.id()));
+		let mut out = Vec::new();
+		for thread in threads {
+			let posts = records.thread_posts(thread.id(), None).await.unwrap();
+			out.push((thread, posts));
+		}
+		out
+	}
+
+	/// The texts of every thread `role` keeps in `store`, each its posts in
+	/// order, a function call as `call <tool path>`, its output as
+	/// `output <text>`, the session brackets left out.
+	pub async fn sittings(store: &BlobStore, role: &str) -> Vec<Vec<String>> {
+		Self::threads(store, role)
+			.await
+			.into_iter()
+			.map(|(_, posts)| {
+				posts
+					.iter()
+					.filter_map(|post| match post.as_agent_post() {
+						AgentPost::Session(_) => None,
+						AgentPost::FunctionCall(call) => Some(format!(
+							"call {}",
+							FunctionToolDefinition::decode_name(call.name())
+						)),
+						AgentPost::FunctionCallOutput(output) => {
+							Some(format!("output {}", output.output()))
+						}
+						_ => Some(post.to_string()),
+					})
+					.collect()
+			})
+			.collect()
+	}
+
 	/// The blank business plan form: a name cell, a description box sharing
 	/// its cell with its prompt and a red instruction sentence, and a Surveys
 	/// checkbox.
@@ -195,10 +240,38 @@ impl FixtureEntry {
 	/// `iterate.bsx` over a fresh copy of the workspace, built and disarmed.
 	pub async fn new() -> Self { Self::of("iterate.bsx").await }
 
+	/// `iterate.bsx` whose loop takes `turns` turns a run, in place of its
+	/// own count, over a fresh copy of the workspace.
+	pub async fn looping(turns: u32) -> Self {
+		let store = Fixture::workspace().await;
+		let path = RelPath::new(Self::LOOP_THREAD);
+		let source =
+			String::from_utf8(store.get(&path).await.unwrap().to_vec())
+				.unwrap();
+		let count = "total_times=3";
+		source.contains(count).xpect_true();
+		store
+			.insert(
+				&path,
+				source.replace(count, &format!("total_times={turns}")),
+			)
+			.await
+			.unwrap();
+		Self::build(store, "iterate.bsx").await
+	}
+
 	/// The entry `name` over a fresh copy of the workspace, built and
 	/// disarmed.
 	pub async fn of(name: &str) -> Self {
-		let store = Fixture::workspace().await;
+		Self::build(Fixture::workspace().await, name).await
+	}
+
+	/// The template of the loop's thread, its turns a run its one count.
+	const LOOP_THREAD: &str = "templates/LoopThread.bsx";
+
+	/// The entry `name` over `store`, built as the binary builds it and
+	/// disarmed.
+	async fn build(store: BlobStore, name: &str) -> Self {
 		let mut app = App::new();
 		app.add_plugins(MinimalPlugins)
 			.install_type::<(RouterPlugin, EvalPlugin)>();
@@ -240,16 +313,6 @@ impl FixtureEntry {
 			.unwrap()
 			.unwrap();
 		Self { app, router, store }
-	}
-
-	/// The turns the loop takes, in place of the entry's own count.
-	pub fn set_turns(&mut self, turns: u32) {
-		let world = self.app.world_mut();
-		let repeat = world
-			.query_filtered::<Entity, With<RepeatTimes>>()
-			.single(world)
-			.unwrap();
-		world.entity_mut(repeat).insert(RepeatTimes::new(turns));
 	}
 
 	/// The response to `request`, the app updated until it answers.

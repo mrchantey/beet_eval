@@ -1,18 +1,28 @@
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// One turn of the loop: computes the [`NextStep`] of the workspace above it
-/// and requests the unit of work it names of the url space it is a route of,
-/// `<verb>/<first target>`, ie `grade/product` or
-/// `build/acme_course/01-business-plan`, the role's route building a thread
-/// for that unit. Fails on `done`, the loop's break.
+/// One turn of the loop: computes the [`NextStep`] of the workspace above it,
+/// appends the decision to the loop's thread and requests the unit of work it
+/// names of the url space it is a route of, `<verb>/<first target>`, ie
+/// `grade/product` or `build/acme_course/01-business-plan`, the role's route
+/// building a thread for that unit. Fails on `done`, the loop's break.
 ///
 /// ```bsx
-/// <Route path="iterate" {ExchangeSequence}>
-///     <RepeatTimes total_times=3 {OutcomeOverload}><NextUnit/></RepeatTimes>
-/// </Route>
+/// <Route path="iterate" {ThreadRoute{template:"LoopThread", metadata:{journal:"loop"}}}/>
 /// <Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>
+/// <!-- templates/LoopThread.bsx -->
+/// <Thread {(Sequence, MountThreadStore{path:"packages/acme/assets/threads/loop"})}>
+///     <CreateActor id=1 name="Loop" kind="Agent" {Fallback}>
+///         <RepeatTimes total_times=3><NextUnit/></RepeatTimes>
+///         <EndWith/>
+///     </CreateActor>
+/// </Thread>
 /// ```
+///
+/// Run by an actor of a thread, each decision is a post by that actor,
+/// `<verb> <target>: <why>`, and the unit is requested with `spawned_by`
+/// naming it, so every unit thread, and every session of one, names the
+/// decision that asked for it. Outside a thread it requests the unit alone.
 ///
 /// A verb with no route errors with the router's own not-found, so a loop
 /// missing a role stops rather than skipping it, and so does a role whose
@@ -35,15 +45,36 @@ impl NextUnit {
 		}
 	}
 
-	/// Take `step` from `caller`: request its unit of the url space `caller`
-	/// is a route of, passing once it answers, failing on `done`.
+	/// The decision `step` is, as the loop's thread records it:
+	/// `<verb> <target>: <why>`.
+	pub fn decision(step: &NextStep) -> String {
+		let unit = std::iter::once(step.verb.word().to_string())
+			.chain(step.targets.first().map(ToString::to_string))
+			.collect::<Vec<_>>()
+			.join(" ");
+		match step.why.is_empty() {
+			true => unit,
+			false => format!("{unit}: {}", step.why),
+		}
+	}
+
+	/// Take `step` from `caller`: record the decision, then request its unit
+	/// of the url space `caller` is a route of, spawned by the decision,
+	/// passing once it answers, failing on `done`.
 	async fn take(caller: &AsyncEntity, step: &NextStep) -> Result<Outcome> {
+		let decision = Self::decide(caller, step).await?;
 		let Some(path) = Self::path(step) else {
 			info!("next: done");
 			return Outcome::FAIL.xok();
 		};
 		info!("next: {path}");
-		let response = RouteCall::new(&path).exchange(caller).await?;
+		let request = match &decision {
+			Some(post) => {
+				Request::get(&path).with_param("spawned-by", post.as_str())
+			}
+			None => Request::get(&path),
+		};
+		let response = RouteCall::from(request).exchange(caller).await?;
 		let status = response.status();
 		let text = response.text().await?;
 		if !status.is_ok() {
@@ -51,6 +82,39 @@ impl NextUnit {
 		}
 		debug!("{path}: {text}");
 		Outcome::PASS.xok()
+	}
+
+	/// Append `step`'s decision to the thread `caller` runs in, by the actor
+	/// running this turn, answering the post: none outside a thread.
+	async fn decide(
+		caller: &AsyncEntity,
+		step: &NextStep,
+	) -> Result<Option<PostRef>> {
+		let decision = Self::decision(step);
+		caller
+			.with_state::<(ThreadWindowQuery, Query<&ChildOf>, Query<&ActorRef>), _>(
+				move |entity,
+				      (mut windows, parents, actors)|
+				      -> Result<Option<PostRef>> {
+					let Some(actor) = parents
+						.iter_ancestors_inclusive(entity)
+						.find_map(|ancestor| actors.get(ancestor).ok())
+					else {
+						return Ok(None);
+					};
+					let thread = windows.thread_id(entity)?;
+					let post = AgentPost::new_text(
+						**actor,
+						thread,
+						decision,
+						PostStatus::Completed,
+					);
+					let id = post.id();
+					windows.push_post(entity, post)?;
+					PostRef::new(thread, id).xsome().xok()
+				},
+			)
+			.await?
 	}
 }
 

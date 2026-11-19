@@ -37,33 +37,9 @@ mod test {
 	use crate::prelude::*;
 	use beet::prelude::*;
 
-	/// The texts of every sitting the `role` persisted in `store`, each its
-	/// posts in order, a function call as `call <tool path>` and its output as
-	/// `output <text>`.
+	/// The texts of every sitting the `role` persisted in `store`.
 	async fn sittings(store: &BlobStore, role: &str) -> Vec<Vec<String>> {
-		let records = BlobThreadStore::new(store.with_subdir(RelPath::new(
-			format!("packages/acme/assets/threads/{role}"),
-		)));
-		let mut sittings = Vec::new();
-		for thread in records.threads().await.unwrap_or_default() {
-			let posts = records.thread_posts(thread.id(), None).await.unwrap();
-			sittings.push(
-				posts
-					.iter()
-					.map(|post| match post.as_agent_post() {
-						AgentPost::FunctionCall(call) => format!(
-							"call {}",
-							FunctionToolDefinition::decode_name(call.name())
-						),
-						AgentPost::FunctionCallOutput(output) => {
-							format!("output {}", output.output())
-						}
-						_ => post.to_string(),
-					})
-					.collect(),
-			);
-		}
-		sittings
+		Fixture::sittings(store, role).await
 	}
 
 	/// The clerk's turn: its seed is its procedure from the document package
@@ -172,26 +148,91 @@ mod test {
 			.xpect_contains("Acme Stalls");
 	}
 
-	/// A role runs by hand through its route, its thread stored under the
-	/// role, and the same request again resumes that thread rather than
-	/// storing another.
+	/// A role runs by hand through its route: the clerk continues its thread
+	/// about one document, while the grader judges fresh every time,
+	/// unanchored by its earlier grades.
 	#[beet::test(timeout_ms = 120000)]
 	async fn a_role_runs_by_hand() {
 		let mut entry = FixtureEntry::new().await;
-		for _ in 0..2 {
+		for path in [
+			"grade/product",
+			"grade/product",
+			"write/product",
+			"write/product",
+		] {
 			entry
-				.request(Request::get("grade/product"))
+				.request(Request::get(path))
 				.status()
 				.xpect_eq(StatusCode::OK);
 		}
 		let grader = sittings(&entry.store, "grader").await;
-		grader.len().xpect_eq(1);
-		grader[0][1].xpect_eq("grade product");
-		grader[0]
+		grader.len().xpect_eq(2);
+		for sitting in &grader {
+			sitting[1].xpect_eq("grade product");
+		}
+		let clerk = sittings(&entry.store, "clerk").await;
+		clerk.len().xpect_eq(1);
+		clerk[0]
 			.iter()
-			.filter(|text| text.starts_with("1. owner/owner: met."))
+			.filter(|text| *text == "Per weekend, as written.")
 			.count()
 			.xpect_eq(2);
-		sittings(&entry.store, "clerk").await.len().xpect_eq(0);
+		// a run by hand names no decision
+		Fixture::threads(&entry.store, "clerk").await[0]
+			.0
+			.spawned_by()
+			.xpect_none();
+	}
+
+	/// The loop's run is a session of one thread, the workspace's journal:
+	/// each turn's decision a post of it, and each unit thread spawned by
+	/// its decision, a second run continuing the journal.
+	#[beet::test(timeout_ms = 120000)]
+	async fn the_loop_journals_each_decision() {
+		let mut entry = FixtureEntry::looping(3).await;
+		entry
+			.request(Request::get("iterate"))
+			.status()
+			.xpect_eq(StatusCode::OK);
+		let journal = Fixture::threads(&entry.store, "loop").await;
+		journal.len().xpect_eq(1);
+		let (loop_thread, posts) = &journal[0];
+		let decisions = posts
+			.iter()
+			.filter(|post| matches!(post.as_agent_post(), AgentPost::Text(_)))
+			.collect::<Vec<_>>();
+		decisions
+			.iter()
+			.map(|post| post.to_string())
+			.collect::<Vec<_>>()
+			.iter()
+			.zip([
+				"write product",
+				"grade product",
+				"build acme_course/01-business-plan",
+			])
+			.all(|(decision, unit)| decision.starts_with(unit))
+			.xpect_true();
+		// each decision spawned the one unit thread it asked for
+		for (role, decision) in
+			["clerk", "grader", "builder"].iter().zip(&decisions)
+		{
+			let units = Fixture::threads(&entry.store, role).await;
+			units.len().xpect_eq(1);
+			units[0]
+				.0
+				.spawned_by()
+				.xpect_eq(Some(&PostRef::new(loop_thread.id(), decision.id())));
+		}
+		// a second run is another session of the same journal
+		entry.request(Request::get("iterate"));
+		let journal = Fixture::threads(&entry.store, "loop").await;
+		journal.len().xpect_eq(1);
+		journal[0]
+			.1
+			.iter()
+			.filter_map(SessionOpened::of)
+			.count()
+			.xpect_eq(2);
 	}
 }

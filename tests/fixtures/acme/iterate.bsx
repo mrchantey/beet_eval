@@ -1,13 +1,14 @@
 <!--
-The acme workspace's loop under the mock provider: three turns of
-`eval/next`, each unit requested of the role's route, which builds a thread
-for it from the role's template under `templates/`, every agent scripted, so
-a run needs no network:
+The acme workspace's loop under the mock provider: a session of the loop
+thread, `templates/LoopThread.bsx`, taking three turns of `eval/next`, each
+decision a post of the loop thread and each unit requested of the role's
+route spawned by it, every agent scripted, so a run needs no network:
 
     just cli --entry=<a copy of this directory>/iterate.bsx iterate
 
-Each role also runs by hand, ie `.. --entry=<copy>/iterate.bsx grade product`,
-a second identical request resuming the stored thread.
+Each role also runs by hand, ie `.. --entry=<copy>/iterate.bsx write product`,
+the clerk, builder and coach each continuing their thread about one target
+and the grader judging fresh every time.
 
 Run it against a copy, since the roles write the workspace: the clerk answers
 the pricing ask in `docs/product.md`, the grader grades the product (and is
@@ -26,13 +27,12 @@ to type into.
 	<Route path="check"><CheckRoutes/></Route>
 	<Route path="document"><DocumentCells/></Route>
 	<!-- the roles: each request a thread of its own for the unit it names -->
-	<Route path="write/:document" {ThreadRoute{template:"ClerkThread"}}/>
+	<Route path="write/:document" {ThreadRoute{template:"ClerkThread", metadata:{document:"{document}"}}}/>
 	<Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>
-	<Route path="build/*rubric" {ThreadRoute{template:"BuilderThread"}}/>
-	<Route path="coach/:claim" {ThreadRoute{template:"CoachThread"}}/>
-	<!-- the loop: one unit of work a turn, the one `eval/next` names -->
-	<Route path="iterate" {ExchangeSequence}>
-		<RepeatTimes total_times=3 {OutcomeOverload}><NextUnit/></RepeatTimes>
-	</Route>
+	<Route path="build/*rubric" {ThreadRoute{template:"BuilderThread", metadata:{rubric:"{rubric}"}}}/>
+	<Route path="coach/:claim" {ThreadRoute{template:"CoachThread", metadata:{claim:"{claim}"}}}/>
+	<!-- the loop: one unit of work a turn, the one `eval/next` names, the
+	run a session of the workspace's journal of decisions -->
+	<Route path="iterate" {ThreadRoute{template:"LoopThread", metadata:{journal:"loop"}}}/>
 </Router>
 </CliServer>

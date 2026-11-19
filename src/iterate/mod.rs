@@ -1,19 +1,18 @@
-//! The loop as routes: an `iterate` route asks `eval/next` for one unit of
-//! work a turn and requests it of the host url space, and each role is a
-//! route building a thread for the unit it is asked, whose agent carries the
-//! toolset of its role.
+//! The loop as routes: the loop's run is a thread whose Loop actor asks
+//! `eval/next` for one unit of work a turn and requests it of the host url
+//! space, and each role is a route building a thread for the unit it is
+//! asked, whose agent carries the toolset of its role.
 //!
 //! ```bsx
-//! <Route path="iterate" {ExchangeSequence}>
-//!     <Repeat {OutcomeOverload}><NextUnit/></Repeat>
-//! </Route>
-//! <Route path="write/:document" {ThreadRoute{template:"ClerkThread"}}/>
+//! <Route path="iterate" {ThreadRoute{template:"LoopThread", metadata:{journal:"loop"}}}/>
+//! <Route path="write/:document" {ThreadRoute{template:"ClerkThread", metadata:{document:"{document}"}}}/>
 //! <Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>
-//! <Route path="build/*rubric" {ThreadRoute{template:"BuilderThread"}}/>
-//! <Route path="coach/:claim" {ThreadRoute{template:"CoachThread"}}/>
+//! <Route path="build/*rubric" {ThreadRoute{template:"BuilderThread", metadata:{rubric:"{rubric}"}}}/>
+//! <Route path="coach/:claim" {ThreadRoute{template:"CoachThread", metadata:{claim:"{claim}"}}}/>
 //! ```
 //!
-//! A role's thread is a template, built afresh for each request:
+//! A role's thread is a template, built afresh for each request, each request
+//! one session of a stored thread:
 //!
 //! ```bsx
 //! <Thread {(Sequence, MountThreadStore{path:"packages/acme/assets/threads/grader"})}>
@@ -29,17 +28,29 @@
 //!
 //! The rules of the loop are its structure:
 //!
-//! - **One unit per turn**: each time round [`NextUnit`] requests one unit,
-//!   and the next time round `eval/next` is asked again of what that unit
-//!   left.
+//! - **The run is a thread**: the `iterate` route's `LoopThread` holds one
+//!   Loop actor whose behavior is a `RepeatTimes` over [`NextUnit`], and
+//!   declares fixed metadata, so every run continues the one loop thread,
+//!   the workspace's journal of decisions, each run a session of it.
+//! - **One unit per turn**: each time round [`NextUnit`] appends its
+//!   decision to the loop thread, `<verb> <target>: <why>`, and requests one
+//!   unit, and the next time round `eval/next` is asked again of what that
+//!   unit left.
+//! - **Every unit names its decision**: the unit is requested with
+//!   `spawned_by` naming the loop thread and the decision post, so a unit
+//!   thread the request creates records it as its creator, and every session
+//!   of a unit thread names the decision that asked for it in its opened
+//!   post. A unit run by hand names none.
 //! - **Shape before substance**: the order is [`NextStep`]'s, so a document
 //!   missing or failing its shape checks is written before anything is
 //!   graded or built.
-//! - **A thread per unit**: a role's seed is its procedure, [`RoleSeed`], and
-//!   the unit its route was asked, a `<RequestPost>` reading the path param,
-//!   both read once as the thread builds, so each unit is a thread of its
-//!   own, persisted under the workspace package and resumed by its seed when
-//!   the same unit comes round again.
+//! - **Continuation by target**: a role's seed is its procedure,
+//!   [`RoleSeed`], and the unit its route was asked, a `<RequestPost>` reading
+//!   the path param, both read afresh each session. The clerk continues its
+//!   thread about one document, the builder about one rubric and the coach
+//!   about one claim, each by the metadata its route declares, an edited seed
+//!   reaching the agent as a new seed post. The grader declares none, so it
+//!   judges fresh every time, unanchored by its earlier grades.
 //! - **A grader cannot write**: its store tools are
 //!   `<StoreToolset read_only=true/>`, and its calls are answered by its own
 //!   router alone, which has no `write-text`; its grades go through

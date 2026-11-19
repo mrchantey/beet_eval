@@ -8,13 +8,6 @@ pub(crate) struct RouteCall {
 }
 
 impl RouteCall {
-	/// A `GET` of `path`.
-	pub fn new(path: impl AsRef<str>) -> Self {
-		Self {
-			request: Request::get(path.as_ref()),
-		}
-	}
-
 	/// The answer of the url space `caller` is a route of.
 	pub async fn exchange(self, caller: &AsyncEntity) -> Result<Response> {
 		let space = caller

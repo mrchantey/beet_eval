@@ -5,7 +5,8 @@ coach scripted under the mock provider:
     just cli --entry=<a copy of this directory>/coach.bsx coach <claim id>
 
 Its thread is `templates/CoachThread.bsx`, stored under the workspace
-package's `assets/threads/coach`. A live workspace's entry is this one with
+package's `assets/threads/coach`, each claim's sittings sessions of one thread
+about it. A live workspace's entry is this one with
 `{ModelStreamer{provider:OpenAi}}` for the coach and `{UserInput}` for the
 owner, under a server with a surface to type into.
 -->
@@ -14,6 +15,6 @@ owner, under a server with a surface to type into.
 <Router {(RequestLogger, HelpHandler)}>
 	<Route path="eval"><EvalRoutes/></Route>
 	<Route path="check"><CheckRoutes/></Route>
-	<Route path="coach/:claim" {ThreadRoute{template:"CoachThread"}}/>
+	<Route path="coach/:claim" {ThreadRoute{template:"CoachThread", metadata:{claim:"{claim}"}}}/>
 </Router>
 </CliServer>

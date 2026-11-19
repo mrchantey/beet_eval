@@ -188,26 +188,9 @@ mod test {
 			.unwrap()
 	}
 
-	/// The sittings stored under the coach's threads, each its posts' texts
-	/// in order.
+	/// The sittings stored under the coach's threads.
 	async fn sittings(store: &BlobStore) -> Vec<Vec<String>> {
-		let records =
-			BlobThreadStore::new(store.with_subdir(RelPath::new(
-				"packages/acme/assets/threads/coach",
-			)));
-		let mut sittings = Vec::new();
-		for thread in records.threads().await.unwrap_or_default() {
-			sittings.push(
-				records
-					.thread_posts(thread.id(), None)
-					.await
-					.unwrap()
-					.iter()
-					.map(|post| post.to_string())
-					.collect(),
-			);
-		}
-		sittings
+		Fixture::sittings(store, "coach").await
 	}
 
 	/// A sitting run by hand: it adds a claim, raises the held one's evidence
@@ -290,12 +273,11 @@ mod test {
 	/// The loop requests the sitting `next` names, `coach/<claim id>`.
 	#[beet::test(timeout_ms = 120000)]
 	async fn the_loop_requests_a_sitting() {
-		let mut entry = FixtureEntry::new().await;
+		let mut entry = FixtureEntry::looping(1).await;
 		entry
 			.request(raise_claim())
 			.status()
 			.xpect_eq(StatusCode::OK);
-		entry.set_turns(1);
 		entry
 			.request(Request::get("iterate"))
 			.status()
