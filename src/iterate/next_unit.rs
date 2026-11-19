@@ -92,9 +92,9 @@ impl NextUnit {
 	) -> Result<Option<PostRef>> {
 		let decision = Self::decision(step);
 		caller
-			.with_state::<(ThreadWindowQuery, Query<&ChildOf>, Query<&ActorRef>), _>(
+			.with_state::<(ThreadRecordsQuery, Query<&ChildOf>, Query<&ActorRef>), _>(
 				move |entity,
-				      (mut windows, parents, actors)|
+				      (mut thread_records, parents, actors)|
 				      -> Result<Option<PostRef>> {
 					let Some(actor) = parents
 						.iter_ancestors_inclusive(entity)
@@ -102,7 +102,7 @@ impl NextUnit {
 					else {
 						return Ok(None);
 					};
-					let thread = windows.thread_id(entity)?;
+					let thread = thread_records.thread_id(entity)?;
 					let post = AgentPost::new_text(
 						**actor,
 						thread,
@@ -110,7 +110,7 @@ impl NextUnit {
 						PostStatus::Completed,
 					);
 					let id = post.id();
-					windows.push_post(entity, post)?;
+					thread_records.push_post(entity, post)?;
 					PostRef::new(thread, id).xsome().xok()
 				},
 			)
