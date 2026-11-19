@@ -180,7 +180,7 @@ impl Fixture {
 
 	/// The texts of every thread `role` keeps in `store`, each its posts in
 	/// order, a function call as `call <tool path>`, its output as
-	/// `output <text>`, the session brackets left out.
+	/// `output <text>`, the log posts left out.
 	pub async fn sittings(store: &BlobStore, role: &str) -> Vec<Vec<String>> {
 		Self::threads(store, role)
 			.await
@@ -188,8 +188,7 @@ impl Fixture {
 			.map(|(_, posts)| {
 				posts
 					.iter()
-					.filter_map(|post| match post.as_agent_post() {
-						AgentPost::Session(_) => None,
+					.filter_map(|post| match post.as_agent_post()? {
 						AgentPost::FunctionCall(call) => Some(format!(
 							"call {}",
 							FunctionToolDefinition::decode_name(call.name())

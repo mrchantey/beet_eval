@@ -199,7 +199,7 @@ mod test {
 		let (loop_thread, posts) = &journal[0];
 		let decisions = posts
 			.iter()
-			.filter(|post| matches!(post.as_agent_post(), AgentPost::Text(_)))
+			.filter(|post| matches!(post.as_agent_post(), Some(AgentPost::Text(_))))
 			.collect::<Vec<_>>();
 		decisions
 			.iter()
@@ -231,7 +231,7 @@ mod test {
 		journal[0]
 			.1
 			.iter()
-			.filter_map(SessionOpened::of)
+			.filter_map(|post| post.log::<SessionOpened>())
 			.count()
 			.xpect_eq(2);
 	}
