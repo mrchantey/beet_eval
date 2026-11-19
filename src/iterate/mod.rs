@@ -45,8 +45,9 @@
 //!   missing or failing its shape checks is written before anything is
 //!   graded or built.
 //! - **Continuation by target**: a role's seed is its procedure,
-//!   [`RoleSeed`], and the unit its route was asked, a `<RequestPost>` reading
-//!   the path param, both the initial posts of a fresh thread. The clerk
+//!   [`RoleSeed`], the initial posts of a fresh thread, and each request
+//!   posts the unit it asks, a `<RequestPost>` reading the path param, as its
+//!   session opens. The clerk
 //!   continues its thread about one document, the builder about one rubric
 //!   and the coach about one claim, each by the metadata its route declares,
 //!   keeping the seed it started with, so an edited seed reaches a new thread
