@@ -160,16 +160,15 @@ mod test {
 
 	/// The register's claim the sitting holds: the plan's pricing, fatal and
 	/// asserted, resting on the section the fixture's decision ask is in.
-	const PER_WEEKEND: &str = r#"{"package":"acme","table":"claims","row":{
+	const PER_WEEKEND: &str = r#"{
 		"id":"per-weekend","claim":"Traders will pay per weekend rather than by the month.",
 		"block":"product#pricing","evidence":0,"stakes":"Fatal","status":"Open",
-		"test":"","sources":[]}}"#;
+		"test":"","sources":[]}"#;
 
 	/// `eval/put` of [`PER_WEEKEND`], as the clerk raises a claim.
 	fn raise_claim() -> Request {
-		Request::get("eval/put")
-			.with_body(PER_WEEKEND)
-			.with_content_type(MediaType::Json)
+		Fixture::request("eval/put --package=acme --table=claims")
+			.with_param("row", PER_WEEKEND)
 	}
 
 	/// What `eval/next` answers of `entry`, as markdown.

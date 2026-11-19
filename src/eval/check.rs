@@ -30,12 +30,30 @@ impl CheckRef {
 		.xok()
 	}
 
-	/// The request calling the route, its params sent as a JSON body, which
-	/// the route reads as it reads flags.
+	/// The request calling the route, each field of its params a flag in
+	/// kebab case: a list repeats its flag, a null is left out, and anything
+	/// but a string is its JSON spelling.
 	pub fn request(&self) -> Request {
-		Request::get(format!("/check/{}", self.route).as_str())
-			.with_body(self.params.to_json_string())
-			.with_content_type(MediaType::Json)
+		let mut request =
+			Request::get(format!("/check/{}", self.route).as_str());
+		let Value::Map(fields) = &self.params else {
+			return request;
+		};
+		for (key, value) in fields.0.iter() {
+			let values = match value {
+				Value::Null => continue,
+				Value::List(items) => items.iter().collect(),
+				value => vec![value],
+			};
+			for value in values {
+				let value = match value {
+					Value::Str(text) => text.to_string(),
+					other => other.to_json_string(),
+				};
+				request.insert_param(key.replace('_', "-"), value);
+			}
+		}
+		request
 	}
 
 	/// The route's path in the engine's router, `check/<route>`.
@@ -71,29 +89,20 @@ impl CheckRef {
 		caller: &AsyncEntity,
 	) -> Result<Option<String>> {
 		let path = self.path();
+		let request = self.request();
 		let route = self.route.clone();
-		let Some(pattern) = caller
+		caller
 			.with_state::<AncestorQuery<&RouteTree>, _>(move |entity, trees| {
-				trees
-					.get(entity)
-					.ok()
-					.and_then(|tree| tree.find(&path))
-					.map(|node| node.params.clone())
+				match trees.get(entity).ok().and_then(|tree| tree.find(&path)) {
+					Some(node) => node
+						.params
+						.refusal(request.params(), ParamsValidation::Complete),
+					None => Some(format!(
+						"no route `check/{route}` decides this check"
+					)),
+				}
 			})
-			.await?
-		else {
-			return Some(format!(
-				"no route `check/{route}` decides this check"
-			))
-			.xok();
-		};
-		let mut request = self.request();
-		request
-			.merge_body_params(|key| pattern.repeats(key))
-			.await?;
-		pattern
-			.refusal(request.params(), ParamsValidation::Complete)
-			.xok()
+			.await
 	}
 }
 

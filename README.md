@@ -371,7 +371,7 @@ A report answers a scene rendered as the request accepts: ANSI in a terminal, ma
 - `eval/new <name> <author>`: scaffolds `docs/` from the outline, every body an ask; refuses a non-empty `docs/`.
 - `eval/grade --eval --level --by [--anchor] [--evidence]`: writes one grade, refused unless the level is one the eval admits, at most 1 where an ask is open, and the evidence is verbatim from its anchor.
 - `eval/rows --package --table [--key]`: a table's rows, or one row by its key, each with its fields, and for a serde `Accept` the rows in their stored form; how the claims register is read.
-- `eval/put --package --table (--row | --from)`: writes one row of a package's table, `evals`, `rubrics`, `render`, `actions` or `claims`, given inline, an object in a JSON body or its JSON text on a command line, or drafted into the workspace store and named by its path, refused unless it keeps the law `eval/check` holds every row to.
+- `eval/put --package --table (--row | --from)`: writes one row of a package's table, `evals`, `rubrics`, `render`, `actions` or `claims`, given inline as its JSON text (an agent's tool call passes the object, sent as that text), or drafted into the workspace store and named by its path, refused unless it keeps the law `eval/check` holds every row to.
 - `eval/drop --package --table --key`: removes one row of a package's table, refused while a rubric cites the eval or a render spec builds the rubric.
 - `eval/cells <package>/<rubric>`: the cells of a reader's blank form, the map a fill spec is written against.
 - `eval/build <package>/<rubric>`: parses the reader's blank form, applies the fill spec, renders the result into `dist/` in the form's own format, and writes its cells beside it.

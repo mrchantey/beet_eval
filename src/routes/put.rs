@@ -8,9 +8,9 @@ use beet::prelude::*;
 /// defines, a rubric's citations of known evals at levels they reach, a coach
 /// action's served sections and a claim's slug and block. How a person or an
 /// agent adds or changes an eval, a rubric, a render spec, a coach action or
-/// a claim. The row is given inline with `--row`, an object in a JSON body or
-/// its JSON text on a command line, or drafted into the workspace store and
-/// named with `--from`.
+/// a claim. The row is given inline with `--row`, its JSON text, which an
+/// agent's `<HostTool>` call sends from the object it passes, or drafted into
+/// the workspace store and named with `--from`.
 #[action(route = "put")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
@@ -121,7 +121,7 @@ mod test {
 				.with_param("table", "evals")
 				.with_param(
 					"row",
-					format!(
+					&format!(
 						"{{\"id\":\"brand.name-cleared\",\"statement\":\"{statement}\",\
 						 \"levels\":\"Generic\",\"sources\":[\"inferred\"],\
 						 \"anchor\":\"brand#name-and-tagline\",\"note\":null}}"
@@ -170,7 +170,7 @@ mod test {
 			.xpect_contains("exactly one of `--row` and `--from`");
 	}
 
-	/// A claim put as an agent puts it, its row an object in a JSON body, is
+	/// A claim put as an agent's tool call puts it, its row JSON text, is
 	/// held to the claim law: a slug id, one sentence, and a block the outline
 	/// declares; a claim the law refuses is never written, and `eval/drop`
 	/// retires one.
@@ -178,14 +178,15 @@ mod test {
 	async fn puts_claims_that_keep_the_law() {
 		let mut fixture = Fixture::new().await;
 		let put = |id: &str, block: &str, evidence: u8| {
-			Fixture::request("eval/put")
-				.with_body(format!(
-					r#"{{"package":"acme","table":"claims","row":{{
-						"id":"{id}","claim":"Traders pay per weekend.",
+			Fixture::request("eval/put --package=acme --table=claims")
+				.with_param(
+					"row",
+					&format!(
+						r#"{{"id":"{id}","claim":"Traders pay per weekend.",
 						"block":"{block}","evidence":{evidence},"stakes":"Fatal",
-						"status":"Open","test":"","sources":[]}}}}"#
-				))
-				.with_content_type(MediaType::Json)
+						"status":"Open","test":"","sources":[]}}"#
+					),
+				)
 		};
 		fixture
 			.answer(put("per-weekend", "product#pricing", 1))
