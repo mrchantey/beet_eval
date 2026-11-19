@@ -70,7 +70,7 @@ impl NextUnit {
 		info!("next: {path}");
 		let request = match &decision {
 			Some(post) => {
-				Request::get(&path).with_param("spawned-by", post.as_str())
+				Request::get(&path).with_param("spawned-by", &post.to_string())
 			}
 			None => Request::get(&path),
 		};

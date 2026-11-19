@@ -46,11 +46,12 @@
 //!   graded or built.
 //! - **Continuation by target**: a role's seed is its procedure,
 //!   [`RoleSeed`], and the unit its route was asked, a `<RequestPost>` reading
-//!   the path param, both read afresh each session. The clerk continues its
-//!   thread about one document, the builder about one rubric and the coach
-//!   about one claim, each by the metadata its route declares, an edited seed
-//!   reaching the agent as a new seed post. The grader declares none, so it
-//!   judges fresh every time, unanchored by its earlier grades.
+//!   the path param, both the initial posts of a fresh thread. The clerk
+//!   continues its thread about one document, the builder about one rubric
+//!   and the coach about one claim, each by the metadata its route declares,
+//!   keeping the seed it started with, so an edited seed reaches a new thread
+//!   (`--new`). The grader declares none, so it judges fresh every time,
+//!   unanchored by its earlier grades.
 //! - **A grader cannot write**: its store tools are
 //!   `<StoreToolset read_only=true/>`, and its calls are answered by its own
 //!   router alone, which has no `write-text`; its grades go through
