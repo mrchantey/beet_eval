@@ -19,8 +19,11 @@
 //!   [`Outline`](prelude::Outline), and the params of the check kinds that
 //!   decide their shape.
 //! - [`form`]: the renderer, a reader package's
-//!   [`RenderSpec`](prelude::RenderSpec) and the
-//!   [`FillSpec`](prelude::FillSpec) a builder writes against it.
+//!   [`RenderSpec`](prelude::RenderSpec), the form's parts a builder edits
+//!   ([`FormBuild`](prelude::FormBuild)) and its cells by place
+//!   ([`FormCell`](prelude::FormCell)).
+//! - [`ingest`]: reading a package's sources, a deck's
+//!   [`DeckTriage`](prelude::DeckTriage) among them.
 //! - [`coach`]: the workspace package's claims register, the document
 //!   package's coach actions, and the end of a coach's sitting.
 //! - [`routes`]: the verbs, each a route of `beet-eval`, mounted by
@@ -37,6 +40,7 @@ pub mod coach;
 pub mod docs;
 pub mod eval;
 pub mod form;
+pub mod ingest;
 pub mod iterate;
 pub mod json_ext;
 mod plugin;
@@ -50,6 +54,7 @@ pub mod prelude {
 	pub use crate::docs::*;
 	pub use crate::eval::*;
 	pub use crate::form::*;
+	pub use crate::ingest::*;
 	pub use crate::iterate::*;
 	pub use crate::json_ext;
 	pub use crate::plugin::*;
@@ -86,7 +91,6 @@ mod test {
 				"Grade" => stored_form::<Grade>(name, &json).await,
 				"Results" => stored_form::<Results>(name, &json).await,
 				"NextStep" => stored_form::<NextStep>(name, &json).await,
-				"FillSpec" => stored_form::<FillSpec>(name, &json).await,
 				other => panic!(
 					"the README shows `{other}`, which is no stored shape"
 				),
@@ -99,7 +103,6 @@ mod test {
 			"Claim",
 			"CoachAction",
 			"Eval",
-			"FillSpec",
 			"Grade",
 			"NextStep",
 			"Outline",

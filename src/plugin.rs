@@ -27,9 +27,6 @@ impl Plugin for EvalPlugin {
 		LiteralParser::register::<SourceTag>(SourceTag::literal_parser(
 			"a source tag, ie ref:sba",
 		));
-		LiteralParser::register::<CellRef>(CellRef::literal_parser(
-			"a cell, ie t1r2c3 or Sheet!A1",
-		));
 		app.register_type::<Eval>()
 			.register_type::<Rubric>()
 			.register_type::<Grade>()
@@ -39,7 +36,6 @@ impl Plugin for EvalPlugin {
 			.register_type::<Workspace>()
 			.register_type::<Outline>()
 			.register_type::<RenderSpec>()
-			.register_type::<FillSpec>()
 			.register_type::<Claim>()
 			.register_type::<CoachAction>()
 			.register_type::<DocumentCheckParams>()
@@ -70,6 +66,7 @@ impl Plugin for EvalPlugin {
 			.register_type::<EvalGrade>()
 			.register_type::<EvalBuild>()
 			.register_type::<EvalCells>()
+			.register_type::<EvalDeck>()
 			.register_type::<EvalRows>()
 			.register_type::<TableRow>()
 			.register_type::<EvalPut>()

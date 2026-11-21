@@ -6,10 +6,10 @@ use std::sync::Arc;
 use std::sync::Mutex;
 
 /// The fixture at `tests/fixtures/acme` copied into a store of its own, its
-/// blank Word form generated through beet's `ooxml`, beneath a cli server
-/// and a router serving the verbs, the check kinds, the store's cells and
-/// the store view, as the fixture's `eval.bsx` mounts them, so a request is
-/// refused as strictly as a command line is.
+/// blank Word form generated through beet's `WordFixture`, beneath a cli
+/// server and a router serving the verbs, the check kinds and the store
+/// view, as the fixture's `eval.bsx` mounts them, so a request is refused as
+/// strictly as a command line is.
 pub(crate) struct Fixture {
 	world: World,
 	router: Entity,
@@ -45,11 +45,6 @@ impl Fixture {
 			.spawn((ChildOf(router), PathPartial::new("check")))
 			.insert_template(CheckRoutes)
 			.unwrap();
-		world.spawn((
-			ChildOf(router),
-			PathPartial::new("document"),
-			children![DocumentCells],
-		));
 		world.spawn((ChildOf(router), DocumentView));
 		Self {
 			world,
@@ -207,7 +202,7 @@ impl Fixture {
 	/// its cell with its prompt and a red instruction sentence, and a Surveys
 	/// checkbox.
 	pub fn blank_form() -> MediaBytes {
-		OoxmlFile::word(
+		WordFixture::new(
 			"<w:tbl><w:tr>\
 			 <w:tc><w:p><w:r><w:t>Business Name</w:t></w:r></w:p></w:tc>\
 			 <w:tc><w:p/></w:tc>\
@@ -220,7 +215,41 @@ impl Fixture {
 			 <w:sdtContent><w:r><w:t>\u{2610}</w:t></w:r></w:sdtContent></w:sdt>\
 			 <w:r><w:t xml:space=\"preserve\"> Surveys</w:t></w:r></w:p>",
 		)
-		.unwrap()
+		.bytes()
+	}
+
+	/// `func` run on `source` read into a world of the formats.
+	pub fn read_with<O>(
+		source: &MediaBytes,
+		func: impl FnOnce(&mut World, Entity) -> O,
+	) -> O {
+		let mut world =
+			(TemplatePlugin, DocumentPlugin, OoxmlPlugin).into_world();
+		let root = world.spawn_empty().id();
+		DocParsers::parse(ParseContext::new(
+			&mut world.entity_mut(root),
+			source,
+		))
+		.unwrap();
+		func(&mut world, root)
+	}
+
+	/// The cells of `form`, as a build lists them.
+	pub fn cells_of(form: &MediaBytes) -> Vec<FormCell> {
+		Self::read_with(form, FormCell::listing)
+	}
+
+	/// `source` read and written as `media_type`, ie an HTML scene of cards
+	/// as a deck.
+	pub fn written(source: &MediaBytes, media_type: MediaType) -> MediaBytes {
+		Self::read_with(source, |world, root| {
+			DocRenderers::render(
+				world,
+				root,
+				&RequestParts::get("/").with_accept(media_type),
+			)
+			.unwrap()
+		})
 	}
 }
 

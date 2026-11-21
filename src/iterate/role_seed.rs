@@ -125,8 +125,9 @@ mod test {
 			.xpect_starts_with("## Next: build acme_course/01-business-plan");
 	}
 
-	/// The builder's turn: its fill spec lands in the build directory, the
-	/// only store it can write, and the build lists the filled form's cells.
+	/// The builder's turn: its edit lands in the form's parts in the build
+	/// directory, the only store it can write, and the build lists the built
+	/// form's cells.
 	#[beet::test(timeout_ms = 120000)]
 	async fn the_builder_builds_one_unit() {
 		let (store, response) = Fixture::iterate(3).await;
@@ -134,18 +135,20 @@ mod test {
 		sittings(&store, "builder").await.len().xpect_eq(1);
 		let fixture = Fixture::over(store.clone());
 		fixture
-			.read("dist/acme_course/01-business-plan.fill.json")
+			.read("dist/acme_course/01-business-plan/word/document.xml")
 			.await
 			.xpect_contains("Acme Stalls");
 		store
-			.exists(&RelPath::new("acme_course/01-business-plan.fill.json"))
+			.exists(&RelPath::new(
+				"acme_course/01-business-plan/word/document.xml",
+			))
 			.await
 			.unwrap()
 			.xpect_false();
 		fixture
 			.read("dist/acme_course/01-business-plan.cells.md")
 			.await
-			.xpect_contains("Acme Stalls");
+			.xpect_contains("| t0/B1 | Acme Stalls |");
 	}
 
 	/// A role runs by hand through its route: the clerk continues its thread
@@ -199,7 +202,9 @@ mod test {
 		let (loop_thread, posts) = &journal[0];
 		let decisions = posts
 			.iter()
-			.filter(|post| matches!(post.as_agent_post(), Some(AgentPost::Text(_))))
+			.filter(|post| {
+				matches!(post.as_agent_post(), Some(AgentPost::Text(_)))
+			})
 			.collect::<Vec<_>>();
 		decisions
 			.iter()

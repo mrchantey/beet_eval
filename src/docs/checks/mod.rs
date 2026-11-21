@@ -123,7 +123,7 @@ mod test {
 	/// fails every check alike: its title and sections by their heading
 	/// styles, its tagline's agreement by its emphasis, its open ask by its
 	/// words. Only its frontmatter differs, a Word file's being its core
-	/// properties, which this one leaves empty.
+	/// properties, which this one gives a title alone.
 	#[beet::test]
 	async fn checks_a_word_document_like_markdown() {
 		let mut fixture = Fixture::new().await;
@@ -137,7 +137,7 @@ mod test {
 			.store
 			.insert(
 				&RelPath::new("docs/brand.docx"),
-				OoxmlFile::word(
+				WordFixture::new(
 					"<w:p><w:pPr><w:pStyle w:val=\"Title\"/></w:pPr><w:r><w:t>Brand</w:t></w:r></w:p>\
 					 <w:p><w:r><w:t>The name is Acme Stalls, and the tagline promises a stall that arrives ready to trade.</w:t></w:r></w:p>\
 					 <w:p><w:pPr><w:pStyle w:val=\"Heading2\"/></w:pPr><w:r><w:t>Name and tagline</w:t></w:r></w:p>\
@@ -146,7 +146,8 @@ mod test {
 					 <w:p><w:pPr><w:pStyle w:val=\"Heading2\"/></w:pPr><w:r><w:t>Voice</w:t></w:r></w:p>\
 					 <w:p><w:r><w:t>TODO(ask): how plain or playful the voice is.</w:t></w:r></w:p>",
 				)
-				.unwrap()
+				.with_properties("<dc:title>Brand</dc:title>")
+				.bytes()
 				.bytes()
 				.to_vec(),
 			)

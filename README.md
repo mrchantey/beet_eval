@@ -35,11 +35,12 @@ This page is the one source for the words. The law lives in the module docs, whi
 | data block | `DataBlock`, `BlockFormat`, `Column`, `ColumnKind` | A fenced `csv` or `json` block named in its info string, defined once across the documents. |
 | ask | `Ask`, `AskKind` | An open question to the owner, inline as `TODO(ask ...)`: a **fact** a source could answer, offered with a default, or a **decision** only the owner can make, challenged by the coach instead. |
 | check kind | `CheckRoutes`, `DocumentCheck`, `FrontmatterCheck`, `H1Check`, `TaglineCheck`, `SummaryCheck`, `AgreesCheck`, `AsksCheck`, `SectionsCheck`, `BlockCheck`, and the params of each, `DocumentCheckParams`, `FrontmatterCheckParams`, `H1CheckParams`, `TaglineCheckParams`, `SummaryCheckParams`, `AgreesCheckParams`, `TitlePart`, `AsksCheckParams`, `SectionsCheckParams`, `BlockCheckParams` | The document check kinds, one route each under `check/`, mounted by `<CheckRoutes/>`. |
-| render spec | `RenderSpec` | How a reader package renders one form: the reader's own blank form, a Word file, a workbook or any document with tables, the output's name, and the form's quirks. |
-| fill spec | `FillSpec`, `FillOp`, `CellRef`, `CellsReport` | What a builder writes for one form: the operations that fill the blank form, by cell, each one of beet's edits, and the cells of the result it reads back. |
+| render spec | `RenderSpec` | How a reader package renders one form: the reader's own blank form, a Word file or a workbook, the output's name, and the form's quirks. |
+| build | `FormBuild`, `CellRef`, `FormCell`, `FormCellQuery`, `CellsReport` | One form's build: the blank form unpacked into the build directory as its package's parts, which the builder edits as the form's own XML, zipped back into the built form, and its cells named by place, `t<table>/<A1>` for a table's and `<sheet>!<A1>` for a workbook's, as the builder reads them back. |
+| deck triage | `DeckTriage`, `SlideTriage`, `PictureTriage`, `DeckTriageReport` | A source deck's slides sorted by what carries them, words or a picture, with every picture's native size and cover and what to watch for while transcribing it: hidden slides, recurring pictures, same-size pictures and exact duplicates. |
 | claim | `Claim`, `Evidence`, `Stakes`, `ClaimStatus` | A row of the workspace package's claims register: something the plan rests on that might be false, with its evidence on the ladder 0 asserted, 1 heard, 2 observed, 3 committed, its stakes, its test and its status. The coach holds the one `Claim::pick` picks: highest stakes, then least evidence, then open first. |
 | action | `CoachAction` | One of the coach's moves, a row of a document package's actions table: the ask, when to stop pushing, the red flags, and a bad and a good exchange. |
-| verb | `EvalRoutes`, `EvalCheck`, `EvalResults`, `EvalNext`, `EvalBlocks`, `EvalWorksheet`, `EvalProject`, `EvalNew`, `EvalGrade`, `EvalRows`, `EvalPut`, `EvalDrop`, `EvalCells`, `EvalBuild` | One route of `beet-eval` under `eval/`, mounted by `<EvalRoutes/>`. |
+| verb | `EvalRoutes`, `EvalCheck`, `EvalResults`, `EvalNext`, `EvalBlocks`, `EvalWorksheet`, `EvalProject`, `EvalNew`, `EvalGrade`, `EvalRows`, `EvalPut`, `EvalDrop`, `EvalCells`, `EvalBuild`, `EvalDeck` | One route of `beet-eval` under `eval/`, mounted by `<EvalRoutes/>`. |
 | report | `ResultsReport`, `NextReport`, `WorksheetReport`, `WorksheetDocument`, `WorksheetSection`, `BlocksReport`, `BlockDump`, `BlockEntry`, `RowsReport`, `TableRow`, `ProjectionReport`, `Projection`, `ProjectedHeading`, `ProjectedCitation`, `CheckReport`, `CheckSummary`, `ScaffoldDocument`, `ScaffoldSection`, `ScaffoldBlock` | A verb's answer as a scene, a `#[template]` of HTML nodes beet renders as the request accepts, beside the data it shows, which a serde `Accept` answers instead; a file a verb writes is the scene's markdown. |
 | clerk, grader, builder, coach | `EvalToolset`, `RoleSeed`, `NextUnit`, `AssignmentWritten` | The four agent roles, below. |
 
@@ -66,7 +67,7 @@ A package and a workspace are stores, addressed by uri and never assumed to be o
   results/grades/<id>   Grade rows, keyed on the eval
   results/summary.json  Results, the last run
   results/projections/  the briefs eval/project writes
-  dist/<package>/       builds: the filled form, its <rubric>.fill.json FillSpec, its <rubric>.cells.md
+  dist/<package>/       builds: each form's parts under <rubric>/, the built form, its <rubric>.cells.md
   packages/<name>/      the workspace's own package, its claims register, its loop's threads under assets/threads/<role>/, the loop's journal under loop/
 ```
 
@@ -337,24 +338,9 @@ What `eval/next` answers.
 }
 ```
 
-`dist/acme_course/01-business-plan.fill.json`, a builder's fill spec. A Word cell is `t<table>r<row>c<cell>`, a workbook cell `<sheet>!<A1>`.
-
-```json FillSpec
-{
-  "ops": [
-    { "Set": { "cell": "t1r2c2", "text": "Acme Stalls" } },
-    { "Append": { "cell": "t3r1c1", "text": "Acme Stalls rents fitted market stalls by the month." } },
-    { "Check": { "label": "Primary research" } },
-    { "Delete": { "text": "Please delete this sentence once completed." } },
-    { "Replace": { "new": "Acme Stalls", "old": "(Insert business name)" } },
-    { "Set": { "cell": "Start Here!D3", "text": "Acme Stalls" } }
-  ]
-}
-```
-
 ## The verbs
 
-Each is a route of `beet-eval`, taking its flags in its signature so `--help` documents them and the strict cli server refuses any other, resolving the workspace through the store above it. A workspace runs them from its own entry, `eval.bsx` at its root, mounting `<EvalRoutes/>` under `eval`, `<CheckRoutes/>` under `check`, beet's `<DocumentCells/>` under `document` and beet's `<DocumentView/>`, so the entry's directory, the repo store, is the workspace store; `tests/fixtures/acme/eval.bsx` is one:
+Each is a route of `beet-eval`, taking its flags in its signature so `--help` documents them and the strict cli server refuses any other, resolving the workspace through the store above it. A workspace runs them from its own entry, `eval.bsx` at its root, mounting `<EvalRoutes/>` under `eval`, `<CheckRoutes/>` under `check` and beet's `<DocumentView/>`, so the entry's directory, the repo store, is the workspace store; `tests/fixtures/acme/eval.bsx` is one:
 
 ```sh
 beet-eval --entry=eval.bsx eval/next
@@ -373,11 +359,11 @@ A report answers a scene rendered as the request accepts: ANSI in a terminal, ma
 - `eval/rows --package --table [--key]`: a table's rows, or one row by its key, each with its fields, and for a serde `Accept` the rows in their stored form; how the claims register is read.
 - `eval/put --package --table (--row | --from)`: writes one row of a package's table, `evals`, `rubrics`, `render`, `actions` or `claims`, given inline as its JSON text (an agent's tool call passes the object, sent as that text), or drafted into the workspace store and named by its path, refused unless it keeps the law `eval/check` holds every row to.
 - `eval/drop --package --table --key`: removes one row of a package's table, refused while a rubric cites the eval or a render spec builds the rubric.
-- `eval/cells <package>/<rubric>`: the cells of a reader's blank form, the map a fill spec is written against.
-- `eval/build <package>/<rubric>`: parses the reader's blank form, applies the fill spec, renders the result into `dist/` in the form's own format, and writes its cells beside it.
+- `eval/cells <package>/<rubric>`: the cells of a reader's blank form by place, `t0/B1` for the first table's second cell of its first row, `Start Here!D3` for a workbook's, the map a builder writes against.
+- `eval/build <package>/<rubric> [--fresh]`: unpacks the reader's blank form into `dist/<package>/<rubric>/` the first time, or afresh with `--fresh`, zips those parts as the builder edited them into the built form, refusing parts that no longer read, and writes its cells beside it.
+- `eval/deck <path>`: the triage of the slide deck at `path` in the store, read beside `view`'s dump before transcribing it, slides counted from 0 as the card stack counts them.
 - `check/<kind>`: one document check kind, called by `eval/results` for every checked eval and directly for one, answering a `CheckVerdict`.
-- `document/cells <path>`: beet's cells of any document in the store with tables, a Word file, a workbook or a markdown form, the map a fill spec is written against.
-- `view <path> [--accept=text/markdown]`: beet's view of any file in the store, parsed as its media type and rendered as the request accepts, so a Word file, a workbook or a slide deck reads as markdown: headings, lists, GFM tables headed `<!-- t<n> -->` with the cells' numbers, checkboxes as `[ ]` and `[x]`, and what a form signals by look kept as `<mark>` and `<span style>`.
+- `view <path> [--accept=text/markdown]`: beet's view of any file in the store, parsed as its media type and rendered as the request accepts, so a Word file, a workbook or a slide deck reads as markdown: headings, lists, GFM tables, checkboxes as `[ ]` and `[x]`, and a highlight as `<mark>`; a colour is no part of markdown, so a red instruction reads as plain text.
 
 ## The roles
 
@@ -391,5 +377,5 @@ beet-eval --entry=coach.bsx coach per-weekend
 
 - **Clerk**: writes a document from its sources and the owner's answers, drafting what the sources allow and asking what only the owner knows. A decision ask whose section no claim names is raised as a claim through `eval/put` on the claims register, which `next` sends it to do before anything is coached.
 - **Grader**: grades one document a turn against the worksheet through `eval/grade`, its store tools `read_only`, so its router has no `write-text` and it can read the workspace and never write it.
-- **Builder**: fills a reader's form, writing the fill spec from the brief into the build directory, the one store it can write, and reading the built form's cells against the structural lines.
+- **Builder**: fills a reader's form, writing the brief's answers into the form's own XML, its parts unpacked into the build directory, the one store it can write, so the built form looks as its author made it, and reading the built form's cells against the structural lines.
 - **Coach**: holds one claim a sitting, each sitting a session of its thread about the claim, `<Route path="coach/:claim" {ThreadRoute{template:"CoachThread", metadata:{claim:"{claim}"}}}/>`, which `next` names when the register holds a fatal claim at evidence 0 or 1. Its seed is its procedure, `seeds/coach.md` with the phrases it never says, then the answers of `eval/rows` for the actions table, the register and the claim held, `<RoutePost path="eval/rows?package=..&table=claims&key={claim}"/>`, whose `test` is the last sitting's assignment. It asks one question a turn, gives a decision no default, keeps the register through `eval/put` pinned to the claims table, `<HostTool path="eval/put" params="package=..&table=claims"/>`, and writes its notes under the workspace package's `assets/`. The sitting is control flow: a `<Repeat>` of the coach's turn, `<AssignmentWritten/>` and the owner's turn, under a `<Fallback>` ending in `<EndWith/>`, so the assignment written to the claim's `test` ends it as a pass.

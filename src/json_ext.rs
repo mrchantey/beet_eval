@@ -1,5 +1,5 @@
-//! Typed documents as stored: a manifest, an outline, a summary or a fill
-//! spec at one path of a store, written in the same form a table row is,
+//! Typed documents as stored: a manifest, an outline or a summary at one
+//! path of a store, written in the same form a table row is,
 //! pretty JSON with sorted keys and a closing newline, so a change diffs by
 //! field.
 use beet::prelude::*;
@@ -16,17 +16,6 @@ pub async fn read<T: DeserializeOwned>(
 	MediaType::Json
 		.deserialize::<T>(&bytes)
 		.map_err(|err| bevyhow!("`{path}` does not parse: {err}"))
-}
-
-/// Reads the typed document at `path`, `None` when there is none.
-pub async fn read_optional<T: DeserializeOwned>(
-	store: &BlobStore,
-	path: &RelPath,
-) -> Result<Option<T>> {
-	match store.exists(path).await? {
-		true => read(store, path).await.map(Some),
-		false => Ok(None),
-	}
 }
 
 /// Writes `value` at `path` in the stored form.

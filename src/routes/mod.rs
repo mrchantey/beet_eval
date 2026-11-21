@@ -13,6 +13,7 @@ mod blocks;
 mod build;
 mod cells;
 mod check;
+mod deck;
 mod drop;
 #[cfg(test)]
 mod fixture;
@@ -31,6 +32,7 @@ pub use blocks::*;
 pub use build::*;
 pub use cells::*;
 pub use check::*;
+pub use deck::*;
 pub use drop::*;
 #[cfg(test)]
 pub(crate) use fixture::*;
@@ -67,6 +69,7 @@ pub fn EvalRoutes() -> impl Bundle {
 		EvalGrade,
 		EvalBuild,
 		EvalCells,
+		EvalDeck,
 		EvalRows,
 		EvalPut,
 		EvalDrop,
@@ -77,6 +80,29 @@ pub fn EvalRoutes() -> impl Bundle {
 /// process exits 1 on.
 fn refusal(text: impl Into<String>) -> Response {
 	Response::status_text(StatusCode::UNPROCESSABLE_CONTENT, text.into())
+}
+
+/// `media` parsed into the caller's world and `func` run on its root, which
+/// is despawned after, whatever `func` answers.
+pub(crate) async fn parsed_with<O: 'static + Send + Sync>(
+	caller: &AsyncEntity,
+	media: MediaBytes,
+	func: impl 'static + Send + FnOnce(&mut World, Entity) -> Result<O>,
+) -> Result<O> {
+	caller
+		.world()
+		.with(move |world: &mut World| -> Result<O> {
+			let root = world.spawn_empty().id();
+			let read = DocParsers::parse(ParseContext::new(
+				&mut world.entity_mut(root),
+				&media,
+			))
+			.map_err(BevyError::from)
+			.and_then(|_| func(world, root));
+			world.entity_mut(root).despawn();
+			read
+		})
+		.await
 }
 
 /// A scene rendered as markdown, the answer to a request accepting it, for a
@@ -129,8 +155,9 @@ mod test {
 			"eval/project acme_course/01-business-plan",
 			"eval/new Acme Ada",
 			"eval/grade --eval=product.alternatives-considered --level=2 --anchor=product#idea --by=x --evidence=We\\ weighed\\ a\\ mobile\\ service",
-			"eval/build acme_course/01-business-plan",
+			"eval/build acme_course/01-business-plan --fresh",
 			"eval/cells acme_course/01-business-plan",
+			"eval/deck packages/acme/assets/week-1.pptx",
 			"eval/rows --package=acme_biz --table=evals --key=product.origin",
 			"eval/put --package=acme_biz --table=evals --from=packages/acme_biz/evals/product.origin --row=",
 			"eval/drop --package=acme_course --table=render --key=01-business-plan",
@@ -143,7 +170,6 @@ mod test {
 			"check/asks",
 			"check/sections --document=brand --headings=Voice",
 			"check/block --name=price-list --section=product#pricing --columns=line --columns=price_ex_gst:num",
-			"document/cells packages/acme_course/assets/forms/01-business-plan.docx",
 			"view packages/acme_course/assets/forms/01-business-plan.docx",
 		];
 		let mut fixture = Fixture::new().await;

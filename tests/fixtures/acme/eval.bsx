@@ -4,7 +4,6 @@
 <Router {(RequestLogger, HelpHandler)}>
 	<Route path="eval"><EvalRoutes/></Route>
 	<Route path="check"><CheckRoutes/></Route>
-	<Route path="document"><DocumentCells/></Route>
 	<DocumentView/>
 </Router>
 </CliServer>

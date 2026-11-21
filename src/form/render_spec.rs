@@ -9,11 +9,11 @@ pub struct RenderSpec {
 	/// The reader's own blank form inside the package, a Word file or a
 	/// workbook, never written to.
 	pub form: RelPath,
-	/// The filled copy's file name under `dist/<package>/`, ie
+	/// The built form's file name under `dist/<package>/`, ie
 	/// `01-business-plan.docx`.
 	pub output: SmolStr,
-	/// What the form needs said beyond its cells: its quirks, what a fill must
-	/// do besides set text, and how the result is read.
+	/// What the form needs said beyond its cells: its quirks, what a build
+	/// must edit besides cell text, and how the result is read.
 	pub notes: String,
 }
 

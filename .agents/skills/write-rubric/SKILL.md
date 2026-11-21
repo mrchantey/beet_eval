@@ -30,7 +30,7 @@ A tag is defined by the manifest `sources` of the package that owns the source: 
 
 ## Building one
 
-1. Read the blank form in full, `just eval view <path to the form> --accept=text/markdown`. Every fill-in cell, checkbox list and red sentence is a candidate requirement; keep the form's numbering and labels.
+1. Read the blank form in full, `just eval view <path to the form> --accept=text/markdown`, and its cells by place, `just eval cells <package>/<rubric>` once its render spec is written. Markdown carries no colour, so find its red sentences in `--accept=text/html`, a run with a look of its own being a `<span class="..">`. Every fill-in cell, checkbox list and red sentence is a candidate requirement; keep the form's numbering and labels.
 2. Read the reader's guidance for the form: its guide, its recordings, its feedback on earlier submissions. Bold in a guide is a minimum.
 3. Read the reader's demonstration, if it has one, and note where it falls short of a stated minimum.
 4. For every substantive requirement, find the eval in the document package and cite it at the level this reader demands; add one by `write-criteria` only when nothing fits. Everything about the form goes in `structural`.

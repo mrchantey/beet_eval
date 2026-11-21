@@ -1,6 +1,6 @@
 <!--
 The builder's thread for one rubric, built per request by `build/*rubric`:
-the build directory alone to write.
+the build directory alone to write, where the form's parts are edited.
 -->
 <Thread {(Sequence, MountThreadStore{path:"packages/acme/assets/threads/builder"})}>
 	<CreateActor id=1 name="System" kind="System"><RoleSeed role="builder"/></CreateActor>
@@ -8,12 +8,16 @@ the build directory alone to write.
 	<RepeatWhileFunctionCallOutput>
 		<CreateActor id=6 name="Builder" kind="Agent" {MockPostStreamer{script:[
 			Call{tool:"eval/project", arguments:{rubric:"acme_course/01-business-plan"}},
-			Call{tool:"write-text", arguments:{
-				path:"acme_course/01-business-plan.fill.json",
-				text:"{\"ops\":[{\"Set\":{\"cell\":\"t1r1c2\",\"text\":\"Acme Stalls\"}},{\"Check\":{\"label\":\"Surveys\"}}]}",
+			Call{tool:"eval/build", arguments:{rubric:"acme_course/01-business-plan"}},
+			Call{tool:"edit-text", arguments:{
+				path:"acme_course/01-business-plan/word/document.xml",
+				edits:[{
+					old_text:"<w:tc><w:p/></w:tc>",
+					new_text:"<w:tc><w:p><w:r><w:t>Acme Stalls</w:t></w:r></w:p></w:tc>",
+				}],
 			}},
 			Call{tool:"eval/build", arguments:{rubric:"acme_course/01-business-plan"}},
-			Text("1. The name cell holds Acme Stalls and Surveys is ticked."),
+			Text("1. The name cell holds Acme Stalls."),
 		]}}>
 			<Router>
 				<Fragment {DirPath("dist")}><StoreToolset/></Fragment>

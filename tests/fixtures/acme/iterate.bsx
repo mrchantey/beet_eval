@@ -25,7 +25,6 @@ to type into.
 <Router {(RequestLogger, HelpHandler)}>
 	<Route path="eval"><EvalRoutes/></Route>
 	<Route path="check"><CheckRoutes/></Route>
-	<Route path="document"><DocumentCells/></Route>
 	<!-- the roles: each request a thread of its own for the unit it names -->
 	<Route path="write/:document" {ThreadRoute{template:"ClerkThread", metadata:{document:"{document}"}}}/>
 	<Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>

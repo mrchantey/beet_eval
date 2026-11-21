@@ -26,7 +26,7 @@ impl NextStep {
 		let mut built = Vec::new();
 		for (reference, _) in run.workspace.rubrics() {
 			if dist
-				.exists(&FillSpec::cells_path(&reference))
+				.exists(&FormBuild::cells_path(&reference))
 				.await
 				.unwrap_or(false)
 			{

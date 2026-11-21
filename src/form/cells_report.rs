@@ -15,7 +15,7 @@ pub fn CellsReport(
 	#[prop(required)]
 	date: Date,
 	/// Its cells.
-	cells: Vec<CellText>,
+	cells: Vec<FormCell>,
 ) -> impl Bundle {
 	rsx! {
 		<h1>{format!("Cells of {output}")}</h1>
@@ -23,6 +23,6 @@ pub fn CellsReport(
 			"Dumped by "<code>{format!("eval/build {rubric}")}</code>{format!(" on {date}. Read these against the structural lines of the rubric ")}
 			<code>{rubric.to_string()}</code>"."
 		</p>
-		{CellText::table(&cells)}
+		{FormCell::table(&cells)}
 	}
 }

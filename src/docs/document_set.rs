@@ -67,7 +67,7 @@ impl DocumentSet {
 		sources
 			.sort_by(|(left, _), (right, _)| left.as_str().cmp(right.as_str()));
 		let mut world =
-			(TemplatePlugin, DocumentPlugin, ParsePlugin).into_world();
+			(TemplatePlugin, DocumentPlugin, OoxmlPlugin).into_world();
 		let mut files = Vec::new();
 		for (path, bytes) in sources {
 			let root = world.spawn_empty().id();
@@ -369,14 +369,14 @@ TODO(ask decision: playful or plain?) and TODO(ask fact: who reads it)
 	fn reads_a_word_document() {
 		let mut set = set(vec![(
 			"brand.docx",
-			OoxmlFile::word(
+			WordFixture::new(
 				"<w:p><w:pPr><w:pStyle w:val=\"Title\"/></w:pPr><w:r><w:t>Acme Stalls</w:t></w:r></w:p>\
 				 <w:p><w:r><w:rPr><w:i/></w:rPr><w:t>Stalls that come fitted</w:t></w:r></w:p>\
 				 <w:p><w:r><w:t>Acme rents fitted market stalls.</w:t></w:r></w:p>\
 				 <w:p><w:pPr><w:pStyle w:val=\"Heading2\"/></w:pPr><w:r><w:t>Voice</w:t></w:r></w:p>\
 				 <w:p><w:r><w:t>Plain. TODO(ask): the voice.</w:t></w:r></w:p>",
 			)
-			.unwrap(),
+			.bytes(),
 		)]);
 		let root = set.get("brand").unwrap().root;
 		set.query(|query| {
