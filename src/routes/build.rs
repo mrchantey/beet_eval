@@ -1,7 +1,11 @@
+use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// `eval/build <package>/<rubric>`: unpacks the reader's blank form named by
+/// `eval/build <package>/<rubric>`: refused until the form's
+/// [`AnswerSheet`] is approved as it stands (`eval/answers`), so nothing is
+/// written into the form a person has not reviewed; then unpacks the
+/// reader's blank form named by
 /// the rubric's render spec into `<package>/<rubric>/` of the build
 /// directory when it is not yet there, or afresh with `--fresh`, zips those
 /// parts, as the builder has edited them, into the built form beside them,
@@ -23,6 +27,16 @@ pub async fn EvalBuild(
 	workspace.require_clean()?;
 	let reference = rubric;
 	let (package, spec) = FormSource::of(&workspace, &reference)?;
+	let state = AnswerState::of(&workspace, &reference).await?;
+	if !matches!(state, AnswerState::Approved(_)) {
+		return refusal(format!(
+			"{reference} is not built while its answers are not approved: {}; write them in {}/{} and review them with `eval/answers {reference}`\n",
+			state.describe(),
+			workspace.manifest.dist,
+			FormBuild::answers_path(&reference)
+		))
+		.xok();
+	}
 	let dist = workspace.dist();
 	let dist_dir = &workspace.manifest.dist;
 	let output = RelPath::new(reference.package()).join(spec.output.as_str());
@@ -96,13 +110,18 @@ mod test {
 	use crate::prelude::*;
 	use beet::prelude::*;
 
-	/// The first build unpacks the blank form and lists its cells; an edit to
-	/// its parts reaches the next build, `--fresh` discards it, and parts that
-	/// no longer read refuse the build.
+	/// A form whose answers are not approved is refused; the first build
+	/// unpacks the blank form and lists its cells; an edit to its parts
+	/// reaches the next build, `--fresh` discards it, and parts that no
+	/// longer read refuse the build.
 	#[beet::test]
 	async fn builds_the_form_from_its_parts() {
 		let mut fixture = Fixture::new().await;
 		let build = "eval/build acme_course/01-business-plan";
+		fixture.refused(build).await.xpect_contains(
+			"not built while its answers are not approved: no answers are written",
+		);
+		fixture.approved_answers("## t0/1,0\n\nAcme Stalls\n").await;
 		let written = "dist/acme_course/01-business-plan.docx written; 3 cells listed in dist/acme_course/01-business-plan.cells.md\n";
 		fixture.ok(build).await.xpect_eq(format!(
 			"unpacked the blank form's 3 parts into dist/acme_course/01-business-plan/\n{written}"
@@ -126,7 +145,7 @@ mod test {
 			.read("dist/acme_course/01-business-plan.cells.md")
 			.await
 			.xpect_contains("| Cell | Text |\n|---|---|\n")
-			.xpect_contains("| t0/B1 | Acme Stalls |\n");
+			.xpect_contains("| t0/1,0 | Acme Stalls |\n");
 		// a built form takes it out of the triage's build queue
 		fixture
 			.ok("eval/next")
@@ -140,7 +159,7 @@ mod test {
 		fixture
 			.read("dist/acme_course/01-business-plan.cells.md")
 			.await
-			.xpect_contains("| t0/B1 | (empty) |\n");
+			.xpect_contains("| t0/1,0 | (empty) |\n");
 
 		fixture
 			.store

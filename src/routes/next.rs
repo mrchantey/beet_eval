@@ -19,26 +19,20 @@ pub async fn EvalNext(
 
 impl NextStep {
 	/// The next unit of work in the workspace `caller` resolves, from one run
-	/// over it and the forms already built.
+	/// over it and how far each form has come.
 	pub async fn of(caller: &AsyncEntity) -> Result<Self> {
 		let mut run = Run::of(caller).await?;
-		let dist = run.workspace.dist();
-		let mut built = Vec::new();
+		let mut forms = Vec::new();
 		for (reference, _) in run.workspace.rubrics() {
-			if dist
-				.exists(&FormBuild::cells_path(&reference))
-				.await
-				.unwrap_or(false)
-			{
-				built.push(reference);
-			}
+			let stage = FormStage::of(&run.workspace, &reference).await?;
+			forms.push((reference, stage));
 		}
 		Self::compute(
 			&run.workspace,
 			&mut run.documents,
 			&run.verdicts,
 			&run.results,
-			&built,
+			&forms,
 		)
 	}
 }

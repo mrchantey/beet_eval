@@ -19,9 +19,10 @@
 //!   [`Outline`](prelude::Outline), and the params of the check kinds that
 //!   decide their shape.
 //! - [`form`]: the renderer, a reader package's
-//!   [`RenderSpec`](prelude::RenderSpec), the form's parts a builder edits
-//!   ([`FormBuild`](prelude::FormBuild)) and its cells by place
-//!   ([`FormCell`](prelude::FormCell)).
+//!   [`RenderSpec`](prelude::RenderSpec), the answers a person approves
+//!   before a build ([`AnswerSheet`](prelude::AnswerSheet)), the form's
+//!   parts a builder edits ([`FormBuild`](prelude::FormBuild)) and its cells
+//!   by place ([`FormCell`](prelude::FormCell)).
 //! - [`ingest`]: reading a package's sources, a deck's
 //!   [`DeckTriage`](prelude::DeckTriage) among them.
 //! - [`coach`]: the workspace package's claims register, the document
@@ -89,6 +90,9 @@ mod test {
 				"Claim" => stored_form::<Claim>(name, &json).await,
 				"Workspace" => stored_form::<Workspace>(name, &json).await,
 				"Grade" => stored_form::<Grade>(name, &json).await,
+				"AnswerApproval" => {
+					stored_form::<AnswerApproval>(name, &json).await
+				}
 				"Results" => stored_form::<Results>(name, &json).await,
 				"NextStep" => stored_form::<NextStep>(name, &json).await,
 				other => panic!(
@@ -100,6 +104,7 @@ mod test {
 		shown.sort();
 		shown.dedup();
 		shown.xpect_eq(vec![
+			"AnswerApproval",
 			"Claim",
 			"CoachAction",
 			"Eval",

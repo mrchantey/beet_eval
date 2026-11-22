@@ -9,6 +9,7 @@
 //! `--accept=application/json`, the stored form of the same value, so an
 //! agent reads what a person does. A file a verb writes, a projection or a
 //! build's cells, is the render of its scene.
+mod answers;
 mod blocks;
 mod build;
 mod cells;
@@ -28,6 +29,7 @@ mod route_call;
 mod rows;
 mod run;
 mod worksheet;
+pub use answers::*;
 pub use blocks::*;
 pub use build::*;
 pub use cells::*;
@@ -68,6 +70,8 @@ pub fn EvalRoutes() -> impl Bundle {
 		EvalNew,
 		EvalGrade,
 		EvalBuild,
+		EvalAnswers,
+		EvalApprove,
 		EvalCells,
 		EvalDeck,
 		EvalRows,
@@ -156,6 +160,8 @@ mod test {
 			"eval/new Acme Ada",
 			"eval/grade --eval=product.alternatives-considered --level=2 --anchor=product#idea --by=x --evidence=We\\ weighed\\ a\\ mobile\\ service",
 			"eval/build acme_course/01-business-plan --fresh",
+			"eval/answers acme_course/01-business-plan",
+			"eval/approve acme_course/01-business-plan --by=ada",
 			"eval/cells acme_course/01-business-plan",
 			"eval/deck packages/acme/assets/week-1.pptx",
 			"eval/rows --package=acme_biz --table=evals --key=product.origin",

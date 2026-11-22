@@ -39,8 +39,8 @@ mod test {
 			.ok("eval/cells acme_course/01-business-plan")
 			.await
 			.xpect_eq(
-				"| Cell | Text |\n|---|---|\n| t0/A1 | Business Name |\n| t0/B1 | (empty) |\n\
-				 | t1/A1 | Briefly describe your business: / (Please delete this sentence once completed) |\n",
+				"| Cell | Text |\n|---|---|\n| t0/0,0 | Business Name |\n| t0/1,0 | (empty) |\n\
+				 | t1/0,0 | Briefly describe your business: / (Please delete this sentence once completed) |\n",
 			);
 	}
 

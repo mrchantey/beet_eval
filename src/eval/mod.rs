@@ -106,7 +106,7 @@
 //!   source tags: a cell filled, a count of rows, a sentence deleted, a mark
 //!   made bold. It is checked on the rendered form, never on `docs/`, the
 //!   mirror image of a citation. Its address is `label.n`, the section's label
-//!   and its position, so a result can cite it: append to a list, never
+//!   and its position from 1, so a result can cite it: append to a list, never
 //!   insert.
 //!
 //! A requirement that one document match another is neither: it goes in the

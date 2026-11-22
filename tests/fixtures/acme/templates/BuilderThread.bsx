@@ -1,6 +1,8 @@
 <!--
 The builder's thread for one rubric, built per request by `build/*rubric`:
-the build directory alone to write, where the form's parts are edited.
+the build directory alone to write, where the form's answers are written
+and, once a person approves them, its parts edited. Its script plays both
+sittings: the first's build is refused, the answers awaiting review.
 -->
 <Thread {(Sequence, MountThreadStore{path:"packages/acme/assets/threads/builder"})}>
 	<CreateActor id=1 name="System" kind="System"><RoleSeed role="builder"/></CreateActor>
@@ -8,6 +10,11 @@ the build directory alone to write, where the form's parts are edited.
 	<RepeatWhileFunctionCallOutput>
 		<CreateActor id=6 name="Builder" kind="Agent" {MockPostStreamer{script:[
 			Call{tool:"eval/project", arguments:{rubric:"acme_course/01-business-plan"}},
+			Call{tool:"write-text", arguments:{
+				path:"acme_course/01-business-plan.answers.md",
+				text:"## t0/1,0\n\nAcme Stalls\n",
+			}},
+			Call{tool:"eval/answers", arguments:{rubric:"acme_course/01-business-plan"}},
 			Call{tool:"eval/build", arguments:{rubric:"acme_course/01-business-plan"}},
 			Call{tool:"edit-text", arguments:{
 				path:"acme_course/01-business-plan/word/document.xml",

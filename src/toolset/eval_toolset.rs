@@ -2,9 +2,10 @@ use beet::prelude::*;
 
 /// `<EvalToolset/>`: the verbs a role works the loop with, as tools:
 /// `eval/check`, `eval/results`, `eval/next`, `eval/worksheet`,
-/// `eval/project`, `eval/blocks`, `eval/grade` and `eval/build`, each a
-/// [`HostTool`] answering the verb's markdown report, a refusal answering as
-/// the error it is.
+/// `eval/project`, `eval/blocks`, `eval/grade`, `eval/cells`, `eval/answers`
+/// and `eval/build`, each a [`HostTool`] answering the verb's markdown
+/// report, a refusal answering as the error it is. `eval/approve` is none of them: a
+/// person approves a form's answers, never a role.
 ///
 /// ```bsx
 /// <CreateActor name="Grader" kind="Agent" {ModelStreamer{provider:OpenAi}}>
@@ -29,6 +30,8 @@ pub fn EvalToolset() -> impl Bundle {
 		<HostTool path="eval/project"/>
 		<HostTool path="eval/blocks"/>
 		<HostTool path="eval/grade"/>
+		<HostTool path="eval/cells"/>
+		<HostTool path="eval/answers"/>
 		<HostTool path="eval/build"/>
 	}
 }

@@ -125,15 +125,46 @@ mod test {
 			.xpect_starts_with("## Next: build acme_course/01-business-plan");
 	}
 
-	/// The builder's turn: its edit lands in the form's parts in the build
-	/// directory, the only store it can write, and the build lists the built
-	/// form's cells.
+	/// The builder's sittings: the first writes the form's answers in the
+	/// build directory, the only store it can write, and its build is refused
+	/// while they await review; once a person approves them, the next lands
+	/// its edit in the form's parts and the build lists the built form's
+	/// cells.
 	#[beet::test(timeout_ms = 120000)]
 	async fn the_builder_builds_one_unit() {
 		let (store, response) = Fixture::iterate(3).await;
 		response.status().xpect_eq(StatusCode::OK);
 		sittings(&store, "builder").await.len().xpect_eq(1);
-		let fixture = Fixture::over(store.clone());
+		let mut fixture = Fixture::over(store.clone());
+		fixture
+			.read(Fixture::ANSWERS)
+			.await
+			.xpect_contains("Acme Stalls");
+		store
+			.exists(&RelPath::new("dist/acme_course/01-business-plan.cells.md"))
+			.await
+			.unwrap()
+			.xpect_false();
+		fixture.ok("eval/next").await.xpect_contains(
+			"`eval/answers acme_course/01-business-plan` await a person's review",
+		);
+		fixture
+			.ok("eval/approve acme_course/01-business-plan --by=ada")
+			.await;
+
+		FixtureEntry::over(store.clone())
+			.await
+			.request(Request::get("build/acme_course/01-business-plan"))
+			.status()
+			.xpect_eq(StatusCode::OK);
+		// the builder continues its one thread about the rubric
+		let sittings = sittings(&store, "builder").await;
+		sittings.len().xpect_eq(1);
+		sittings[0]
+			.iter()
+			.filter(|post| *post == "build acme_course/01-business-plan")
+			.count()
+			.xpect_eq(2);
 		fixture
 			.read("dist/acme_course/01-business-plan/word/document.xml")
 			.await
@@ -148,7 +179,7 @@ mod test {
 		fixture
 			.read("dist/acme_course/01-business-plan.cells.md")
 			.await
-			.xpect_contains("| t0/B1 | Acme Stalls |");
+			.xpect_contains("| t0/1,0 | Acme Stalls |");
 	}
 
 	/// A role runs by hand through its route: the clerk continues its thread

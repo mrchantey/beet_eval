@@ -2,12 +2,13 @@ use crate::text_type::text_type;
 use beet::prelude::*;
 
 text_type!(
-	/// A cell of a form, named by its place: a table's cell as `t<table>/<A1>`,
-	/// the table's place among the document's tables and the cell's grid slot,
-	/// ie `t0/B1` for the second cell of the first table's first row, as Word
-	/// and Writer name a table's cells in their formulas; a workbook's as
-	/// `<sheet>!<A1>`, ie `Start Here!D3`. Tables count from 0 as every
-	/// index does; a `/`, which no sheet name may hold, tells the two apart.
+	/// A cell of a form, named by its place: `<table>/<x>,<y>`, its table
+	/// then its slot in that table's grid, both counted from 0 as every index
+	/// in beet is, `x` the column and `y` the row. A table outside a
+	/// worksheet is `t<n>` by its place among the document's tables, ie
+	/// `t0/1,0` for the second cell of the first table's first row; a
+	/// worksheet's is its name, ie `Start Here/3,2`, which a `/` never
+	/// appears in.
 	CellRef,
 	|text| CellRef::slot_of(&text).map(|_| ())
 );
@@ -15,37 +16,39 @@ text_type!(
 impl CellRef {
 	/// The cell at `slot` of the document's table counted `table` from 0.
 	pub fn table(table: usize, slot: UVec2) -> Self {
-		Self(format!("t{table}/{}", A1Reference(slot)).into())
+		Self::at(&format!("t{table}"), slot)
 	}
 
 	/// The cell at `slot` of the worksheet `sheet`.
-	pub fn sheet(sheet: &str, slot: UVec2) -> Self {
-		Self(format!("{sheet}!{}", A1Reference(slot)).into())
+	pub fn sheet(sheet: &str, slot: UVec2) -> Self { Self::at(sheet, slot) }
+
+	fn at(place: &str, slot: UVec2) -> Self {
+		Self(format!("{place}/{},{}", slot.x, slot.y).into())
 	}
 
-	/// The grid slot `text` names, checking its table or sheet half.
+	/// The grid slot `text` names, checking it names a table or sheet.
 	fn slot_of(text: &str) -> Result<UVec2> {
-		let (place, reference) =
-			match (text.split_once('/'), text.rsplit_once('!')) {
-				(Some((table, reference)), _) => {
-					table
-						.strip_prefix('t')
-						.filter(|index| !index.is_empty())
-						.and_then(|index| index.parse::<usize>().ok())
-						.ok_or_else(|| {
-							bevyhow!("`{text}` names no table, ie t0/B1")
-						})?;
-					(table, reference)
-				}
-				(None, Some((sheet, reference))) => (sheet, reference),
-				(None, None) => {
-					bevybail!("`{text}` is no cell, ie t0/B1 or Sheet1!B1")
-				}
-			};
-		if place.is_empty() {
-			bevybail!("`{text}` names no table or sheet");
+		let (place, slot) = text
+			.rsplit_once('/')
+			.filter(|(place, _)| !place.is_empty())
+			.ok_or_else(|| bevyhow!("`{text}` is no cell, ie t0/1,0"))?;
+		if place.contains('/') {
+			bevybail!("`{text}` names no table or sheet, ie t0/1,0");
 		}
-		A1Reference::parse(reference)?.0.xok()
+		slot.split_once(',')
+			.and_then(|(x, y)| {
+				let parse = |index: &str| {
+					index
+						.chars()
+						.all(|char| char.is_ascii_digit())
+						.then(|| index.parse::<u32>().ok())
+						.flatten()
+				};
+				UVec2::new(parse(x)?, parse(y)?).xsome()
+			})
+			.ok_or_else(|| {
+				bevyhow!("`{text}` names no slot, ie t0/1,0, column then row")
+			})
 	}
 }
 
@@ -216,16 +219,14 @@ mod test {
 	fn names_cells_by_place() {
 		CellRef::table(2, UVec2::new(0, 1))
 			.as_str()
-			.xpect_eq("t2/A2");
+			.xpect_eq("t2/0,1");
 		CellRef::sheet("Start Here", UVec2::new(3, 2))
 			.as_str()
-			.xpect_eq("Start Here!D3");
-		for good in ["t0/B1", "Start Here!D3", "a!b!C2"] {
+			.xpect_eq("Start Here/3,2");
+		for good in ["t0/1,0", "Start Here/3,2", "a!b/0,12"] {
 			CellRef::parse(good).unwrap();
 		}
-		for bad in
-			["t/B1", "tx/B1", "t0/1", "Sheet!3", "!A1", "Sheet!A01", "A1"]
-		{
+		for bad in ["t0/B1", "t0/1", "/1,0", "a/b/1,0", "t0/1,-2", "t0/+1,0"] {
 			CellRef::parse(bad).xpect_err();
 		}
 	}
@@ -250,9 +251,9 @@ mod test {
 				.collect::<Vec<_>>()
 		});
 		markdown.clone().xpect_eq(vec![
-			"| t0/A1 | Business Name |".to_string(),
-			"| t0/B1 | (empty) |".into(),
-			"| t1/A1 | Briefly describe it: |".into(),
+			"| t0/0,0 | Business Name |".to_string(),
+			"| t0/1,0 | (empty) |".into(),
+			"| t1/0,0 | Briefly describe it: |".into(),
 		]);
 		word.xpect_eq(markdown);
 	}
@@ -272,6 +273,6 @@ mod test {
 			.iter()
 			.map(ToString::to_string)
 			.collect::<Vec<_>>()
-			.xpect_eq(vec!["| Start Here!B1 | Acme |".to_string()]);
+			.xpect_eq(vec!["| Start Here/1,0 | Acme |".to_string()]);
 	}
 }

@@ -25,6 +25,13 @@ impl FormBuild {
 			.join(format!("{}.cells.md", rubric.rubric()))
 	}
 
+	/// The path below the build directory a form's [`AnswerSheet`] is
+	/// written to, beside the form, ie `acme_course/01-business-plan.answers.md`.
+	pub fn answers_path(rubric: &RubricRef) -> RelPath {
+		RelPath::new(rubric.package())
+			.join(format!("{}.answers.md", rubric.rubric()))
+	}
+
 	/// Whether `parts` holds an unpacked form.
 	pub async fn is_unpacked(parts: &BlobStore) -> Result<bool> {
 		parts
@@ -111,6 +118,6 @@ mod test {
 		let built = FormBuild::pack(&parts, MediaType::Docx).await.unwrap();
 		Fixture::cells_of(&built)[1]
 			.to_string()
-			.xpect_eq("| t0/B1 | Acme Stalls |");
+			.xpect_eq("| t0/1,0 | Acme Stalls |");
 	}
 }

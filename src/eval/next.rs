@@ -17,7 +17,9 @@ use beet::prelude::*;
 /// 5. [`Grade`](NextVerb::Grade) every document written with no asks open but
 ///    ungraded, or graded before its last `updated`.
 /// 6. [`Build`](NextVerb::Build) the first reader rubric fully met, with a
-///    [`RenderSpec`] and nothing built for it.
+///    [`RenderSpec`] and nothing built for it, whose answers are unwritten or
+///    approved ([`FormStage`]): the builder writes the answers of the one and
+///    builds the other. A form whose answers await review waits for a person.
 /// 7. [`Write`](NextVerb::Write) the document with the most open asks and the
 ///    widest gap to the owner rubric, weighing an ask as two levels.
 /// 8. [`Done`](NextVerb::Done) when nothing is left.
@@ -41,14 +43,13 @@ impl NextStep {
 	/// The triage over one run: the documents of the outline in order, each
 	/// weighed by its asks, its shape failures, its gaps to the owner and the
 	/// reader rubrics and its grading, then the unit of work by the order
-	/// above. `built` names the rubrics whose built form has its cells listed in the
-	/// build directory.
+	/// above. `forms` names how far each rubric's form has come.
 	pub fn compute(
 		workspace: &LoadedWorkspace,
 		documents: &mut DocumentSet,
 		verdicts: &[(EvalId, CheckVerdict)],
 		results: &Results,
-		built: &[RubricRef],
+		forms: &[(RubricRef, FormStage)],
 	) -> Result<Self> {
 		let document_package =
 			workspace.document_package()?.manifest.name.clone();
@@ -182,7 +183,7 @@ impl NextStep {
 			&documents_rows,
 			&claims,
 			results,
-			built,
+			forms,
 			&document_package,
 		);
 		Self {
@@ -203,7 +204,7 @@ impl NextStep {
 		rows: &[DocumentRow],
 		claims: &[&Claim],
 		results: &Results,
-		built: &[RubricRef],
+		forms: &[(RubricRef, FormStage)],
 		document_package: &str,
 	) -> (NextVerb, Vec<SmolStr>, String) {
 		let absent = rows.iter().filter(|row| !row.present).collect::<Vec<_>>();
@@ -312,7 +313,14 @@ impl NextStep {
 				format!("{why}."),
 			);
 		}
-		let ready = results
+		let stage = |id: &RubricRef| {
+			forms
+				.iter()
+				.find(|(reference, _)| reference == id)
+				.map(|(_, stage)| *stage)
+				.unwrap_or(FormStage::Unanswered)
+		};
+		let met = results
 			.rubrics
 			.iter()
 			.filter(|rubric| {
@@ -325,7 +333,28 @@ impl NextStep {
 						.and_then(|package| {
 							package.render_spec(rubric.id.rubric())
 						})
-						.is_some() && !built.contains(&rubric.id)
+						.is_some()
+			})
+			.collect::<Vec<_>>();
+		let reviewing = met
+			.iter()
+			.filter(|rubric| stage(&rubric.id) == FormStage::Awaiting)
+			.map(|rubric| format!("`eval/answers {}`", rubric.id))
+			.collect::<Vec<_>>();
+		let reviewing = match reviewing.is_empty() {
+			true => String::new(),
+			false => format!(
+				" The answers of {} await a person's review.",
+				reviewing.join(", ")
+			),
+		};
+		let ready = met
+			.iter()
+			.filter(|rubric| {
+				matches!(
+					stage(&rubric.id),
+					FormStage::Unanswered | FormStage::Approved
+				)
 			})
 			.collect::<Vec<_>>();
 		if let Some(first) = ready.first() {
@@ -333,12 +362,20 @@ impl NextStep {
 				1 => String::new(),
 				count => format!("; {} more form(s) are ready too", count - 1),
 			};
+			let task = match stage(&first.id) {
+				FormStage::Approved => format!(
+					"its answers are approved and nothing is in {}/ for it: build it",
+					workspace.manifest.dist
+				),
+				_ => "no answers are written for it: write them for review"
+					.to_string(),
+			};
 			return (
 				NextVerb::Build,
 				vec![first.id.as_str().into()],
 				format!(
-					"every citation of {} is met and nothing is in {}/ for it{more}.",
-					first.id, workspace.manifest.dist
+					"every citation of {} is met and {task}{more}.{reviewing}",
+					first.id
 				),
 			);
 		}
@@ -358,7 +395,7 @@ impl NextStep {
 					vec![row.document.clone()],
 					format!(
 						"{} ask(s) open and an owner gap of {}{reader}, the most of any \
-						 document.",
+						 document.{reviewing}",
 						row.asks, row.owner_gap
 					),
 				)
@@ -366,7 +403,9 @@ impl NextStep {
 			_ => (
 				NextVerb::Done,
 				Vec::new(),
-				"no asks open, every owner citation met, every ready form built.".into(),
+				format!(
+					"no asks open, every owner citation met, every ready form built.{reviewing}"
+				),
 			),
 		}
 	}

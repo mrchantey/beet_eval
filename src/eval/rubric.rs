@@ -30,6 +30,16 @@ impl Rubric {
 	pub fn citations(&self) -> impl Iterator<Item = &Citation> {
 		self.sections.iter().flat_map(RubricSection::citations)
 	}
+
+	/// Every structural line in the rubric with its address, `label.n`, in
+	/// heading order.
+	pub fn structural_lines(&self) -> Vec<(String, &StructuralLine)> {
+		let mut lines = Vec::new();
+		for section in &self.sections {
+			section.structural_lines(&mut lines);
+		}
+		lines
+	}
 }
 
 /// A row of a package's `rubrics` table, keyed on its id.
@@ -54,7 +64,8 @@ pub struct RubricSection {
 	/// The evals the reader holds this section to, each at a level.
 	pub citations: Vec<Citation>,
 	/// Checkable sentences about the rendered form. Append only: a line's
-	/// address is `label.n` by its position, which results cite.
+	/// address is `label.n` by its position counted from 1, which results
+	/// cite.
 	pub structural: Vec<StructuralLine>,
 	/// What gets the form sent back, each with its source tags inline.
 	pub sent_back_when: Vec<String>,
@@ -69,6 +80,20 @@ pub struct RubricSection {
 }
 
 impl RubricSection {
+	/// This section's structural lines and its descendants', each with its
+	/// address, pushed onto `lines`.
+	fn structural_lines<'a>(
+		&'a self,
+		lines: &mut Vec<(String, &'a StructuralLine)>,
+	) {
+		for (index, line) in self.structural.iter().enumerate() {
+			lines.push((format!("{}.{}", self.label, index + 1), line));
+		}
+		for child in &self.sections {
+			child.structural_lines(lines);
+		}
+	}
+
 	/// This section's citations and its descendants', in heading order.
 	pub fn citations(&self) -> Box<dyn Iterator<Item = &Citation> + '_> {
 		Box::new(

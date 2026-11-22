@@ -22,6 +22,9 @@ impl Fixture {
 	pub const FORM: &str =
 		"packages/acme_course/assets/forms/01-business-plan.docx";
 
+	/// The business plan's answer sheet in the workspace store.
+	pub const ANSWERS: &str = "dist/acme_course/01-business-plan.answers.md";
+
 	/// The fixture, freshly copied.
 	pub async fn new() -> Self { Self::over(Self::workspace().await) }
 
@@ -151,6 +154,21 @@ impl Fixture {
 			self.store.get(&RelPath::new(path)).await.unwrap().to_vec(),
 		)
 		.unwrap()
+	}
+
+	/// Writes `sheet` as the business plan's answers and approves it.
+	pub async fn approved_answers(&mut self, sheet: &str) {
+		self.write(Self::ANSWERS, sheet).await;
+		self.ok("eval/approve acme_course/01-business-plan --by=ada")
+			.await;
+	}
+
+	/// Writes `text` at `path` in the workspace store.
+	pub async fn write(&self, path: &str, text: &str) {
+		self.store
+			.insert(&RelPath::new(path), text.to_string())
+			.await
+			.unwrap();
 	}
 
 	/// Every thread `role` keeps under the workspace package's
@@ -285,6 +303,11 @@ impl FixtureEntry {
 			)
 			.await
 			.unwrap();
+		Self::build(store, "iterate.bsx").await
+	}
+
+	/// `iterate.bsx` over `store`, ie a copy a loop has run in.
+	pub async fn over(store: BlobStore) -> Self {
 		Self::build(store, "iterate.bsx").await
 	}
 
