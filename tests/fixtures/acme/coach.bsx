@@ -1,19 +1,70 @@
 <!--
-The acme workspace's coach: one sitting on one claim of the register, the
-coach scripted under the mock provider:
+The acme workspace's coach: a person's sitting on one claim of the register,
+held by `{RunThread}` and entered with the start request, the coach scripted
+under the mock provider:
 
-    just cli --entry=<a copy of this directory>/coach.bsx coach <claim id>
+    just cli --entry=<a copy of this directory>/coach.bsx --claim=<claim id>
 
-Its thread is `templates/CoachThread.bsx`, stored under the workspace
-package's `assets/threads/coach`, each claim's sittings sessions of one thread
-about it. A live workspace's entry is this one with
-`{ModelStreamer{provider:OpenAi}}` for the coach and `{UserInput}` for the
-owner, under a server with a surface to type into.
+The sitting's thread mounts `coach/{claim}`, stored under the workspace
+package's `assets/threads`, so each claim's sittings continue one thread about
+it. Its seed is the coach's procedure, the actions table, the register and the
+claim held, and it asks a question a turn until the coach writes the claim's
+assignment, which ends it as a pass, the transcript left on the surface.
+A live workspace's entry is this one with `{ModelStreamer{provider:OpenAi}}`
+for the coach and `{UserInput}` for the owner.
 -->
-<CliServer {CallOnReady}>
-<Router {(RequestLogger, HelpHandler, JsonTableStore{path:"packages/acme/assets/threads"})}>
+<CallOnReady {(TuiServer, SweepDescendants)}>
+<Router {(Layout(Template("AppShell")), RequestLogger, HelpHandler, JsonTableStore{path:"packages/acme/assets/threads"})}>
+	<Route path="/" {FixedPage}>
+		<ThreadView {OfThread($sitting)}/>
+		<CreatePostForm {OfThread($sitting)}/>
+	</Route>
 	<Route path="eval"><EvalRoutes/></Route>
 	<Route path="check"><CheckRoutes/></Route>
-	<Route path="coach/:claim" {ThreadRoute{source:Document("templates/CoachThread.bsx"), message:"coach {claim}"}}/>
+	<Thread bx:ref="sitting" {(Sequence, RunThread, MountThreadStore{path:"coach/{claim}"})}>
+		<CreateActor id=1 name="System" kind="System">
+			<RoleSeed role="coach"/>
+			<RoutePost path="eval/rows?package=acme_biz&table=actions"/>
+			<RoutePost path="eval/rows?package=acme&table=claims"/>
+			<RoutePost path="eval/rows?package=acme&table=claims&key={claim}"/>
+		</CreateActor>
+		<Fallback>
+			<Sequence>
+				<HoldClaim/>
+				<Repeat>
+					<Sequence>
+						<RepeatWhileFunctionCallOutput>
+							<CreateActor id=7 name="Coach" kind="Agent" {MockPostStreamer{script:[
+								Call{tool:"eval/rows", arguments:{package:"acme", table:"claims"}},
+								Call{tool:"eval/put", arguments:{row:{
+									id:"traders-return", claim:"Traders who try a stall come back the next weekend.",
+									block:"product#idea", evidence:0, stakes:"Fatal", status:"Open", test:"", sources:[],
+								}}},
+								Call{tool:"write-text", arguments:{path:"docs/product.md", text:"Two traders paid for last weekend."}},
+								Call{tool:"write-text", arguments:{path:"../../../docs/brand.md", text:"escaped"}},
+								Text("Who paid, and how much?"),
+								Call{tool:"eval/put", arguments:{row:{
+									id:"per-weekend", claim:"Traders will pay per weekend rather than by the month.",
+									block:"product#pricing", evidence:2, stakes:"Fatal", status:"Testing",
+									test:"Ask three traders on Saturday to book the next weekend at $120.",
+									sources:["owner 2026-11-18"],
+								}}},
+								Text("Your assignment: ask three traders on Saturday to book the next weekend at $120."),
+							]}}>
+								<Router>
+									<RouteTool path="eval/rows"/>
+									<RouteTool path="eval/put" params="package=acme&table=claims"/>
+									<Fragment {DirPath("packages/acme/assets")}><StoreToolset/></Fragment>
+								</Router>
+							</CreateActor>
+						</RepeatWhileFunctionCallOutput>
+						<AssignmentWritten/>
+						<CreateActor id=8 name="Owner" kind="User" {MockPostStreamer{custom_response:"Two traders paid $120 each for last weekend."}}/>
+					</Sequence>
+				</Repeat>
+			</Sequence>
+			<EndWith/>
+		</Fallback>
+	</Thread>
 </Router>
-</CliServer>
+</CallOnReady>

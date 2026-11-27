@@ -277,7 +277,8 @@ impl Fixture {
 /// One of the fixture's entries built as the binary builds it, over a fresh
 /// copy of the workspace, every agent scripted: `iterate.bsx`, the loop at
 /// `iterate` and each role at its own route, ie `grade/product`, or
-/// `coach.bsx`, the coach's sitting at `coach/<claim id>`.
+/// `coach.bsx`, the coach's sitting held by its `RunThread`, started by
+/// [`Self::start`].
 pub(crate) struct FixtureEntry {
 	app: App,
 	router: Entity,
@@ -367,20 +368,45 @@ impl FixtureEntry {
 
 	/// The response to `request`, the app updated until it answers.
 	pub fn request(&mut self, request: Request) -> Response {
+		self.until(self.router, async move |router| {
+			router.exchange(request).await
+		})
+	}
+
+	/// The outcome of starting the entry with `request`, as the start verb
+	/// starts it, ie `Request::get("/").with_param("claim", "per-weekend")`:
+	/// its one `RunThread` called with the request, the app updated until
+	/// the run ends.
+	pub fn start(&mut self, request: Request) -> Result<Outcome> {
+		let run = self
+			.app
+			.world_mut()
+			.query_filtered::<Entity, With<RunThread>>()
+			.single(self.app.world())
+			.unwrap();
+		self.until(run, async move |run| {
+			run.call::<Request, Outcome>(request).await
+		})
+	}
+
+	/// What `func` answers of `entity`, the app updated until it does.
+	fn until<O: 'static + Send>(
+		&mut self,
+		entity: Entity,
+		func: impl 'static + AsyncFnOnce(AsyncEntity) -> O,
+	) -> O {
 		let answer = Arc::new(Mutex::new(None));
 		let out = answer.clone();
-		self.app
-			.world_mut()
-			.entity_mut(self.router)
-			.run_async_local(|router| async move {
-				let response = router.exchange(request).await;
-				*out.lock().unwrap() = Some(response);
+		self.app.world_mut().entity_mut(entity).run_async_local(
+			|entity| async move {
+				*out.lock().unwrap() = Some(func(entity).await);
 				Ok(())
-			});
+			},
+		);
 		for _ in 0..20_000 {
 			self.app.update();
-			if let Some(response) = answer.lock().unwrap().take() {
-				return response;
+			if let Some(answer) = answer.lock().unwrap().take() {
+				return answer;
 			}
 		}
 		panic!("the entry did not answer");

@@ -17,9 +17,9 @@ use beet::prelude::*;
 /// ```
 ///
 /// The tools are routes of the agent's own url space, the `<Router>` beneath
-/// it, while the verbs they forward to are routes of the url space hosting
-/// the agent, so a tool's `eval/grade` is the host's, named as a person runs
-/// it, never a route the agent could call itself.
+/// it, while the verbs they forward to are routes of the url space around
+/// the agent, so a tool's `eval/grade` is the workspace's verb, named as a
+/// person runs it, never a route the agent could call itself.
 #[template]
 pub fn EvalToolset() -> impl Bundle {
 	rsx! {

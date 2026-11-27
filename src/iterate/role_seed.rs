@@ -2,13 +2,22 @@ use crate::prelude::*;
 use beet::prelude::*;
 
 /// `<RoleSeed role="clerk"/>`: the seed post holding a role's procedure, the
-/// file `seeds/<role>.md` of the workspace's document package, read once
-/// while the thread builds, so the procedure has one source, every package
-/// ships its own, and an edited procedure is a thread of its own.
+/// file `seeds/<role>.md` of the workspace's document package, read by the
+/// entry creating the thread, so the procedure has one source, every package
+/// ships its own, and an edited procedure reaches a new thread only.
+///
+/// Each `{param}` of the procedure is filled from the request entering, ie
+/// the coach's `{claim}`, and `{{` and `}}` spell a literal brace
+/// ([`ThreadEntry::fill`]).
 ///
 /// The package is the one the workspace manifest names, wherever it lives,
 /// beside the workspace or in a bucket, so an entry names a role and never a
 /// path.
+///
+/// ## Errors
+///
+/// Errors when the package has no seed for the role, and on a param the
+/// request lacks.
 #[template]
 pub fn RoleSeed(
 	/// The role, ie `clerk`, `grader`, `builder` or `coach`.
@@ -28,7 +37,7 @@ pub fn RoleSeed(
 						package.manifest.name
 					)
 				})?;
-				String::from_utf8(bytes.to_vec())?.xok()
+				cx.input.fill(&String::from_utf8(bytes.to_vec())?)
 			},
 		),
 	)
@@ -224,9 +233,10 @@ mod test {
 			.xpect_none();
 	}
 
-	/// The loop's run is a session of one thread, the workspace's journal:
-	/// each turn's decision a post of it, and each unit thread spawned by
-	/// its decision, a second run continuing the journal.
+	/// Every run of the loop continues one thread, the workspace's journal:
+	/// each turn's decision a post by its Loop actor, each unit thread
+	/// spawned by its decision, and a second run the Loop actor's second
+	/// session of it.
 	#[beet::test(timeout_ms = 120000)]
 	async fn the_loop_journals_each_decision() {
 		let mut entry = FixtureEntry::looping(3).await;
@@ -265,14 +275,18 @@ mod test {
 				.spawned_by()
 				.xpect_eq(Some(&PostRef::new(loop_thread.id(), decision.id())));
 		}
-		// a second run is another session of the same journal
+		// a second run is the Loop actor's second join of the same journal
+		let looper = decisions[0].author().clone();
 		entry.request(Request::get("iterate"));
 		let journal = Fixture::threads(&entry.store, "loop").await;
 		journal.len().xpect_eq(1);
 		journal[0]
 			.1
 			.iter()
-			.filter_map(|post| post.log::<SessionOpened>())
+			.filter(|post| {
+				post.author() == &looper
+					&& post.log::<SessionOpened>().is_some()
+			})
 			.count()
 			.xpect_eq(2);
 	}

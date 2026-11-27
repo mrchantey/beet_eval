@@ -5,7 +5,9 @@ use beet::prelude::*;
 /// appends the decision to the loop's thread and requests the unit of work it
 /// names of the url space it is a route of, `<verb>/<first target>`, ie
 /// `grade/product` or `build/acme_course/01-business-plan`, the role's route
-/// building a thread for that unit. Fails on `done`, the loop's break.
+/// building a thread for that unit. Fails where the loop stops: on `done`,
+/// its break, and on `coach`, a sitting only a person can hold, saying which
+/// claim to sit down with.
 ///
 /// ```bsx
 /// <Route path="iterate" {ThreadRoute{source:Document("templates/LoopThread.bsx")}}/>
@@ -21,7 +23,7 @@ use beet::prelude::*;
 ///
 /// Run by an actor of a thread, each decision is a post by that actor,
 /// `<verb> <target>: <why>`, and the unit is requested with `spawned_by`
-/// naming it, so every unit thread, and every session of one, names the
+/// naming it, so every unit thread, and every join of one, names the
 /// decision that asked for it. Outside a thread it requests the unit alone.
 ///
 /// A verb with no route errors with the router's own not-found, so a loop
@@ -36,10 +38,11 @@ pub async fn NextUnit(cx: ActionContext) -> Result<Outcome> {
 }
 
 impl NextUnit {
-	/// The request running `step`, `<verb>/<first target>`, none when done.
+	/// The request running `step`, `<verb>/<first target>`, none where the
+	/// loop stops ([`Self::stop`]).
 	pub fn path(step: &NextStep) -> Option<String> {
 		match (&step.verb, step.targets.first()) {
-			(NextVerb::Done, _) => None,
+			(NextVerb::Done | NextVerb::Coach, _) => None,
 			(verb, Some(target)) => Some(format!("{}/{target}", verb.word())),
 			(verb, None) => Some(verb.word().to_string()),
 		}
@@ -58,14 +61,30 @@ impl NextUnit {
 		}
 	}
 
+	/// Why the loop stops at `step`, none where it runs a unit: `done`, or a
+	/// coach's sitting, a person's to hold, naming the claim.
+	pub fn stop(step: &NextStep) -> Option<String> {
+		match (&step.verb, step.targets.first()) {
+			(NextVerb::Done, _) => Some("done".into()),
+			(NextVerb::Coach, Some(claim)) => Some(format!(
+				"sit down with the coach on {claim}, its sitting entered with `--claim={claim}`"
+			)),
+			(NextVerb::Coach, None) => Some("sit down with the coach".into()),
+			_ => None,
+		}
+	}
+
 	/// Take `step` from `caller`: record the decision, then request its unit
 	/// of the url space `caller` is a route of, spawned by the decision,
-	/// passing once it answers, failing on `done`.
+	/// passing once it answers, failing where the loop stops.
 	async fn take(caller: &AsyncEntity, step: &NextStep) -> Result<Outcome> {
 		let decision = Self::decide(caller, step).await?;
-		let Some(path) = Self::path(step) else {
-			info!("next: done");
+		if let Some(stop) = Self::stop(step) {
+			info!("next: {stop}");
 			return Outcome::FAIL.xok();
+		}
+		let Some(path) = Self::path(step) else {
+			bevybail!("`{}` names no unit", Self::decision(step));
 		};
 		info!("next: {path}");
 		let request = match &decision {
@@ -163,6 +182,7 @@ mod test {
 		]))
 		.xpect_eq(Some("build/acme_course/01-business-plan".to_string()));
 		NextUnit::path(&step(NextVerb::Done, &[])).xpect_none();
+		NextUnit::path(&step(NextVerb::Coach, &["per-weekend"])).xpect_none();
 	}
 
 	/// `done` breaks the loop, requesting nothing: a `Repeat` never passes,

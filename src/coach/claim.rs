@@ -6,7 +6,7 @@ use beet::prelude::*;
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct Claim {
 	/// A slug unique in the register, ie `buyers-pay-monthly`, one path
-	/// segment, so `coach/<id>` names its sitting.
+	/// segment, so the mount `coach/{claim}` names its sittings' thread.
 	pub id: SmolStr,
 	/// The claim, one sentence that could turn out false.
 	pub claim: String,
@@ -90,7 +90,7 @@ impl TableStoreRow for Claim {
 /// The ladder is The Mom Test's [ref:fitzpatrick-2013]: compliments and
 /// hypotheticals are no data, facts about past behaviour are, and commitment
 /// in its three currencies of time, reputation and money is the real signal.
-/// Seibel's how to talk to users [ref:seibel] asks about the last time
+/// Seibel's how to talk to users \[ref:seibel\] asks about the last time
 /// rather than the next, the rung between heard and observed, and Blank's
 /// customer validation [ref:blank-2005] and Maurya's validated learning
 /// [ref:maurya-2012] hold a claim proven only by what customers commit to.

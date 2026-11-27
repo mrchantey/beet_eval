@@ -1,9 +1,10 @@
 <!--
 The loop's run, built per request by `iterate`: one Loop actor taking a unit
 of work a turn, the one `eval/next` names, each decision a post of this
-thread and every unit thread spawned by its decision. The route continues one
-thread by `journal`, the workspace's journal of decisions, each run a session
-of it. `done` ends the run as a pass.
+thread and every unit thread spawned by its decision. It mounts one fixed
+path, `loop`, so every run continues one thread, the workspace's journal of
+decisions, each run a session of its Loop actor. `done`, or a sitting only a
+person can hold, ends the run as a pass.
 -->
 <Thread {(Sequence, MountThreadStore{path:"loop"})}>
 	<CreateActor id=1 name="Loop" kind="Agent" {Fallback}>

@@ -15,7 +15,8 @@ default = []
 # course kept in a private bucket, over https by `rustls-tls`, so the library
 # stays free of it, and `vault`
 # opens the sealed `secrets.toml` a workspace entry's `<Secrets/>` declares,
-# which holds the pair that reads it.
+# which holds the pair that reads it. `tui_server` is the surface a person
+# sits at, ie the coach's `coach.bsx`.
 cli = [
 	"beet/scene",
 	"beet/serde_plain",
@@ -24,6 +25,7 @@ cli = [
 	"beet/aws",
 	"beet/rustls-tls",
 	"beet/vault",
+	"beet/tui_server",
 ]
 
 [dependencies]

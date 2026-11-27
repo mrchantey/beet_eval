@@ -75,14 +75,14 @@ impl Plugin for EvalPlugin {
 			.register_type::<EvalPut>()
 			.register_type::<EvalDrop>()
 			.register_type::<NextUnit>()
-			.register_type::<AssignmentCheck>();
+			.register_type::<HoldClaim>()
+			.register_type::<AssignmentWritten>();
 		app.install_types::<(
 			ThreadPlugin,
 			CheckRoutes,
 			EvalRoutes,
 			EvalToolset,
 			RoleSeed,
-			AssignmentWritten,
 		)>();
 	}
 }

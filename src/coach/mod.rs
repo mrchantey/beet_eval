@@ -3,13 +3,15 @@
 //! tested on the [`Evidence`] ladder, and the document package's coach
 //! actions, the moves a sitting makes against them.
 //!
-//! A sitting is a route, `coach/:claim`, building a thread from its template
-//! per request. It holds the claim [`Claim::pick`] picks, the highest stakes,
-//! then the least evidence, then an open one, which `eval/next` names when it
-//! is fatal at evidence 0 or 1. The coach asks one question per turn, gives a
-//! decision no default, keeps the register through `eval/put`, and ends with
-//! one assignment written to the claim's test, which [`AssignmentWritten`]
-//! sees and ends the sitting on.
+//! A sitting is a conversation with the owner, held by `RunThread` in a
+//! workspace's `coach.bsx` under a surface to type into and entered with the
+//! start request, `--claim=<claim id>`, so it is never a unit the loop runs.
+//! It holds the claim [`Claim::pick`] picks, the highest stakes, then the
+//! least evidence, then an open one, which `eval/next` names when it is
+//! fatal at evidence 0 or 1, [`HoldClaim`] reading it off the entry. The
+//! coach asks one question per turn, gives a decision no default, keeps the
+//! register through `eval/put`, and ends with one assignment written to the
+//! claim's test, which [`AssignmentWritten`] sees and ends the sitting on.
 mod assignment_written;
 mod claim;
 mod coach_action;

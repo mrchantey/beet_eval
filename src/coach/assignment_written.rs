@@ -1,80 +1,106 @@
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// `<AssignmentWritten/>`: a coach sitting's end condition, passing while the
-/// claim the sitting holds keeps the `test` it opened with and failing once
-/// the coach has written a new one, the assignment that ends every sitting.
+/// `<HoldClaim/>`: a coach sitting's first step, holding the claim the
+/// sitting is about, the `claim` param of the request its window was
+/// entered with, ie `--claim=per-weekend`, and reading the `test` it opens
+/// with from the register, before the coach's first turn.
 ///
 /// ```bsx
-/// <Fallback>
-///     <Repeat>
+/// <Thread {(Sequence, RunThread, MountThreadStore{path:"coach/{claim}"})}>
+///     ..actors..
+///     <Fallback>
 ///         <Sequence>
-///             <RepeatWhileFunctionCallOutput><CreateActor name="Coach" kind="Agent" ../></RepeatWhileFunctionCallOutput>
-///             <AssignmentWritten/>
-///             <CreateActor name="Owner" kind="User" {UserInput}/>
+///             <HoldClaim/>
+///             <Repeat>
+///                 <Sequence>
+///                     <RepeatWhileFunctionCallOutput><CreateActor name="Coach" kind="Agent" ../></RepeatWhileFunctionCallOutput>
+///                     <AssignmentWritten/>
+///                     <CreateActor name="Owner" kind="User" {UserInput}/>
+///                 </Sequence>
+///             </Repeat>
 ///         </Sequence>
-///     </Repeat>
-///     <EndWith/>
-/// </Fallback>
+///         <EndWith/>
+///     </Fallback>
+/// </Thread>
 /// ```
 ///
-/// The claim is the `claim` param of the request the thread is built for,
-/// ie `coach/:claim`, read while the template builds, and its opening `test`
-/// is read from the register while the thread builds, before any turn runs.
+/// The held claim lands on the window as a [`HeldClaim`], which
+/// [`AssignmentWritten`] reads.
 ///
 /// ## Errors
 ///
-/// Errors outside a request build, or for a request with no `claim` param.
-#[template(system)]
-pub fn AssignmentWritten(
-	stack: Res<RequestContextStack>,
-) -> Result<impl Bundle> {
-	let claim = stack
-		.try_current()
-		.and_then(|cx| cx.parts().get_param("claim").map(SmolStr::from))
-		.ok_or_else(|| {
-			bevyhow!(
-				"`<AssignmentWritten/>` reads the `claim` of the request its \
-				 sitting is built for, ie a `coach/:claim` route's"
-			)
-		})?;
-	(
-		AssignmentCheck {
-			claim: claim.clone(),
-			opened: None,
-		},
-		OpeningTest { claim },
-	)
-		.xok()
-}
-
-/// The action [`AssignmentWritten`] builds: passes while the claim's `test`
-/// is `opened`, fails once it differs.
+/// Errors outside an entered thread, for an entry with no `claim` param,
+/// and for a claim the register lacks.
 #[action]
 #[derive(Debug, Default, Clone, Component, Reflect)]
 #[reflect(Component, Default)]
-pub async fn AssignmentCheck(
-	/// The claim the sitting holds, its id.
-	#[field]
-	claim: SmolStr,
-	/// The claim's `test` as the sitting opened, read while it builds.
-	#[field]
-	opened: Option<String>,
-	cx: ActionContext,
-) -> Result<Outcome> {
-	let Some(opened) = opened else {
-		bevybail!(
-			"the sitting on {claim} runs before its opening test was read"
-		);
-	};
-	match AssignmentCheck::test_of(&cx.caller, &claim).await? == opened {
+pub async fn HoldClaim(cx: ActionContext) -> Result<Outcome> {
+	let (window, claim) = cx
+		.caller
+		.with_state::<AncestorQuery<(Entity, &ThreadEntry)>, _>(
+			|entity, entries| -> Result<(Entity, SmolStr)> {
+				let (window, entry) = entries.get(entity).map_err(|_| {
+					bevyhow!("`<HoldClaim/>` runs in an entered thread")
+				})?;
+				let claim =
+					entry.parts().get_param("claim").ok_or_else(|| {
+						bevyhow!(
+							"`<HoldClaim/>` reads the `claim` param of the request \
+						 its sitting was entered with, ie `--claim=<claim id>`"
+						)
+					})?;
+				(window, SmolStr::from(claim)).xok()
+			},
+		)
+		.await??;
+	let opened = HeldClaim::test_of(&cx.caller, &claim).await?;
+	cx.caller
+		.world()
+		.entity(window)
+		.insert(HeldClaim { claim, opened })
+		.await?;
+	Outcome::PASS.xok()
+}
+
+/// `<AssignmentWritten/>`: a coach sitting's end condition, passing while
+/// the claim [`HoldClaim`] holds keeps the `test` it opened with and failing
+/// once the coach has written a new one, the assignment that ends every
+/// sitting.
+///
+/// ## Errors
+///
+/// Errors before a [`HoldClaim`] has run in its window.
+#[action]
+#[derive(Debug, Default, Clone, Component, Reflect)]
+#[reflect(Component, Default)]
+pub async fn AssignmentWritten(cx: ActionContext) -> Result<Outcome> {
+	let held = cx
+		.caller
+		.with_state::<AncestorQuery<&HeldClaim>, _>(|entity, held| {
+			held.get(entity).cloned().map_err(|_| {
+				bevyhow!("`<AssignmentWritten/>` runs after a `<HoldClaim/>`")
+			})
+		})
+		.await??;
+	match HeldClaim::test_of(&cx.caller, &held.claim).await? == held.opened {
 		true => Outcome::PASS,
 		false => Outcome::FAIL,
 	}
 	.xok()
 }
 
-impl AssignmentCheck {
+/// The claim a coach sitting holds, on its window: its id and the `test` it
+/// opened with, written by [`HoldClaim`].
+#[derive(Debug, Clone, Component)]
+pub struct HeldClaim {
+	/// The claim's id.
+	pub claim: SmolStr,
+	/// Its `test` as the sitting opened.
+	pub opened: String,
+}
+
+impl HeldClaim {
 	/// The `test` of `claim` in the register of the workspace above
 	/// `caller`.
 	async fn test_of(caller: &AsyncEntity, claim: &str) -> Result<String> {
@@ -85,71 +111,6 @@ impl AssignmentCheck {
 			.find(|row| row.id == claim)
 			.map(|row| row.test.clone())
 			.ok_or_else(|| bevyhow!("the register holds no claim {claim}"))
-	}
-}
-
-/// Reads the opening `test` of `claim` into the [`AssignmentCheck`] beside
-/// it while the thread builds, a pending dependency of the build as a seed
-/// is, so it is read before any turn runs, then leaves.
-#[derive(Debug, Clone, Component)]
-#[component(on_add = OpeningTest::on_add)]
-struct OpeningTest {
-	claim: SmolStr,
-}
-
-impl OpeningTest {
-	/// Park the read on the build root and run it as a task holding the
-	/// guard, so however it ends the guard resolves.
-	fn on_add(mut world: DeferredWorld, cx: HookContext) {
-		let entity = cx.entity;
-		let root = world.get_resource::<TemplateBuildRoot>().map(|root| **root);
-		let Some(claim) = world
-			.get::<OpeningTest>(entity)
-			.map(|read| read.claim.clone())
-		else {
-			return;
-		};
-		world.commands().queue(move |world: &mut World| {
-			let guard = TemplatePending::park_on(
-				world,
-				root.unwrap_or(entity),
-				PendingKind::Passive,
-				format!("<AssignmentWritten/> reading {claim}"),
-			);
-			let Ok(mut entity_mut) = world.get_entity_mut(entity) else {
-				return;
-			};
-			entity_mut.run_async_local(async move |entity: AsyncEntity| {
-				let root = guard.root();
-				let id = entity.id();
-				let result = AssignmentCheck::test_of(&entity, &claim).await;
-				entity
-					.world()
-					.with(move |world: &mut World| {
-						match result {
-							Ok(test) => {
-								if let Ok(mut entity) = world.get_entity_mut(id)
-								{
-									entity.remove::<OpeningTest>();
-									if let Some(mut check) =
-										entity.get_mut::<AssignmentCheck>()
-									{
-										check.opened = Some(test);
-									}
-								}
-							}
-							Err(err) => {
-								if let Ok(mut root) = world.get_entity_mut(root)
-								{
-									root.insert(TemplateError::new(err));
-								}
-							}
-						}
-						guard.resolve(world);
-					})
-					.await;
-			});
-		});
 	}
 }
 
@@ -192,22 +153,32 @@ mod test {
 		Fixture::sittings(store, "coach/per-weekend").await
 	}
 
-	/// A sitting run by hand: it adds a claim, raises the held one's evidence
-	/// and writes its assignment, which ends it as a pass, its thread stored
-	/// under `coach/per-weekend` and `next` on the claim it added.
-	#[beet::test(timeout_ms = 120000)]
-	async fn a_sitting_runs_by_hand() {
+	/// `coach.bsx` with the held claim raised, as `next` names its sitting.
+	async fn coach() -> FixtureEntry {
 		let mut entry = FixtureEntry::of("coach.bsx").await;
 		entry
 			.request(raise_claim())
 			.status()
 			.xpect_eq(StatusCode::OK);
+		entry
+	}
+
+	/// The start request of a sitting on `claim`, `--claim=<claim>`.
+	fn sit(claim: &str) -> Request {
+		Request::get("/").with_param("claim", claim)
+	}
+
+	/// A sitting: it adds a claim, raises the held one's evidence and
+	/// writes its assignment, which ends it as a pass, its thread stored
+	/// under `coach/per-weekend` and `next` on the claim it added.
+	#[beet::test(timeout_ms = 120000)]
+	async fn a_sitting_ends_on_its_assignment() {
+		let mut entry = coach().await;
 		next(&mut entry).xpect_starts_with("## Next: coach per-weekend");
-		let response = entry.request(Request::get("coach/per-weekend"));
-		response.status().xpect_eq(StatusCode::OK);
-		async_ext::block_on(response.text())
+		entry
+			.start(sit("per-weekend"))
 			.unwrap()
-			.xpect_eq("Your assignment: ask three traders on Saturday to book the next weekend at $120.");
+			.xpect_eq(Outcome::PASS);
 		let held = claim(&entry.store, "per-weekend").await;
 		held.evidence.xpect_eq(Evidence::OBSERVED);
 		held.status.xpect_eq(ClaimStatus::Testing);
@@ -220,12 +191,12 @@ mod test {
 			.xpect_eq(Evidence::ASSERTED);
 		let sittings = sittings(&entry.store).await;
 		sittings.len().xpect_eq(1);
-		// the seed: the procedure, the actions, the register, the claim held,
-		// then the unit
+		// the seed: the procedure naming the claim held, the actions, the
+		// register and the claim's row
 		let posts = &sittings[0];
-		posts[0]
-			.as_str()
-			.xpect_starts_with("You are the coach of Acme's owner.");
+		posts[0].as_str().xpect_starts_with(
+			"You are the coach of Acme's owner. Hold the claim per-weekend to",
+		);
 		posts[1]
 			.as_str()
 			.xpect_starts_with("## acme_biz/actions")
@@ -237,8 +208,23 @@ mod test {
 			.as_str()
 			.xpect_contains("### per-weekend")
 			.xpect_contains("- **evidence**: 0");
-		posts[4].xpect_eq("coach per-weekend");
+		posts
+			.last()
+			.unwrap()
+			.xpect_eq("Your assignment: ask three traders on Saturday to book the next weekend at $120.");
 		next(&mut entry).xpect_starts_with("## Next: coach traders-return");
+	}
+
+	/// A sitting's mount is filled from the claim it is entered with, so an
+	/// entry naming none is refused.
+	#[beet::test(timeout_ms = 120000)]
+	async fn a_sitting_needs_its_claim() {
+		coach()
+			.await
+			.start(Request::get("/"))
+			.unwrap_err()
+			.to_string()
+			.xpect_contains("names the param `claim`");
 	}
 
 	/// The coach's store is the workspace package's assets: a write under
@@ -246,9 +232,8 @@ mod test {
 	/// scope is dropped by `RelPath`, keeping the write inside it.
 	#[beet::test(timeout_ms = 120000)]
 	async fn the_coach_writes_only_its_notes() {
-		let mut entry = FixtureEntry::of("coach.bsx").await;
-		entry.request(raise_claim());
-		entry.request(Request::get("coach/per-weekend"));
+		let mut entry = coach().await;
+		entry.start(sit("per-weekend")).unwrap();
 		let fixture = Fixture::over(entry.store.clone());
 		fixture
 			.read("packages/acme/assets/docs/product.md")
@@ -269,23 +254,25 @@ mod test {
 			.xpect_contains("escaped");
 	}
 
-	/// The loop requests the sitting `next` names, `coach/<claim id>`.
+	/// The loop stops at the sitting `next` names, a person's to hold,
+	/// saying which claim to sit down with, and runs no coach.
 	#[beet::test(timeout_ms = 120000)]
-	async fn the_loop_requests_a_sitting() {
-		let mut entry = FixtureEntry::looping(1).await;
+	async fn the_loop_stops_for_a_sitting() {
+		let mut entry = FixtureEntry::looping(3).await;
 		entry
 			.request(raise_claim())
 			.status()
 			.xpect_eq(StatusCode::OK);
-		entry
-			.request(Request::get("iterate"))
-			.status()
-			.xpect_eq(StatusCode::OK);
-		sittings(&entry.store).await.len().xpect_eq(1);
+		let response = entry.request(Request::get("iterate"));
+		response.status().xpect_eq(StatusCode::OK);
+		async_ext::block_on(response.text())
+			.unwrap()
+			.xpect_starts_with("coach per-weekend:");
+		sittings(&entry.store).await.len().xpect_eq(0);
 		claim(&entry.store, "per-weekend")
 			.await
 			.status
-			.xpect_eq(ClaimStatus::Testing);
+			.xpect_eq(ClaimStatus::Open);
 	}
 
 	/// A decision ask no claim names is the clerk's to raise, so `next` names

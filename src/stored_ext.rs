@@ -1,5 +1,5 @@
 //! Typed documents as stored: a manifest, an outline, a summary or a
-//! [`RowTable`] row at one path of a store, pretty JSON with sorted keys and
+//! [`RowTable`](crate::prelude::RowTable) row at one path of a store, pretty JSON with sorted keys and
 //! a closing newline, so a change diffs by field.
 use beet::prelude::*;
 
