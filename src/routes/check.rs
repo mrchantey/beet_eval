@@ -182,11 +182,10 @@ mod test {
 	}
 
 	/// The fixture document package's evals.
-	fn evals(fixture: &Fixture) -> beet::net::prelude::Table<Eval> {
-		TableStore::new(
+	fn evals(fixture: &Fixture) -> RowTable<Eval> {
+		RowTable::<Eval>::new(
 			fixture.store.with_subdir(RelPath::new("packages/acme_biz")),
 		)
-		.table::<Eval>()
 	}
 
 	/// Every law a row breaks is named, and the verb exits 1.

@@ -14,7 +14,7 @@ pub async fn EvalResults(
 ) -> Result<DataPage<Results>> {
 	let run = Run::of(&cx.caller).await?;
 	let summary = RelPath::new(Results::SUMMARY);
-	json_ext::write(&run.workspace.results(), &summary, &run.results).await?;
+	stored_ext::write(&run.workspace.results(), &summary, &run.results).await?;
 	let written =
 		format!("{}/{}", run.workspace.manifest.results, Results::SUMMARY);
 	let judged = run.workspace.judged();
@@ -43,7 +43,7 @@ mod test {
 			.xpect_starts_with(
 				"# Results\n\n13 of 14 checks pass; no grades; 2 rubrics read; results/summary.json written.\n",
 			);
-		let summary = json_ext::read::<Results>(
+		let summary = stored_ext::read::<Results>(
 			&fixture.store,
 			&RelPath::new("results/summary.json"),
 		)

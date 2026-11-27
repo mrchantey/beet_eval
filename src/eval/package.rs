@@ -24,7 +24,7 @@ use std::collections::BTreeMap;
 /// | `claims/<id>` | workspace | [`Claim`] rows |
 /// | `assets/` | any | the files the package provides or was built from, which no table depends on to be checked |
 ///
-/// A table is the json-over-blobs form of [`TableStore`] over the package's
+/// A table is a [`RowTable`] over the package's
 /// store: one blob per row at `<table>/<key>`, the key being the row's id
 /// verbatim with no extension, so `evals/market.competitors-named` holds that
 /// eval alone, pretty-printed, and a tool call writing one row touches one
@@ -153,14 +153,15 @@ impl LoadedPackage {
 		store: BlobStore,
 		source: PackageSource,
 	) -> Result<(Self, Vec<String>)> {
-		let manifest = json_ext::read::<PackageManifest>(
+		let manifest = stored_ext::read::<PackageManifest>(
 			&store,
 			&RelPath::new(PackageManifest::FILE),
 		)
 		.await?;
 		let mut problems = Vec::new();
 		let outline = match &manifest.outline {
-			Some(path) => match json_ext::read::<Outline>(&store, path).await {
+			Some(path) => match stored_ext::read::<Outline>(&store, path).await
+			{
 				Ok(outline) => Some(outline),
 				Err(err) => {
 					problems.push(format!("{}: {err}", manifest.name));
@@ -191,7 +192,8 @@ impl LoadedPackage {
 		package: &str,
 		problems: &mut Vec<String>,
 	) -> Result<Vec<T>> {
-		let (rows, row_problems) = json_ext::rows::<T>(store).await?;
+		let (rows, row_problems) =
+			RowTable::<T>::new(store.clone()).all().await?;
 		problems.extend(
 			row_problems
 				.into_iter()
@@ -230,11 +232,12 @@ mod test {
 		let dir = TempDir::new().unwrap();
 		let store = BlobStore::new(FsStore::new((*dir).clone()))
 			.with_subdir("packages/acme".into());
-		let evals = TableStore::new(store.clone()).table::<Eval>();
+		let evals = RowTable::<Eval>::new(store.clone());
 		evals.push(eval("product.origin")).await.unwrap();
 		evals.push(eval("market.competitors-named")).await.unwrap();
 
-		BlobStoreProvider::list(&store)
+		store
+			.list()
 			.await
 			.unwrap()
 			.xtap(|paths| paths.sort())

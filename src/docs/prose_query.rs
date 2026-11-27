@@ -32,7 +32,7 @@ pub struct ProseQuery<'w, 's> {
 			Option<&'static Children>,
 		),
 	>,
-	spans: Query<'w, 's, &'static FileSpan>,
+	sources: SourceQuery<'w, 's>,
 	parents: Query<'w, 's, &'static ChildOf>,
 	metas: Query<'w, 's, &'static DocMeta>,
 	attributes: AttributeQuery<'w, 's>,
@@ -202,8 +202,12 @@ impl ProseQuery<'_, '_> {
 	/// The line `entity` starts on in its file, from 1; a file of no lines,
 	/// ie a Word file, numbers its top-level blocks instead.
 	pub fn line(&self, root: Entity, entity: Entity) -> u32 {
-		if let Ok(span) = self.spans.get(entity) {
-			return span.start_line();
+		if let Some(line_col) = self
+			.sources
+			.position(entity)
+			.and_then(|position| position.line_col)
+		{
+			return line_col.line;
 		}
 		let blocks = self.blocks(root);
 		core::iter::once(entity)

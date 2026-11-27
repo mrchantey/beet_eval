@@ -97,7 +97,11 @@ impl DocumentSet {
 			manifest.docs,
 		)
 		.await?;
-		Response::ok_json(&decide(&params, &mut documents))
+		Response::ok_body(
+			MediaType::Json.serialize(&decide(&params, &mut documents))?,
+			MediaType::Json,
+		)
+		.xok()
 	}
 }
 

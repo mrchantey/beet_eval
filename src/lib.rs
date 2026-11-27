@@ -43,9 +43,10 @@ pub mod eval;
 pub mod form;
 pub mod ingest;
 pub mod iterate;
-pub mod json_ext;
 mod plugin;
 pub mod routes;
+mod row_table;
+pub mod stored_ext;
 mod text_type;
 pub mod toolset;
 
@@ -57,9 +58,10 @@ pub mod prelude {
 	pub use crate::form::*;
 	pub use crate::ingest::*;
 	pub use crate::iterate::*;
-	pub use crate::json_ext;
 	pub use crate::plugin::*;
 	pub use crate::routes::*;
+	pub use crate::row_table::*;
+	pub use crate::stored_ext;
 	pub use crate::toolset::*;
 }
 

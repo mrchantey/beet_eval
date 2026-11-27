@@ -171,31 +171,36 @@ impl Fixture {
 			.unwrap();
 	}
 
-	/// Every thread `role` keeps under the workspace package's
-	/// `assets/threads/<role>` in `store`, with its posts in order, oldest
-	/// thread first.
+	/// Every thread listed under `dir` of the workspace package's threads in
+	/// `store`, ie `clerk/product` for the clerk's threads about the product,
+	/// with its posts in order, oldest thread first.
 	pub async fn threads(
 		store: &BlobStore,
-		role: &str,
+		dir: &str,
 	) -> Vec<(Thread, Vec<Post>)> {
-		let records = BlobThreadStore::new(store.with_subdir(RelPath::new(
-			format!("packages/acme/assets/threads/{role}"),
-		)));
+		let records = ThreadStore::new(
+			JsonTableStore::over(
+				store.with_subdir(RelPath::new("packages/acme/assets/threads")),
+			)
+			.unwrap(),
+			RelPath::new(dir),
+		)
+		.unwrap();
 		let mut threads = records.threads().await.unwrap_or_default();
 		threads.sort_by_key(|thread| (thread.created(), thread.id()));
 		let mut out = Vec::new();
 		for thread in threads {
-			let posts = records.thread_posts(thread.id(), None).await.unwrap();
+			let posts = records.posts(thread.id()).await.unwrap();
 			out.push((thread, posts));
 		}
 		out
 	}
 
-	/// The texts of every thread `role` keeps in `store`, each its posts in
-	/// order, a function call as `call <tool path>`, its output as
+	/// The texts of every thread listed under `dir` in `store`, each its
+	/// posts in order, a function call as `call <tool path>`, its output as
 	/// `output <text>`, the log posts left out.
-	pub async fn sittings(store: &BlobStore, role: &str) -> Vec<Vec<String>> {
-		Self::threads(store, role)
+	pub async fn sittings(store: &BlobStore, dir: &str) -> Vec<Vec<String>> {
+		Self::threads(store, dir)
 			.await
 			.into_iter()
 			.map(|(_, posts)| {
@@ -244,11 +249,9 @@ impl Fixture {
 		let mut world =
 			(TemplatePlugin, DocumentPlugin, OoxmlPlugin).into_world();
 		let root = world.spawn_empty().id();
-		DocParsers::parse(ParseContext::new(
-			&mut world.entity_mut(root),
-			source,
-		))
-		.unwrap();
+		ParseContext::new(&mut world.entity_mut(root), source)
+			.parse()
+			.unwrap();
 		func(&mut world, root)
 	}
 
@@ -325,14 +328,11 @@ impl FixtureEntry {
 	async fn build(store: BlobStore, name: &str) -> Self {
 		let mut app = App::new();
 		app.add_plugins(MinimalPlugins)
-			.install_type::<(RouterPlugin, EvalPlugin)>();
-		let (formats, prescans) = {
-			let world = app.world_mut();
-			(
-				world.get_resource_or_init::<TemplateFormats>().clone(),
-				world.get_resource_or_init::<PrescanRegistry>().clone(),
-			)
-		};
+			.install_types::<(RouterPlugin, EvalPlugin)>();
+		let prescans = app
+			.world_mut()
+			.get_resource_or_init::<PrescanRegistry>()
+			.clone();
 		let entry = entry_build::resolve_in_repo_store(
 			store.clone(),
 			&prescans,
@@ -342,7 +342,6 @@ impl FixtureEntry {
 		.unwrap();
 		let sources = entry_build::read_sources(
 			&entry.repo_store,
-			formats,
 			entry.entry_name,
 			entry.prescan,
 		)

@@ -5,7 +5,7 @@ thread and every unit thread spawned by its decision. The route continues one
 thread by `journal`, the workspace's journal of decisions, each run a session
 of it. `done` ends the run as a pass.
 -->
-<Thread {(Sequence, MountThreadStore{path:"packages/acme/assets/threads/loop"})}>
+<Thread {(Sequence, MountThreadStore{path:"loop"})}>
 	<CreateActor id=1 name="Loop" kind="Agent" {Fallback}>
 		<RepeatTimes total_times=3><NextUnit/></RepeatTimes>
 		<EndWith/>

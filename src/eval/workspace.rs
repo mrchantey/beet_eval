@@ -41,7 +41,7 @@ impl Workspace {
 
 	/// Reads the manifest at the root of `store`.
 	pub async fn read(store: &BlobStore) -> Result<Self> {
-		json_ext::read(store, &RelPath::new(Self::FILE)).await
+		stored_ext::read(store, &RelPath::new(Self::FILE)).await
 	}
 }
 

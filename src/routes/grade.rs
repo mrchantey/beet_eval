@@ -47,8 +47,7 @@ pub async fn EvalGrade(
 		Ok(grade) => grade,
 		Err(err) => return refusal(format!("{err}\n")).xok(),
 	};
-	TableStore::new(workspace.results())
-		.table::<Grade>()
+	RowTable::<Grade>::new(workspace.results())
 		.push(grade.clone())
 		.await?;
 	Response::ok_text(format!(
@@ -191,12 +190,12 @@ mod test {
 			.ok("eval/grade --eval=product.alternatives-considered --level=2 --by=a\\ grader --evidence=We\\ weighed\\ a\\ mobile\\ service\\ against\\ the\\ stall")
 			.await
 			.xpect_eq("graded product.alternatives-considered at product#idea by a grader: 2\n");
-		let grade =
-			TableStore::new(fixture.store.with_subdir(RelPath::new("results")))
-				.table::<Grade>()
-				.get("product.alternatives-considered")
-				.await
-				.unwrap();
+		let grade = RowTable::<Grade>::new(
+			fixture.store.with_subdir(RelPath::new("results")),
+		)
+		.get("product.alternatives-considered")
+		.await
+		.unwrap();
 		grade.date.xpect_eq(Date::today());
 		fixture
 			.ok("eval/results")

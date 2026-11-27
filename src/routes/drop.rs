@@ -26,18 +26,28 @@ pub async fn EvalDrop(
 		bevyhow!("the workspace names no package {}", package)
 	})?;
 	let at = format!("{}/{}/{}", package, table, key);
-	let tables = TableStore::new(loaded.store.clone());
+	let store = &loaded.store;
 	let key = key.as_str();
 	let exists = match table {
-		PackageTable::Evals => tables.table::<Eval>().exists(key).await?,
-		PackageTable::Rubrics => tables.table::<Rubric>().exists(key).await?,
+		PackageTable::Evals => {
+			RowTable::<Eval>::new(store.clone()).exists(key).await?
+		}
+		PackageTable::Rubrics => {
+			RowTable::<Rubric>::new(store.clone()).exists(key).await?
+		}
 		PackageTable::Render => {
-			tables.table::<RenderSpec>().exists(key).await?
+			RowTable::<RenderSpec>::new(store.clone())
+				.exists(key)
+				.await?
 		}
 		PackageTable::Actions => {
-			tables.table::<CoachAction>().exists(key).await?
+			RowTable::<CoachAction>::new(store.clone())
+				.exists(key)
+				.await?
 		}
-		PackageTable::Claims => tables.table::<Claim>().exists(key).await?,
+		PackageTable::Claims => {
+			RowTable::<Claim>::new(store.clone()).exists(key).await?
+		}
 	};
 	if !exists {
 		return refusal(format!("{at} is no row\n")).xok();
@@ -51,15 +61,25 @@ pub async fn EvalDrop(
 		.xok();
 	}
 	match table {
-		PackageTable::Evals => tables.table::<Eval>().remove(key).await?,
-		PackageTable::Rubrics => tables.table::<Rubric>().remove(key).await?,
+		PackageTable::Evals => {
+			RowTable::<Eval>::new(store.clone()).remove(key).await?
+		}
+		PackageTable::Rubrics => {
+			RowTable::<Rubric>::new(store.clone()).remove(key).await?
+		}
 		PackageTable::Render => {
-			tables.table::<RenderSpec>().remove(key).await?
+			RowTable::<RenderSpec>::new(store.clone())
+				.remove(key)
+				.await?
 		}
 		PackageTable::Actions => {
-			tables.table::<CoachAction>().remove(key).await?
+			RowTable::<CoachAction>::new(store.clone())
+				.remove(key)
+				.await?
 		}
-		PackageTable::Claims => tables.table::<Claim>().remove(key).await?,
+		PackageTable::Claims => {
+			RowTable::<Claim>::new(store.clone()).remove(key).await?
+		}
 	}
 	Response::ok_text(format!("dropped {at}\n")).xok()
 }

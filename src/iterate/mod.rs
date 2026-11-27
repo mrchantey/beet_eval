@@ -4,20 +4,22 @@
 //! asked, whose agent carries the toolset of its role.
 //!
 //! ```bsx
-//! <Route path="iterate" {ThreadRoute{template:"LoopThread", metadata:{journal:"loop"}}}/>
-//! <Route path="write/:document" {ThreadRoute{template:"ClerkThread", metadata:{document:"{document}"}}}/>
-//! <Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>
-//! <Route path="build/*rubric" {ThreadRoute{template:"BuilderThread", metadata:{rubric:"{rubric}"}}}/>
-//! <Route path="coach/:claim" {ThreadRoute{template:"CoachThread", metadata:{claim:"{claim}"}}}/>
+//! <Router {JsonTableStore{path:"packages/acme/assets/threads"}}>
+//!     <Route path="iterate" {ThreadRoute{source:Document("templates/LoopThread.bsx")}}/>
+//!     <Route path="write/:document" {ThreadRoute{source:Document("templates/ClerkThread.bsx"), message:"write {document}"}}/>
+//!     <Route path="grade/:document" {ThreadRoute{source:Document("templates/GraderThread.bsx"), message:"grade {document}"}}/>
+//!     <Route path="build/*rubric" {ThreadRoute{source:Document("templates/BuilderThread.bsx"), message:"build {rubric}"}}/>
+//!     <Route path="coach/:claim" {ThreadRoute{source:Document("templates/CoachThread.bsx"), message:"coach {claim}"}}/>
+//! </Router>
 //! ```
 //!
 //! A role's thread is a template, built afresh for each request, each request
 //! one session of a stored thread:
 //!
 //! ```bsx
-//! <Thread {(Sequence, MountThreadStore{path:"packages/acme/assets/threads/grader"})}>
+//! <Thread {(Sequence, MountThreadStore{path:"grader", new:true})}>
 //!     <CreateActor id=1 name="System" kind="System"><RoleSeed role="grader"/></CreateActor>
-//!     <CreateActor id=2 name="Loop" kind="User"><RequestPost text="grade {document}"/></CreateActor>
+//!     <CreateActor id=2 name="Loop" kind="User"/>
 //!     <RepeatWhileFunctionCallOutput>
 //!         <CreateActor id=3 name="Grader" kind="Agent" {ModelStreamer{provider:OpenAi}}>
 //!             <Router><StoreToolset read_only=true/><EvalToolset/></Router>
@@ -30,7 +32,7 @@
 //!
 //! - **The run is a thread**: the `iterate` route's `LoopThread` holds one
 //!   Loop actor whose behavior is a `RepeatTimes` over [`NextUnit`], and
-//!   declares fixed metadata, so every run continues the one loop thread,
+//!   mounts one fixed path, `loop`, so every run continues the one loop thread,
 //!   the workspace's journal of decisions, each run a session of it.
 //! - **One unit per turn**: each time round [`NextUnit`] appends its
 //!   decision to the loop thread, `<verb> <target>: <why>`, and requests one
@@ -46,13 +48,13 @@
 //!   graded or built.
 //! - **Continuation by target**: a role's seed is its procedure,
 //!   [`RoleSeed`], the initial posts of a fresh thread, and each request
-//!   posts the unit it asks, a `<RequestPost>` reading the path param, as its
-//!   session opens. The clerk
-//!   continues its thread about one document, the builder about one rubric
-//!   and the coach about one claim, each by the metadata its route declares,
-//!   keeping the seed it started with, so an edited seed reaches a new thread
-//!   (`--new`). The grader declares none, so it judges fresh every time,
-//!   unanchored by its earlier grades.
+//!   posts the unit it asks, its route's `message` filled from the path
+//!   param, as its session opens. The clerk continues its thread about one
+//!   document, the builder about one rubric and the coach about one claim,
+//!   each by the target its mount path names (`clerk/{document}`), keeping
+//!   the seed it started with, so an edited seed reaches a new thread
+//!   (`--new`). The grader's mount is `new:true`, so it judges fresh every
+//!   time, unanchored by its earlier grades.
 //! - **A grader cannot write**: its store tools are
 //!   `<StoreToolset read_only=true/>`, and its calls are answered by its own
 //!   router alone, which has no `write-text`; its grades go through

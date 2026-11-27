@@ -41,7 +41,7 @@ impl Run {
 			verdicts.push((packaged.eval.id.clone(), verdict));
 		}
 		let (grades, unreadable) =
-			json_ext::rows::<Grade>(&workspace.results()).await?;
+			RowTable::<Grade>::new(workspace.results()).all().await?;
 		let mut results = Results::compute(
 			Date::today(),
 			&workspace.evals,

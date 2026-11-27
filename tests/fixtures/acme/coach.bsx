@@ -10,11 +10,10 @@ about it. A live workspace's entry is this one with
 `{ModelStreamer{provider:OpenAi}}` for the coach and `{UserInput}` for the
 owner, under a server with a surface to type into.
 -->
-<TemplateDir src="templates"/>
 <CliServer {CallOnReady}>
-<Router {(RequestLogger, HelpHandler)}>
+<Router {(RequestLogger, HelpHandler, JsonTableStore{path:"packages/acme/assets/threads"})}>
 	<Route path="eval"><EvalRoutes/></Route>
 	<Route path="check"><CheckRoutes/></Route>
-	<Route path="coach/:claim" {ThreadRoute{template:"CoachThread", metadata:{claim:"{claim}"}}}/>
+	<Route path="coach/:claim" {ThreadRoute{source:Document("templates/CoachThread.bsx"), message:"coach {claim}"}}/>
 </Router>
 </CliServer>

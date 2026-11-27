@@ -2,7 +2,7 @@
 //! loop works the workspace through the same routes a person runs.
 //!
 //! `<EvalToolset/>` in the `<Router>` beneath an agent actor gives it the
-//! eight verbs a role needs, each a beet `<HostTool>` at the verb's own path,
+//! eight verbs a role needs, each a beet `<RouteTool>` at the verb's own path,
 //! ie `eval/grade`, its definition read off the verb's route: the verb's doc
 //! as its description and its declared params as its arguments, so one
 //! declaration serves `--help` and the tool's schema. A call forwards to the

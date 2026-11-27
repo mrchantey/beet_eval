@@ -20,18 +20,17 @@ A live workspace's entry is this one with `{ModelStreamer{provider:OpenAi}}`
 for each mock and `{UserInput}` for the owner, under a server with a surface
 to type into.
 -->
-<TemplateDir src="templates"/>
 <CliServer {CallOnReady}>
-<Router {(RequestLogger, HelpHandler)}>
+<Router {(RequestLogger, HelpHandler, JsonTableStore{path:"packages/acme/assets/threads"})}>
 	<Route path="eval"><EvalRoutes/></Route>
 	<Route path="check"><CheckRoutes/></Route>
 	<!-- the roles: each request a thread of its own for the unit it names -->
-	<Route path="write/:document" {ThreadRoute{template:"ClerkThread", metadata:{document:"{document}"}}}/>
-	<Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>
-	<Route path="build/*rubric" {ThreadRoute{template:"BuilderThread", metadata:{rubric:"{rubric}"}}}/>
-	<Route path="coach/:claim" {ThreadRoute{template:"CoachThread", metadata:{claim:"{claim}"}}}/>
+	<Route path="write/:document" {ThreadRoute{source:Document("templates/ClerkThread.bsx"), message:"write {document}"}}/>
+	<Route path="grade/:document" {ThreadRoute{source:Document("templates/GraderThread.bsx"), message:"grade {document}"}}/>
+	<Route path="build/*rubric" {ThreadRoute{source:Document("templates/BuilderThread.bsx"), message:"build {rubric}"}}/>
+	<Route path="coach/:claim" {ThreadRoute{source:Document("templates/CoachThread.bsx"), message:"coach {claim}"}}/>
 	<!-- the loop: one unit of work a turn, the one `eval/next` names, the
 	run a session of the workspace's journal of decisions -->
-	<Route path="iterate" {ThreadRoute{template:"LoopThread", metadata:{journal:"loop"}}}/>
+	<Route path="iterate" {ThreadRoute{source:Document("templates/LoopThread.bsx")}}/>
 </Router>
 </CliServer>

@@ -66,8 +66,7 @@ pub async fn EvalApprove(
 			Ok(checked) => checked,
 			Err(refused) => return refused.xok(),
 		};
-	TableStore::new(workspace.results())
-		.table::<AnswerApproval>()
+	RowTable::<AnswerApproval>::new(workspace.results())
 		.push(AnswerApproval {
 			rubric,
 			by: by.clone(),

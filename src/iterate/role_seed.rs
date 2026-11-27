@@ -17,18 +17,20 @@ pub fn RoleSeed(
 ) -> impl Bundle {
 	SeedSource::new(
 		format!("<RoleSeed role=\"{role}\">"),
-		Action::new_async(async move |cx: ActionContext| -> Result<String> {
-			let workspace = LoadedWorkspace::of(&cx.caller).await?;
-			let package = workspace.document_package()?;
-			let path = RelPath::new(format!("seeds/{role}.md"));
-			let bytes = package.store.get(&path).await.map_err(|err| {
-				bevyhow!(
-					"the document package {} has no seed for the {role}: {err}",
-					package.manifest.name
-				)
-			})?;
-			String::from_utf8(bytes.to_vec())?.xok()
-		}),
+		Action::new_async(
+			async move |cx: ActionContext<ThreadEntry>| -> Result<String> {
+				let workspace = LoadedWorkspace::of(&cx.caller).await?;
+				let package = workspace.document_package()?;
+				let path = RelPath::new(format!("seeds/{role}.md"));
+				let bytes = package.store.get(&path).await.map_err(|err| {
+					bevyhow!(
+						"the document package {} has no seed for the {role}: {err}",
+						package.manifest.name
+					)
+				})?;
+				String::from_utf8(bytes.to_vec())?.xok()
+			},
+		),
 	)
 }
 
@@ -37,9 +39,14 @@ mod test {
 	use crate::prelude::*;
 	use beet::prelude::*;
 
-	/// The texts of every sitting the `role` persisted in `store`.
-	async fn sittings(store: &BlobStore, role: &str) -> Vec<Vec<String>> {
-		Fixture::sittings(store, role).await
+	/// The clerk's threads about the product.
+	const CLERK: &str = "clerk/product";
+	/// The builder's threads about the course's business plan.
+	const BUILDER: &str = "builder/acme_course/01-business-plan";
+
+	/// The texts of every sitting persisted under `dir` in `store`.
+	async fn sittings(store: &BlobStore, dir: &str) -> Vec<Vec<String>> {
+		Fixture::sittings(store, dir).await
 	}
 
 	/// The clerk's turn: its seed is its procedure from the document package
@@ -50,7 +57,7 @@ mod test {
 	async fn the_clerk_writes_one_unit() {
 		let (store, response) = Fixture::iterate(1).await;
 		response.status().xpect_eq(StatusCode::OK);
-		let clerk = sittings(&store, "clerk").await;
+		let clerk = sittings(&store, CLERK).await;
 		clerk.len().xpect_eq(1);
 		let sitting = &clerk[0];
 		sitting[0]
@@ -74,7 +81,7 @@ mod test {
 			.await
 			.xpect_starts_with("## Next: grade product");
 		sittings(&store, "grader").await.len().xpect_eq(0);
-		sittings(&store, "builder").await.len().xpect_eq(0);
+		sittings(&store, BUILDER).await.len().xpect_eq(0);
 	}
 
 	/// The grader's turn: it grades through `grade` alone, is refused a quote
@@ -105,8 +112,7 @@ mod test {
 			.await
 			.xpect_contains("We charge per weekend");
 		let grades =
-			TableStore::new(store.with_subdir(RelPath::new("results")))
-				.table::<Grade>();
+			RowTable::<Grade>::new(store.with_subdir(RelPath::new("results")));
 		grades
 			.get("product.origin")
 			.await
@@ -134,7 +140,7 @@ mod test {
 	async fn the_builder_builds_one_unit() {
 		let (store, response) = Fixture::iterate(3).await;
 		response.status().xpect_eq(StatusCode::OK);
-		sittings(&store, "builder").await.len().xpect_eq(1);
+		sittings(&store, BUILDER).await.len().xpect_eq(1);
 		let mut fixture = Fixture::over(store.clone());
 		fixture
 			.read(Fixture::ANSWERS)
@@ -158,7 +164,7 @@ mod test {
 			.status()
 			.xpect_eq(StatusCode::OK);
 		// the builder continues its one thread about the rubric
-		let sittings = sittings(&store, "builder").await;
+		let sittings = sittings(&store, BUILDER).await;
 		sittings.len().xpect_eq(1);
 		sittings[0]
 			.iter()
@@ -204,7 +210,7 @@ mod test {
 		for sitting in &grader {
 			sitting[1].xpect_eq("grade product");
 		}
-		let clerk = sittings(&entry.store, "clerk").await;
+		let clerk = sittings(&entry.store, CLERK).await;
 		clerk.len().xpect_eq(1);
 		clerk[0]
 			.iter()
@@ -212,7 +218,7 @@ mod test {
 			.count()
 			.xpect_eq(2);
 		// a run by hand names no decision
-		Fixture::threads(&entry.store, "clerk").await[0]
+		Fixture::threads(&entry.store, CLERK).await[0]
 			.0
 			.spawned_by()
 			.xpect_none();
@@ -250,10 +256,9 @@ mod test {
 			.all(|(decision, unit)| decision.starts_with(unit))
 			.xpect_true();
 		// each decision spawned the one unit thread it asked for
-		for (role, decision) in
-			["clerk", "grader", "builder"].iter().zip(&decisions)
+		for (dir, decision) in [CLERK, "grader", BUILDER].iter().zip(&decisions)
 		{
-			let units = Fixture::threads(&entry.store, role).await;
+			let units = Fixture::threads(&entry.store, dir).await;
 			units.len().xpect_eq(1);
 			units[0]
 				.0

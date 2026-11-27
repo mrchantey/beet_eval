@@ -9,7 +9,7 @@ use beet::prelude::*;
 /// action's served sections and a claim's slug and block. How a person or an
 /// agent adds or changes an eval, a rubric, a render spec, a coach action or
 /// a claim. The row is given inline with `--row`, its JSON text, which an
-/// agent's `<HostTool>` call sends from the object it passes, or drafted into
+/// agent's `<RouteTool>` call sends from the object it passes, or drafted into
 /// the workspace store and named with `--from`.
 #[action(route = "put")]
 #[derive(Default, Component, Reflect)]
@@ -34,7 +34,7 @@ pub async fn EvalPut(
 	let loaded = workspace.package(&package).ok_or_else(|| {
 		bevyhow!("the workspace names no package {}", package)
 	})?;
-	let tables = TableStore::new(loaded.store.clone());
+	let store = &loaded.store;
 	let row = match (row, from) {
 		// a command line's text that is no JSON object, refused as the JSON
 		// it fails to be
@@ -60,29 +60,47 @@ pub async fn EvalPut(
 					eval.id, other.package
 				));
 			}
-			Put::finish(problems, tables.table::<Eval>().push(eval)).await?
+			Put::finish(
+				problems,
+				RowTable::<Eval>::new(store.clone()).push(eval),
+			)
+			.await?
 		}
 		PackageTable::Rubrics => {
 			let rubric = row.into_serde::<Rubric>()?;
 			let problems = Laws::rubric(&workspace, &rubric);
-			Put::finish(problems, tables.table::<Rubric>().push(rubric)).await?
+			Put::finish(
+				problems,
+				RowTable::<Rubric>::new(store.clone()).push(rubric),
+			)
+			.await?
 		}
 		PackageTable::Render => {
 			let spec = row.into_serde::<RenderSpec>()?;
 			let problems = Laws::prose(&spec);
-			Put::finish(problems, tables.table::<RenderSpec>().push(spec))
-				.await?
+			Put::finish(
+				problems,
+				RowTable::<RenderSpec>::new(store.clone()).push(spec),
+			)
+			.await?
 		}
 		PackageTable::Actions => {
 			let action = row.into_serde::<CoachAction>()?;
 			let problems = Laws::action(&action, outline);
-			Put::finish(problems, tables.table::<CoachAction>().push(action))
-				.await?
+			Put::finish(
+				problems,
+				RowTable::<CoachAction>::new(store.clone()).push(action),
+			)
+			.await?
 		}
 		PackageTable::Claims => {
 			let claim = row.into_serde::<Claim>()?;
 			let problems = Laws::claim(&claim, outline);
-			Put::finish(problems, tables.table::<Claim>().push(claim)).await?
+			Put::finish(
+				problems,
+				RowTable::<Claim>::new(store.clone()).push(claim),
+			)
+			.await?
 		}
 	};
 	match problems.is_empty() {

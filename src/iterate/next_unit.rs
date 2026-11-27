@@ -8,10 +8,10 @@ use beet::prelude::*;
 /// building a thread for that unit. Fails on `done`, the loop's break.
 ///
 /// ```bsx
-/// <Route path="iterate" {ThreadRoute{template:"LoopThread", metadata:{journal:"loop"}}}/>
-/// <Route path="grade/:document" {ThreadRoute{template:"GraderThread"}}/>
+/// <Route path="iterate" {ThreadRoute{source:Document("templates/LoopThread.bsx")}}/>
+/// <Route path="grade/:document" {ThreadRoute{source:Document("templates/GraderThread.bsx"), message:"grade {document}"}}/>
 /// <!-- templates/LoopThread.bsx -->
-/// <Thread {(Sequence, MountThreadStore{path:"packages/acme/assets/threads/loop"})}>
+/// <Thread {(Sequence, MountThreadStore{path:"loop"})}>
 ///     <CreateActor id=1 name="Loop" kind="Agent" {Fallback}>
 ///         <RepeatTimes total_times=3><NextUnit/></RepeatTimes>
 ///         <EndWith/>
@@ -104,7 +104,7 @@ impl NextUnit {
 					};
 					let thread = thread_records.thread_id(entity)?;
 					let post = AgentPost::new_text(
-						**actor,
+						(**actor).clone(),
 						thread,
 						decision,
 						PostStatus::Completed,

@@ -51,8 +51,7 @@ impl AnswerState {
 			return Self::Unwritten.xok();
 		}
 		let text = String::from_utf8(dist.get(&path).await?.to_vec())?;
-		let approvals =
-			TableStore::new(workspace.results()).table::<AnswerApproval>();
+		let approvals = RowTable::<AnswerApproval>::new(workspace.results());
 		match approvals.exists(rubric.as_str()).await? {
 			false => Self::Awaiting,
 			true => {

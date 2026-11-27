@@ -181,21 +181,20 @@ mod test {
 
 	/// The claim `id` of the register in `store`.
 	async fn claim(store: &BlobStore, id: &str) -> Claim {
-		TableStore::new(store.with_subdir(RelPath::new("packages/acme")))
-			.table::<Claim>()
+		RowTable::<Claim>::new(store.with_subdir(RelPath::new("packages/acme")))
 			.get(id)
 			.await
 			.unwrap()
 	}
 
-	/// The sittings stored under the coach's threads.
+	/// The sittings stored under the coach's threads about the held claim.
 	async fn sittings(store: &BlobStore) -> Vec<Vec<String>> {
-		Fixture::sittings(store, "coach").await
+		Fixture::sittings(store, "coach/per-weekend").await
 	}
 
 	/// A sitting run by hand: it adds a claim, raises the held one's evidence
 	/// and writes its assignment, which ends it as a pass, its thread stored
-	/// under `threads/coach` and `next` on the claim it added.
+	/// under `coach/per-weekend` and `next` on the claim it added.
 	#[beet::test(timeout_ms = 120000)]
 	async fn a_sitting_runs_by_hand() {
 		let mut entry = FixtureEntry::of("coach.bsx").await;

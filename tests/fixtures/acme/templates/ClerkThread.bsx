@@ -2,9 +2,9 @@
 The clerk's thread for one document, built per request by `write/:document`:
 the whole workspace to write, then the owner's answer.
 -->
-<Thread {(Sequence, MountThreadStore{path:"packages/acme/assets/threads/clerk"})}>
+<Thread {(Sequence, MountThreadStore{path:"clerk/{document}"})}>
 	<CreateActor id=1 name="System" kind="System"><RoleSeed role="clerk"/></CreateActor>
-	<CreateActor id=2 name="Loop" kind="User"><RequestPost text="write {document}"/></CreateActor>
+	<CreateActor id=2 name="Loop" kind="User"/>
 	<RepeatWhileFunctionCallOutput>
 		<CreateActor id=3 name="Clerk" kind="Agent" {MockPostStreamer{script:[
 			Call{tool:"eval/results", arguments:{}},
@@ -17,7 +17,7 @@ the whole workspace to write, then the owner's answer.
 			<Router>
 				<StoreToolset/>
 				<EvalToolset/>
-				<HostTool path="eval/put" params="package=acme&table=claims"/>
+				<RouteTool path="eval/put" params="package=acme&table=claims"/>
 			</Router>
 		</CreateActor>
 	</RepeatWhileFunctionCallOutput>

@@ -5,14 +5,14 @@ table to write, the workspace package's assets its notes. The sitting asks a
 question a turn until the coach writes the claim's assignment, which ends it
 as a pass.
 -->
-<Thread {(Sequence, MountThreadStore{path:"packages/acme/assets/threads/coach"})}>
+<Thread {(Sequence, MountThreadStore{path:"coach/{claim}"})}>
 	<CreateActor id=1 name="System" kind="System">
 		<RoleSeed role="coach"/>
 		<RoutePost path="eval/rows?package=acme_biz&table=actions"/>
 		<RoutePost path="eval/rows?package=acme&table=claims"/>
 		<RoutePost path="eval/rows?package=acme&table=claims&key={claim}"/>
 	</CreateActor>
-	<CreateActor id=2 name="Loop" kind="User"><RequestPost text="coach {claim}"/></CreateActor>
+	<CreateActor id=2 name="Loop" kind="User"/>
 	<Fallback>
 		<Repeat>
 			<Sequence>
@@ -35,8 +35,8 @@ as a pass.
 						Text("Your assignment: ask three traders on Saturday to book the next weekend at $120."),
 					]}}>
 						<Router>
-							<HostTool path="eval/rows"/>
-							<HostTool path="eval/put" params="package=acme&table=claims"/>
+							<RouteTool path="eval/rows"/>
+							<RouteTool path="eval/put" params="package=acme&table=claims"/>
 							<Fragment {DirPath("packages/acme/assets")}><StoreToolset/></Fragment>
 						</Router>
 					</CreateActor>

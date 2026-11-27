@@ -2,9 +2,9 @@
 The grader's thread for one document, built per request by `grade/:document`:
 the workspace to read, grades through `grade` alone.
 -->
-<Thread {(Sequence, MountThreadStore{path:"packages/acme/assets/threads/grader"})}>
+<Thread {(Sequence, MountThreadStore{path:"grader", new:true})}>
 	<CreateActor id=1 name="System" kind="System"><RoleSeed role="grader"/></CreateActor>
-	<CreateActor id=2 name="Loop" kind="User"><RequestPost text="grade {document}"/></CreateActor>
+	<CreateActor id=2 name="Loop" kind="User"/>
 	<RepeatWhileFunctionCallOutput>
 		<CreateActor id=5 name="Grader" kind="Agent" {MockPostStreamer{script:[
 			Call{tool:"eval/worksheet", arguments:{document:"product"}},

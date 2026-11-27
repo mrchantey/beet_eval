@@ -68,15 +68,21 @@ impl DocumentSet {
 			.sort_by(|(left, _), (right, _)| left.as_str().cmp(right.as_str()));
 		let mut world =
 			(TemplatePlugin, DocumentPlugin, OoxmlPlugin).into_world();
+		// the frontmatter read as a `DocMeta`, without building the document
+		let meta_parsers = DocParsers::of(&world)
+			.with_metadata_type(TypeName::of::<DocMeta>().short());
 		let mut files = Vec::new();
 		for (path, bytes) in sources {
 			let root = world.spawn_empty().id();
 			let mut problems = Vec::new();
-			match DocParsers::of(&world)?
-				.declarations(&bytes, &TypeName::of::<DocMeta>().short())
-				.and_then(|declarations| {
-					declarations.get::<DocMeta>(Self::meta_registry())
-				}) {
+			match meta_parsers.root_components(&bytes, Some(&path)).and_then(
+				|declarations| {
+					BodyComponents::get::<DocMeta>(
+						&declarations,
+						Self::meta_registry(),
+					)
+				},
+			) {
 				Ok(Some(meta)) => {
 					world.entity_mut(root).insert(meta);
 				}
@@ -84,11 +90,10 @@ impl DocumentSet {
 				Err(err) => problems
 					.push(format!("the frontmatter does not parse: {err}")),
 			}
-			DocParsers::parse(
-				ParseContext::new(&mut world.entity_mut(root), &bytes)
-					.with_path(WsPath::new(path.as_str())),
-			)
-			.map_err(|err| bevyhow!("{dir}/{path}: {err}"))?;
+			ParseContext::new(&mut world.entity_mut(root), &bytes)
+				.with_path(path.clone())
+				.parse()
+				.map_err(|err| bevyhow!("{dir}/{path}: {err}"))?;
 			files.push(DocumentFile {
 				name: Self::name_of(&path),
 				file: path,

@@ -97,12 +97,10 @@ pub(crate) async fn parsed_with<O: 'static + Send + Sync>(
 		.world()
 		.with(move |world: &mut World| -> Result<O> {
 			let root = world.spawn_empty().id();
-			let read = DocParsers::parse(ParseContext::new(
-				&mut world.entity_mut(root),
-				&media,
-			))
-			.map_err(BevyError::from)
-			.and_then(|_| func(world, root));
+			let read = ParseContext::new(&mut world.entity_mut(root), &media)
+				.parse()
+				.map_err(BevyError::from)
+				.and_then(|_| func(world, root));
 			world.entity_mut(root).despawn();
 			read
 		})

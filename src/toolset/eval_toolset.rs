@@ -3,7 +3,7 @@ use beet::prelude::*;
 /// `<EvalToolset/>`: the verbs a role works the loop with, as tools:
 /// `eval/check`, `eval/results`, `eval/next`, `eval/worksheet`,
 /// `eval/project`, `eval/blocks`, `eval/grade`, `eval/cells`, `eval/answers`
-/// and `eval/build`, each a [`HostTool`] answering the verb's markdown
+/// and `eval/build`, each a [`RouteTool`] answering the verb's markdown
 /// report, a refusal answering as the error it is. `eval/approve` is none of them: a
 /// person approves a form's answers, never a role.
 ///
@@ -23,15 +23,15 @@ use beet::prelude::*;
 #[template]
 pub fn EvalToolset() -> impl Bundle {
 	rsx! {
-		<HostTool path="eval/check"/>
-		<HostTool path="eval/results"/>
-		<HostTool path="eval/next"/>
-		<HostTool path="eval/worksheet"/>
-		<HostTool path="eval/project"/>
-		<HostTool path="eval/blocks"/>
-		<HostTool path="eval/grade"/>
-		<HostTool path="eval/cells"/>
-		<HostTool path="eval/answers"/>
-		<HostTool path="eval/build"/>
+		<RouteTool path="eval/check"/>
+		<RouteTool path="eval/results"/>
+		<RouteTool path="eval/next"/>
+		<RouteTool path="eval/worksheet"/>
+		<RouteTool path="eval/project"/>
+		<RouteTool path="eval/blocks"/>
+		<RouteTool path="eval/grade"/>
+		<RouteTool path="eval/cells"/>
+		<RouteTool path="eval/answers"/>
+		<RouteTool path="eval/build"/>
 	}
 }

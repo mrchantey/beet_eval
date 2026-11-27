@@ -76,7 +76,7 @@ impl Plugin for EvalPlugin {
 			.register_type::<EvalDrop>()
 			.register_type::<NextUnit>()
 			.register_type::<AssignmentCheck>();
-		app.install_type::<(
+		app.install_types::<(
 			ThreadPlugin,
 			CheckRoutes,
 			EvalRoutes,
