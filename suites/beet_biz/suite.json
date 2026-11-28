@@ -4,8 +4,8 @@
   "name": "beet_biz",
   "outline": "outline.json",
   "sources": {
-    "biz:outline": "This package's own `outline.json`.",
-    "gstack:office-hours": "Garry Tan, gstack, the office-hours skill's startup diagnostic: six forcing questions, each with what to push until and the answers that are red flags, the shape of this package's coach actions, and the phrases a coach never says.",
+    "biz:outline": "This suite's own `outline.json`.",
+    "gstack:office-hours": "Garry Tan, gstack, the office-hours skill's startup diagnostic: six forcing questions, each with what to push until and the answers that are red flags, the shape of this suite's coach actions, and the phrases a coach never says.",
     "ref:aaker-1996": "David A. Aaker, Building Strong Brands, Free Press, 1996. The brand identity system, and identity as something planned rather than found.",
     "ref:blank-2005": "Steven Gary Blank, The Four Steps to the Epiphany, 2005. Customer discovery and validation: every fact in a plan is a hypothesis until customers confirm it, outside the building.",
     "ref:business-gov-au": "Australian Government, business.gov.au, the business plan template and guide, the Australian form of the same outline.",

@@ -2,7 +2,7 @@ use crate::prelude::*;
 use beet::prelude::*;
 
 /// A form's build in the build directory: the blank form unpacked into
-/// `<package>/<rubric>/`, one file per entry of its zip, which the builder
+/// `<suite>/<rubric>/`, one file per entry of its zip, which the builder
 /// edits as the form's own XML with the store's text tools, and the files
 /// zipped back into the built form.
 ///
@@ -15,20 +15,20 @@ impl FormBuild {
 	/// The directory below the build directory the form of `rubric` is
 	/// unpacked into, ie `acme_course/01-business-plan`.
 	pub fn parts_dir(rubric: &RubricRef) -> RelPath {
-		RelPath::new(rubric.package()).join(rubric.rubric())
+		RelPath::new(rubric.suite()).join(rubric.rubric())
 	}
 
 	/// The path below the build directory a build writes the built form's
 	/// [`CellsReport`] to, beside the form, which the triage reads as built.
 	pub fn cells_path(rubric: &RubricRef) -> RelPath {
-		RelPath::new(rubric.package())
+		RelPath::new(rubric.suite())
 			.join(format!("{}.cells.md", rubric.rubric()))
 	}
 
 	/// The path below the build directory a form's [`AnswerSheet`] is
 	/// written to, beside the form, ie `acme_course/01-business-plan.answers.md`.
 	pub fn answers_path(rubric: &RubricRef) -> RelPath {
-		RelPath::new(rubric.package())
+		RelPath::new(rubric.suite())
 			.join(format!("{}.answers.md", rubric.rubric()))
 	}
 

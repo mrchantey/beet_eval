@@ -2,7 +2,7 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// `eval/check`: every table of every package against the law: rows that
+/// `eval/check`: every table of every suite against the law: rows that
 /// parse, ids unique across the workspace, the prose rules, each check's
 /// params against its route's, citations of known evals at levels they can
 /// reach, and every anchor, block home, agreement, action's served section
@@ -19,13 +19,14 @@ pub async fn EvalCheck(
 ) -> Result<DataPage<CheckSummary>> {
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	let mut errors = workspace.problems.clone();
-	if let Err(err) = workspace.document_package() {
+	if let Err(err) = workspace.document_suite() {
 		errors.push(err.to_string());
 	}
 	let outline = workspace.outline().ok();
-	for packaged in &workspace.evals {
-		let at = format!("{}/evals/{}", packaged.package, packaged.eval.id);
-		for problem in Laws::eval_row(&cx.caller, &packaged.eval, outline).await
+	for suite_eval in &workspace.evals {
+		let at = format!("{}/evals/{}", suite_eval.suite, suite_eval.eval.id);
+		for problem in
+			Laws::eval_row(&cx.caller, &suite_eval.eval, outline).await
 		{
 			errors.push(format!("{at}: {problem}"));
 		}
@@ -47,28 +48,28 @@ pub async fn EvalCheck(
 			errors.push(format!("{reference}: {problem}"));
 		}
 	}
-	for package in &workspace.packages {
-		for spec in &package.render {
+	for suite in &workspace.suites {
+		for spec in &suite.render {
 			for problem in Laws::prose(spec) {
 				errors.push(format!(
 					"{}/render/{}: {problem}",
-					package.manifest.name, spec.rubric
+					suite.manifest.name, spec.rubric
 				));
 			}
 		}
-		for action in &package.actions {
+		for action in &suite.actions {
 			for problem in Laws::action(action, outline) {
 				errors.push(format!(
 					"{}/actions/{}: {problem}",
-					package.manifest.name, action.id
+					suite.manifest.name, action.id
 				));
 			}
 		}
-		for claim in &package.claims {
+		for claim in &suite.claims {
 			for problem in Laws::claim(claim, outline) {
 				errors.push(format!(
 					"{}/claims/{}: {problem}",
-					package.manifest.name, claim.id
+					suite.manifest.name, claim.id
 				));
 			}
 		}
@@ -76,19 +77,19 @@ pub async fn EvalCheck(
 	let checked = workspace
 		.evals
 		.iter()
-		.filter(|packaged| packaged.eval.is_checked())
+		.filter(|suite_eval| suite_eval.eval.is_checked())
 		.count();
 	let summary = CheckSummary {
 		evals: workspace.evals.len(),
 		judged: workspace.evals.len() - checked,
 		checked,
-		packages: workspace.packages.len(),
+		suites: workspace.suites.len(),
 		citations: cited.values().sum::<usize>(),
 		uncited: workspace
 			.evals
 			.iter()
-			.filter(|packaged| !cited.contains_key(&packaged.eval.id))
-			.map(|packaged| packaged.eval.id.clone())
+			.filter(|suite_eval| !cited.contains_key(&suite_eval.eval.id))
+			.map(|suite_eval| suite_eval.eval.id.clone())
 			.collect(),
 		errors,
 	};
@@ -108,14 +109,14 @@ pub async fn EvalCheck(
 pub struct CheckSummary {
 	/// Every law a row breaks, one line each.
 	pub errors: Vec<String>,
-	/// Every eval of every package.
+	/// Every eval of every suite.
 	pub evals: usize,
 	/// The judged ones.
 	pub judged: usize,
 	/// The checked ones.
 	pub checked: usize,
-	/// The packages.
-	pub packages: usize,
+	/// The suites.
+	pub suites: usize,
 	/// Every citation of every rubric.
 	pub citations: usize,
 	/// The evals no rubric cites.
@@ -123,14 +124,14 @@ pub struct CheckSummary {
 }
 
 impl CheckSummary {
-	/// The count line, ie `19 evals (5 judged, 14 checked) in 3 packages`.
+	/// The count line, ie `19 evals (5 judged, 14 checked) in 3 suites`.
 	pub fn line(&self) -> String {
 		format!(
-			"{} evals ({} judged, {} checked) in {} packages, {} citations, {} uncited, {} error(s)",
+			"{} evals ({} judged, {} checked) in {} suites, {} citations, {} uncited, {} error(s)",
 			self.evals,
 			self.judged,
 			self.checked,
-			self.packages,
+			self.suites,
 			self.citations,
 			self.uncited.len(),
 			self.errors.len()
@@ -177,14 +178,14 @@ mod test {
 			.ok("eval/check --unused")
 			.await
 			.xpect_eq(
-				"19 evals (5 judged, 14 checked) in 3 packages, 21 citations, 0 uncited, 0 error(s)\n",
+				"19 evals (5 judged, 14 checked) in 3 suites, 21 citations, 0 uncited, 0 error(s)\n",
 			);
 	}
 
-	/// The fixture document package's evals.
+	/// The fixture document suite's evals.
 	fn evals(fixture: &Fixture) -> RowTable<Eval> {
 		RowTable::<Eval>::new(
-			fixture.store.with_subdir(RelPath::new("packages/acme_biz")),
+			fixture.store.with_subdir(RelPath::new("suites/acme_biz")),
 		)
 	}
 

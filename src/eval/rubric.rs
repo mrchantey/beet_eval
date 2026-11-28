@@ -4,15 +4,15 @@ use beet::prelude::*;
 
 /// A profile over evals for one reader: the level each cited eval must reach,
 /// and the structural lines that reader's form demands, under the form's own
-/// headings. A row of a package's `rubrics` table, keyed on its id.
+/// headings. A row of a suite's `rubrics` table, keyed on its id.
 ///
 /// A rubric's citations are read off the one [`Results`] grading `docs/`
 /// produces, never off a rendered form; its structural lines are checked on the
 /// rendered form, never on `docs/`.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct Rubric {
-	/// Unique within its package, ie `01-business-plan`; the workspace names it
-	/// `<package>/<id>`, a [`RubricRef`].
+	/// Unique within its suite, ie `01-business-plan`; the workspace names it
+	/// `<suite>/<id>`, a [`RubricRef`].
 	pub id: SmolStr,
 	/// Who reads the form and on what basis, ie `an assessor marking the form
 	/// satisfactory`.
@@ -42,7 +42,7 @@ impl Rubric {
 	}
 }
 
-/// A row of a package's `rubrics` table, keyed on its id.
+/// A row of a suite's `rubrics` table, keyed on its id.
 impl TableStoreRow for Rubric {
 	fn table_name() -> SmolStr { "rubrics".into() }
 	fn key(&self) -> TableKey { self.id.as_str().into() }
@@ -136,34 +136,34 @@ impl StructuralLine {
 }
 
 text_type!(
-	/// A rubric named across a workspace, `<package>/<rubric>`, ie
+	/// A rubric named across a workspace, `<suite>/<rubric>`, ie
 	/// `course/01-business-plan`: what `eval/project` and `eval/build`
 	/// take and [`Results`] reports by.
 	RubricRef,
 	|text| match text.split_once('/') {
-		Some((package, rubric))
-			if PackageManifest::is_name(package) && EvalId::is_slug(rubric) =>
+		Some((suite, rubric))
+			if SuiteManifest::is_name(suite) && EvalId::is_slug(rubric) =>
 		{
 			OK
 		}
 		_ => bevybail!(
-			"`{text}` is not a rubric reference, expected `<package>/<rubric>`"
+			"`{text}` is not a rubric reference, expected `<suite>/<rubric>`"
 		),
 	}
 );
 
 impl RubricRef {
-	/// Names `rubric` in `package`.
-	pub fn new(package: &str, rubric: &str) -> Result<Self> {
-		Self::parse(format!("{package}/{rubric}"))
+	/// Names `rubric` in `suite`.
+	pub fn new(suite: &str, rubric: &str) -> Result<Self> {
+		Self::parse(format!("{suite}/{rubric}"))
 	}
 
-	/// The package part, ie `course`.
-	pub fn package(&self) -> &str {
-		self.0.split_once('/').map_or("", |(package, _)| package)
+	/// The suite part, ie `course`.
+	pub fn suite(&self) -> &str {
+		self.0.split_once('/').map_or("", |(suite, _)| suite)
 	}
 
-	/// The rubric's id within its package, ie `01-business-plan`.
+	/// The rubric's id within its suite, ie `01-business-plan`.
 	pub fn rubric(&self) -> &str {
 		self.0.split_once('/').map_or("", |(_, rubric)| rubric)
 	}

@@ -1,9 +1,9 @@
 <!--
 beet_eval's entry: `just cli` discovers it, builds it, and the root's
 `CallOnReady` calls it with the process request, dispatching down into the
-router. The verbs resolve the workspace through the repo store, the entry's
-directory by default and any workspace with `--repo=<uri>`, ie
-`just cli --repo=fs:../beetmash eval/next`. A route naming a type defined in
+router. The verbs resolve the workspace through the package store, the entry's
+directory by default and any workspace with `--package=<uri>`, ie
+`just cli --package=fs:../beetmash eval/next`. A route naming a type defined in
 this crate resolves because the binary links `EvalPlugin`; the stock `beet`
 cannot, hence the `<RequireCfg>`.
 

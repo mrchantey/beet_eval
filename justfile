@@ -15,7 +15,7 @@ default:
 
 #     just cli --help
 #
-# This repo's beet cli: the stock runner plus `EvalPlugin`, serving `main.bsx`.
+# This package's beet cli: the stock runner plus `EvalPlugin`, serving `main.bsx`.
 cli *args:
 	cargo run --features=cli -- "$@"
 

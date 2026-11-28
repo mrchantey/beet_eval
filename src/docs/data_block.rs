@@ -122,7 +122,7 @@ impl BlockFormat {
 	}
 }
 
-/// One column of a block's schema, as a document package's
+/// One column of a block's schema, as a document suite's
 /// [`Outline`](crate::prelude::Outline) fixes it. Its flat
 /// spelling, `name` or `name:kind`, is what a check's params and a reader
 /// carry.

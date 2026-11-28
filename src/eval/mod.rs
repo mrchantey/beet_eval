@@ -1,22 +1,22 @@
 //! The core, agnostic of the subject: evals, the scale, checks, rubrics,
-//! grades, results and the triage, and the packages and workspaces that hold
+//! grades, results and the triage, and the suites and workspaces that hold
 //! them. `README.md` fixes the words; this is the law they obey.
 //!
 //! # Evals
 //!
 //! An [`Eval`] is one statement about the subject that can be found true or
-//! false of it, defined exactly once as a row of a package's `evals` table.
+//! false of it, defined exactly once as a row of a suite's `evals` table.
 //! Two kinds share the row: a **judged** eval, graded on the four-level scale
 //! by a grader, and a **checked** eval, decided by the check route its
 //! [`Levels::Binary`] names. A [`Rubric`] is the third thing, a profile citing
 //! evals at the level one reader demands, plus the structural lines of that
-//! reader's form. The eval is the test, a rubric the suite run for one
-//! audience, and one run over the subject produces one [`Results`] every rubric
+//! reader's form. The eval is the test, a rubric the selection of tests
+//! run for one audience, and one run over the subject produces one [`Results`] every rubric
 //! reads.
 //!
-//! A document package's **owner rubric** holds the documents to level 3 on what
+//! A document suite's **owner rubric** holds the documents to level 3 on what
 //! matters to the subject, and is the default every workspace runs. A reader
-//! package's rubrics hold the same documents to what one outside reader
+//! suite's rubrics hold the same documents to what one outside reader
 //! accepts, mostly level 2, and add the structural lines of that reader's
 //! forms. Judged evals are always graded on `docs/`, never on a rendered form:
 //! a form asking for one line on pricing still holds the subject to the whole
@@ -26,15 +26,15 @@
 //! ## Ids
 //!
 //! An [`EvalId`] is `namespace.slug`, global across the workspace, so two
-//! packages may not both define one; `eval/check` refuses it. A document
-//! package names an eval's namespace after the document its anchor lies in,
+//! suites may not both define one; `eval/check` refuses it. A document
+//! suite names an eval's namespace after the document its anchor lies in,
 //! and keeps `structure` for the checks on the shape of the set, part of which
 //! its [`Outline`](crate::prelude::Outline) generates.
 //!
 //! An id is permanent: to change what an eval means, add a new one, delete the
 //! old and fix every rubric that cited it. A move between namespaces when a
-//! package's documents change is the one exception: the slug keeps its
-//! meaning, every citation is rewritten in the same change, and the package's
+//! suite's documents change is the one exception: the slug keeps its
+//! meaning, every citation is rewritten in the same change, and the suite's
 //! README records the move.
 //!
 //! ## The scale
@@ -65,12 +65,12 @@
 //!   `check/` and its params. The route decides; the statement still says in
 //!   words what it decides.
 //! - **sources**: one or more [`SourceTag`]s, most authoritative first. A
-//!   tag's meaning is in the source table of the package that owns the source;
-//!   `ref:<slug>` points at an entry in the citing package's own table, and
+//!   tag's meaning is in the source table of the suite that owns the source;
+//!   `ref:<slug>` points at an entry in the citing suite's own table, and
 //!   `inferred` is a legal source and an honest one.
 //! - **anchor**: the [`Address`] where the statement is expected to be
 //!   satisfied, which a grader, a worksheet and a projection point at. A
-//!   document package sets it on every judged eval; absent, it is the document
+//!   document suite sets it on every judged eval; absent, it is the document
 //!   the namespace names.
 //! - **note**: one optional paragraph for a contradiction between sources, an
 //!   accepted not-applicable answer, or a warning to the grader. Never a
@@ -137,12 +137,12 @@
 //! the cited level, and awaiting when no grade exists. It writes
 //! `results/summary.json`; `eval/next` triages from the same computation.
 //!
-//! ## Packages and workspaces
+//! ## Suites and workspaces
 //!
-//! A package is a store with a [`PackageManifest`], whose docs give the layout
+//! A suite is a store with a [`SuiteManifest`], whose docs give the layout
 //! and how its tables lie in the store; a workspace is a store with a
-//! [`Workspace`] manifest naming its packages. A verb reads both once, a
-//! [`LoadedWorkspace`]: every package with its rows, every eval of all of them
+//! [`Workspace`] manifest naming its suites. A verb reads both once, a
+//! [`LoadedWorkspace`]: every suite with its rows, every eval of all of them
 //! in one list, and what could not be read, which `eval/check` reports and
 //! every other verb refuses to run on.
 mod check;
@@ -150,16 +150,16 @@ mod eval;
 mod grade;
 mod levels;
 mod next;
-mod package;
 mod results;
 mod rubric;
+mod suite;
 mod workspace;
 pub use check::*;
 pub use eval::*;
 pub use grade::*;
 pub use levels::*;
 pub use next::*;
-pub use package::*;
 pub use results::*;
 pub use rubric::*;
+pub use suite::*;
 pub use workspace::*;

@@ -4,7 +4,7 @@
 //! for the unit it is asked, whose agent carries the toolset of its role.
 //!
 //! ```bsx
-//! <Router {JsonTableStore{path:"packages/acme/assets/threads"}}>
+//! <Router {JsonTableStore{path:"suites/acme/assets/threads"}}>
 //!     <Route path="iterate" {ThreadRoute{source:Document("templates/LoopThread.bsx")}}/>
 //!     <Route path="write/:document" {ThreadRoute{source:Document("templates/ClerkThread.bsx"), message:"write {document}"}}/>
 //!     <Route path="grade/:document" {ThreadRoute{source:Document("templates/GraderThread.bsx"), message:"grade {document}"}}/>

@@ -2,18 +2,18 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// `eval/project <package>/<rubric>`: the deterministic half of a build, the
+/// `eval/project <suite>/<rubric>`: the deterministic half of a build, the
 /// brief for one form. For every heading of the rubric, the evals it cites,
 /// where each is anchored, what is written there today, and the heading's
 /// structural lines: the [`ProjectionReport`], written as markdown to
-/// `results/projections/<package>-<rubric>.md` and answered, its
+/// `results/projections/<suite>-<rubric>.md` and answered, its
 /// [`Projection`] for a serde `Accept`. With no rubric named, lists the
 /// rubrics.
 #[action(route = "project/*rubric?")]
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
 pub async fn EvalProject(
-	/// The rubric, `<package>/<rubric>`, the path after `project`; the rubrics listed when absent.
+	/// The rubric, `<suite>/<rubric>`, the path after `project`; the rubrics listed when absent.
 	#[param]
 	rubric: Option<RubricRef>,
 	cx: ActionContext<Request>,
@@ -48,7 +48,7 @@ pub async fn EvalProject(
 		Projection::new(&workspace, &mut documents, &reference, rubric);
 	let path = RelPath::new(format!(
 		"projections/{}-{}.md",
-		reference.package(),
+		reference.suite(),
 		reference.rubric()
 	));
 	let report = || rsx! { <ProjectionReport projection=projection.clone()/> };
@@ -142,7 +142,7 @@ impl Projection {
 					.citations
 					.iter()
 					.map(|citation| {
-						let Some(packaged) = workspace.eval(&citation.eval)
+						let Some(suite_eval) = workspace.eval(&citation.eval)
 						else {
 							return ProjectedCitation {
 								eval: citation.eval.clone(),
@@ -151,7 +151,7 @@ impl Projection {
 								quote: None,
 							};
 						};
-						let anchor = packaged.eval.anchor_or_namespace();
+						let anchor = suite_eval.eval.anchor_or_namespace();
 						ProjectedCitation {
 							eval: citation.eval.clone(),
 							quote: documents
@@ -159,7 +159,7 @@ impl Projection {
 								.filter(|text| !text.is_empty()),
 							anchor: Some(anchor),
 							statement: Some(
-								packaged.eval.statement.to_string(),
+								suite_eval.eval.statement.to_string(),
 							),
 						}
 					})

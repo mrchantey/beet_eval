@@ -28,14 +28,14 @@ pub struct NextStep {
 	/// The unit of work.
 	pub verb: NextVerb,
 	/// What it is done to: a document, the documents to grade, a
-	/// `<package>/<rubric>` to build, a claim to coach, `docs/` to scaffold;
+	/// `<suite>/<rubric>` to build, a claim to coach, `docs/` to scaffold;
 	/// empty when done.
 	pub targets: Vec<SmolStr>,
 	/// Why this unit and not another, one paragraph.
 	pub why: String,
 	/// Every document of the outline, in its order.
 	pub documents: Vec<DocumentRow>,
-	/// Every rubric of every package.
+	/// Every rubric of every suite.
 	pub rubrics: Vec<RubricRow>,
 }
 
@@ -51,15 +51,14 @@ impl NextStep {
 		results: &Results,
 		forms: &[(RubricRef, FormStage)],
 	) -> Result<Self> {
-		let document_package =
-			workspace.document_package()?.manifest.name.clone();
+		let document_suite = workspace.document_suite()?.manifest.name.clone();
 		let outline = workspace.outline()?;
 		let docs = &workspace.manifest.docs;
 		let judged = workspace
 			.evals
 			.iter()
-			.filter(|packaged| !packaged.eval.is_checked())
-			.map(|packaged| &packaged.eval)
+			.filter(|suite_eval| !suite_eval.eval.is_checked())
+			.map(|suite_eval| &suite_eval.eval)
 			.collect::<Vec<_>>();
 		let anchored_in = |eval: &Eval, name: &str| {
 			eval.anchor_or_namespace().document_name() == name
@@ -108,7 +107,7 @@ impl NextStep {
 									as u32
 							}
 						};
-						match rubric.id.package() == document_package {
+						match rubric.id.suite() == document_suite {
 							true => owner_gap += gap,
 							false => reader_gap += gap,
 						}
@@ -184,7 +183,7 @@ impl NextStep {
 			&claims,
 			results,
 			forms,
-			&document_package,
+			&document_suite,
 		);
 		Self {
 			verb,
@@ -205,7 +204,7 @@ impl NextStep {
 		claims: &[&Claim],
 		results: &Results,
 		forms: &[(RubricRef, FormStage)],
-		document_package: &str,
+		document_suite: &str,
 	) -> (NextVerb, Vec<SmolStr>, String) {
 		let absent = rows.iter().filter(|row| !row.present).collect::<Vec<_>>();
 		if absent.len() == rows.len() {
@@ -325,14 +324,12 @@ impl NextStep {
 			.iter()
 			.filter(|rubric| {
 				let row = rubric.row();
-				rubric.id.package() != document_package
+				rubric.id.suite() != document_suite
 					&& row.failing == 0
 					&& row.awaiting == 0
 					&& workspace
-						.package(rubric.id.package())
-						.and_then(|package| {
-							package.render_spec(rubric.id.rubric())
-						})
+						.suite(rubric.id.suite())
+						.and_then(|suite| suite.render_spec(rubric.id.rubric()))
 						.is_some()
 			})
 			.collect::<Vec<_>>();
@@ -545,7 +542,7 @@ pub struct DocumentRow {
 /// One rubric as the triage counts it.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct RubricRow {
-	/// The rubric, `<package>/<rubric>`.
+	/// The rubric, `<suite>/<rubric>`.
 	pub rubric: RubricRef,
 	/// Citations met.
 	pub met: u32,

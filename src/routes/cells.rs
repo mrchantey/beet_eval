@@ -1,7 +1,7 @@
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// `eval/cells <package>/<rubric>`: the cells of a rubric's blank form, the
+/// `eval/cells <suite>/<rubric>`: the cells of a rubric's blank form, the
 /// map a builder writes against: every cell a person may type into, named by
 /// its place, with what a reader reads in it, a table for a markup `Accept`
 /// and the rows for a serde one. Listed from the form on demand and never
@@ -10,7 +10,7 @@ use beet::prelude::*;
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
 pub async fn EvalCells(
-	/// The reader rubric whose blank form is dumped, `<package>/<rubric>`,
+	/// The reader rubric whose blank form is dumped, `<suite>/<rubric>`,
 	/// the path after `cells`.
 	#[param]
 	rubric: RubricRef,
@@ -18,8 +18,8 @@ pub async fn EvalCells(
 ) -> Result<DataPage<Vec<FormCell>>> {
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
 	workspace.require_clean()?;
-	let (package, spec) = FormSource::of(&workspace, &rubric)?;
-	let blank = package.store.blob(spec.form.clone()).get_media().await?;
+	let (suite, spec) = FormSource::of(&workspace, &rubric)?;
+	let blank = suite.store.blob(spec.form.clone()).get_media().await?;
 	let cells = parsed_with(&cx.caller, blank, |world, root| {
 		FormCell::listing(world, root).xok()
 	})

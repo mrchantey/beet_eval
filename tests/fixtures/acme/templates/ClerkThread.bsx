@@ -17,7 +17,7 @@ the whole workspace to write, then the owner's answer.
 			<Router>
 				<StoreToolset/>
 				<EvalToolset/>
-				<RouteTool path="eval/put" params="package=acme&table=claims"/>
+				<RouteTool path="eval/put" params="suite=acme&table=claims"/>
 			</Router>
 		</CreateActor>
 	</RepeatWhileFunctionCallOutput>

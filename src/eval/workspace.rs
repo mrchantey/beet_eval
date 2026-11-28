@@ -2,9 +2,9 @@ use crate::prelude::*;
 use beet::prelude::*;
 
 /// A workspace's manifest, `workspace.json` at the root of the workspace store:
-/// where the subject and its outputs live, and the packages it is evaluated
+/// where the subject and its outputs live, and the suites it is evaluated
 /// against. The workspace store is the one IO goes through, resolved from an
-/// ancestor; its own package sits inside it, the rest anywhere a store uri
+/// ancestor; its own suite sits inside it, the rest anywhere a store uri
 /// reaches.
 ///
 /// ```json
@@ -12,15 +12,15 @@ use beet::prelude::*;
 ///   "docs": "docs",
 ///   "results": "results",
 ///   "dist": "dist",
-///   "packages": [
-///     { "Local": "packages/acme" },
-///     { "Store": { "Fs": { "path_prefix": "../beet_eval/packages/beet_biz" } } }
+///   "suites": [
+///     { "Local": "suites/acme" },
+///     { "Store": { "Fs": { "path_prefix": "../beet_eval/suites/beet_biz" } } }
 ///   ]
 /// }
 /// ```
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct Workspace {
-	/// The documents under evaluation, laid out by the document package's
+	/// The documents under evaluation, laid out by the document suite's
 	/// outline.
 	pub docs: RelPath,
 	/// What runs write and keep: the grades, the last [`Results`], the
@@ -30,9 +30,9 @@ pub struct Workspace {
 	pub results: RelPath,
 	/// What builds write, rebuilt at will and never kept.
 	pub dist: RelPath,
-	/// Every package the subject is evaluated against, exactly one of them a
-	/// document package.
-	pub packages: Vec<PackageSource>,
+	/// Every suite the subject is evaluated against, exactly one of them a
+	/// document suite.
+	pub suites: Vec<SuiteSource>,
 }
 
 impl Workspace {
@@ -51,15 +51,15 @@ impl Default for Workspace {
 			docs: RelPath::new("docs"),
 			results: RelPath::new("results"),
 			dist: RelPath::new("dist"),
-			packages: Vec::new(),
+			suites: Vec::new(),
 		}
 	}
 }
 
-/// Where a package lives, relative to the workspace that names it.
+/// Where a suite lives, relative to the workspace that names it.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
-pub enum PackageSource {
-	/// A directory of the workspace store, ie the workspace's own package.
+pub enum SuiteSource {
+	/// A directory of the workspace store, ie the workspace's own suite.
 	Local(RelPath),
 	/// Any other store; a relative `fs:` path resolves against the context
 	/// directory, which a workspace run from its own root makes the
@@ -67,7 +67,7 @@ pub enum PackageSource {
 	Store(StoreUri),
 }
 
-/// A workspace read for a run: its store, its manifest, and every package it
+/// A workspace read for a run: its store, its manifest, and every suite it
 /// names with its rows, the evals of all of them in one list. Read once per
 /// verb; what could not be read is listed rather than raised, so `eval/check`
 /// reports all of it and every other verb refuses to run on it.
@@ -77,23 +77,23 @@ pub struct LoadedWorkspace {
 	pub store: BlobStore,
 	/// The manifest.
 	pub manifest: Workspace,
-	/// Every package, in the manifest's order.
-	pub packages: Vec<LoadedPackage>,
-	/// Every eval of every package, the outline's generated ones included, in
-	/// package order and then by id; a duplicate id keeps its first.
-	pub evals: Vec<PackagedEval>,
+	/// Every suite, in the manifest's order.
+	pub suites: Vec<LoadedSuite>,
+	/// Every eval of every suite, the outline's generated ones included, in
+	/// suite order and then by id; a duplicate id keeps its first.
+	pub evals: Vec<SuiteEval>,
 	/// What could not be read, one line each.
 	pub problems: Vec<String>,
 }
 
-/// An eval with the package that defines it.
+/// An eval with the suite that defines it.
 #[derive(Debug, Clone, PartialEq)]
-pub struct PackagedEval {
-	/// The defining package's name.
-	pub package: SmolStr,
+pub struct SuiteEval {
+	/// The defining suite's name.
+	pub suite: SmolStr,
 	/// The eval.
 	pub eval: Eval,
-	/// Whether the package's outline generates it rather than a row.
+	/// Whether the suite's outline generates it rather than a row.
 	pub generated: bool,
 }
 
@@ -104,51 +104,51 @@ impl LoadedWorkspace {
 		if !store.exists(&manifest_path).await.unwrap_or(false) {
 			bevybail!(
 				"no `{}` at the root of the workspace store {}: a workspace \
-				 names its documents, results and packages there",
+				 names its documents, results and suites there",
 				Workspace::FILE,
 				store.describe()
 			);
 		}
 		let manifest = Workspace::read(&store).await?;
-		let mut packages = Vec::new();
+		let mut suites = Vec::new();
 		let mut problems = Vec::new();
-		for source in &manifest.packages {
-			let package_store = match source {
-				PackageSource::Local(path) => store.with_subdir(path.clone()),
-				PackageSource::Store(uri) => match BlobStore::from_uri(uri) {
-					Ok(package_store) => package_store,
+		for source in &manifest.suites {
+			let suite_store = match source {
+				SuiteSource::Local(path) => store.with_subdir(path.clone()),
+				SuiteSource::Store(uri) => match BlobStore::from_uri(uri) {
+					Ok(suite_store) => suite_store,
 					Err(err) => {
 						problems.push(format!(
-							"package {source:?} does not resolve: {err}"
+							"suite {source:?} does not resolve: {err}"
 						));
 						continue;
 					}
 				},
 			};
-			match LoadedPackage::load(package_store, source.clone()).await {
-				Ok((package, package_problems)) => {
-					problems.extend(package_problems);
-					packages.push(package);
+			match LoadedSuite::load(suite_store, source.clone()).await {
+				Ok((suite, suite_problems)) => {
+					problems.extend(suite_problems);
+					suites.push(suite);
 				}
-				Err(err) => problems.push(format!("package {source:?}: {err}")),
+				Err(err) => problems.push(format!("suite {source:?}: {err}")),
 			}
 		}
-		let mut evals = Vec::<PackagedEval>::new();
-		for package in &packages {
-			let generated = match &package.outline {
+		let mut evals = Vec::<SuiteEval>::new();
+		for suite in &suites {
+			let generated = match &suite.outline {
 				Some(outline) => match outline.evals() {
 					Ok(generated) => generated,
 					Err(err) => {
 						problems.push(format!(
 							"{}: the outline: {err}",
-							package.manifest.name
+							suite.manifest.name
 						));
 						Vec::new()
 					}
 				},
 				None => Vec::new(),
 			};
-			let rows = package.evals.iter().cloned().map(|eval| (eval, false));
+			let rows = suite.evals.iter().cloned().map(|eval| (eval, false));
 			let mut own = rows
 				.chain(generated.into_iter().map(|eval| (eval, true)))
 				.collect::<Vec<_>>();
@@ -158,10 +158,10 @@ impl LoadedWorkspace {
 				{
 					Some(existing) => problems.push(format!(
 						"{}: duplicate id {}, also defined in {}",
-						package.manifest.name, eval.id, existing.package
+						suite.manifest.name, eval.id, existing.suite
 					)),
-					None => evals.push(PackagedEval {
-						package: package.manifest.name.clone(),
+					None => evals.push(SuiteEval {
+						suite: suite.manifest.name.clone(),
 						eval,
 						generated,
 					}),
@@ -171,7 +171,7 @@ impl LoadedWorkspace {
 		Self {
 			store,
 			manifest,
-			packages,
+			suites,
 			evals,
 			problems,
 		}
@@ -179,7 +179,7 @@ impl LoadedWorkspace {
 	}
 
 	/// The workspace store a verb runs against: the nearest store above its
-	/// route, which an entry declares, or `--repo` selects.
+	/// route, which an entry declares, or `--package` selects.
 	pub async fn store_of(caller: &AsyncEntity) -> Result<BlobStore> {
 		caller
 			.with_state::<AncestorQuery<&BlobStore>, _>(|entity, query| {
@@ -223,73 +223,73 @@ impl LoadedWorkspace {
 		self.store.with_subdir(self.manifest.dist.clone())
 	}
 
-	/// The package named `name`.
-	pub fn package(&self, name: &str) -> Option<&LoadedPackage> {
-		self.packages
-			.iter()
-			.find(|package| package.manifest.name == name)
+	/// The suite named `name`.
+	pub fn suite(&self, name: &str) -> Option<&LoadedSuite> {
+		self.suites.iter().find(|suite| suite.manifest.name == name)
 	}
 
-	/// The one document package, refusing none or several.
-	pub fn document_package(&self) -> Result<&LoadedPackage> {
+	/// The one document suite, refusing none or several.
+	pub fn document_suite(&self) -> Result<&LoadedSuite> {
 		let mut documents = self
-			.packages
+			.suites
 			.iter()
-			.filter(|package| package.manifest.kind == PackageKind::Document);
+			.filter(|suite| suite.manifest.kind == SuiteKind::Document);
 		match (documents.next(), documents.next()) {
-			(Some(package), None) => package.xok(),
-			(None, _) => bevybail!("the workspace names no document package"),
+			(Some(suite), None) => suite.xok(),
+			(None, _) => bevybail!("the workspace names no document suite"),
 			(Some(first), Some(second)) => bevybail!(
-				"the workspace names more than one document package: {} and {}",
+				"the workspace names more than one document suite: {} and {}",
 				first.manifest.name,
 				second.manifest.name
 			),
 		}
 	}
 
-	/// The claims register: every claim of every workspace package, in
-	/// package order.
+	/// The claims register: every claim of every workspace suite, in
+	/// suite order.
 	pub fn claims(&self) -> Vec<&Claim> {
-		self.packages
+		self.suites
 			.iter()
-			.filter(|package| package.manifest.kind == PackageKind::Workspace)
-			.flat_map(|package| package.claims.iter())
+			.filter(|suite| suite.manifest.kind == SuiteKind::Workspace)
+			.flat_map(|suite| suite.claims.iter())
 			.collect()
 	}
 
-	/// The document package's outline.
+	/// The document suite's outline.
 	pub fn outline(&self) -> Result<&Outline> {
-		let package = self.document_package()?;
-		package.outline.as_ref().ok_or_else(|| {
+		let suite = self.document_suite()?;
+		suite.outline.as_ref().ok_or_else(|| {
 			bevyhow!(
-				"the document package {} has no outline",
-				package.manifest.name
+				"the document suite {} has no outline",
+				suite.manifest.name
 			)
 		})
 	}
 
-	/// The judged evals' ids, in package order and then by id.
+	/// The judged evals' ids, in suite order and then by id.
 	pub fn judged(&self) -> Vec<EvalId> {
 		self.evals
 			.iter()
-			.filter(|packaged| !packaged.eval.is_checked())
-			.map(|packaged| packaged.eval.id.clone())
+			.filter(|suite_eval| !suite_eval.eval.is_checked())
+			.map(|suite_eval| suite_eval.eval.id.clone())
 			.collect()
 	}
 
 	/// The eval with `id`.
-	pub fn eval(&self, id: &EvalId) -> Option<&PackagedEval> {
-		self.evals.iter().find(|packaged| &packaged.eval.id == id)
+	pub fn eval(&self, id: &EvalId) -> Option<&SuiteEval> {
+		self.evals
+			.iter()
+			.find(|suite_eval| &suite_eval.eval.id == id)
 	}
 
-	/// Every rubric of every package, `<package>/<rubric>`, in that order.
+	/// Every rubric of every suite, `<suite>/<rubric>`, in that order.
 	pub fn rubrics(&self) -> Vec<(RubricRef, &Rubric)> {
 		let mut rubrics = self
-			.packages
+			.suites
 			.iter()
-			.flat_map(|package| {
-				package.rubrics.iter().filter_map(move |rubric| {
-					RubricRef::new(&package.manifest.name, &rubric.id)
+			.flat_map(|suite| {
+				suite.rubrics.iter().filter_map(move |rubric| {
+					RubricRef::new(&suite.manifest.name, &rubric.id)
 						.ok()
 						.map(|reference| (reference, rubric))
 				})
@@ -301,7 +301,7 @@ impl LoadedWorkspace {
 
 	/// The rubric `reference` names.
 	pub fn rubric(&self, reference: &RubricRef) -> Option<&Rubric> {
-		self.package(reference.package())?
+		self.suite(reference.suite())?
 			.rubrics
 			.iter()
 			.find(|rubric| rubric.id == reference.rubric())

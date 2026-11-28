@@ -1,7 +1,7 @@
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// One of the coach's moves: a row of a document package's `actions` table,
+/// One of the coach's moves: a row of a document suite's `actions` table,
 /// keyed on its id, the question asked, how hard to push, and a bad and a good
 /// exchange to calibrate by.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
@@ -26,7 +26,7 @@ pub struct CoachAction {
 	pub serves: Vec<Address>,
 }
 
-/// A row of a document package's `actions` table, keyed on its id.
+/// A row of a document suite's `actions` table, keyed on its id.
 impl TableStoreRow for CoachAction {
 	fn table_name() -> SmolStr { "actions".into() }
 	fn key(&self) -> TableKey { self.id.as_str().into() }

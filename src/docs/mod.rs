@@ -1,6 +1,6 @@
 //! The first subject: the documents under a workspace's documents directory,
 //! prose for people, each a markdown file or a Word file read the same way. A
-//! document package's [`Outline`] says which documents exist and what their
+//! document suite's [`Outline`] says which documents exist and what their
 //! sections are; this is what any one of them looks like, so a reader, a
 //! grader and a renderer can rely on it. Read, a document is a tree in a
 //! [`DocumentSet`], and its frontmatter is beet's
@@ -121,7 +121,7 @@
 //!
 //! The kinds deciding a document's shape are routes under `check/`, their
 //! actions and params in [`checks`]; an outline generates the evals restating
-//! it, and a package writes the rest as rows.
+//! it, and a suite writes the rest as rows.
 mod ask;
 pub mod checks;
 mod data_block;

@@ -1,7 +1,7 @@
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// A document package's outline, `outline.json`: which documents exist, in
+/// A document suite's outline, `outline.json`: which documents exist, in
 /// reading order, the `##` sections of each with what each holds, and the data
 /// blocks they carry. It names no subject; a change to it is a change to every
 /// workspace written against it, recorded in its history.
@@ -12,7 +12,7 @@ use beet::prelude::*;
 /// sections.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct Outline {
-	/// The source tag every generated eval cites, defined in the package's
+	/// The source tag every generated eval cites, defined in the suite's
 	/// source table as this outline.
 	pub source: SourceTag,
 	/// The documents, in reading order.
@@ -24,10 +24,10 @@ pub struct Outline {
 }
 
 impl Outline {
-	/// The outline's path at its package's root.
+	/// The outline's path at its suite's root.
 	pub const FILE: &str = "outline.json";
 
-	/// The namespace of the generated evals, shared with the package's own
+	/// The namespace of the generated evals, shared with the suite's own
 	/// checks on the shape of the set.
 	pub const NAMESPACE: &str = "structure";
 

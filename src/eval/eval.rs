@@ -3,7 +3,7 @@ use crate::text_type::text_type;
 use beet::prelude::*;
 
 /// One statement about the subject, true of a strong subject and false of a
-/// missing one, defined exactly once and never renamed: a row of a package's
+/// missing one, defined exactly once and never renamed: a row of a suite's
 /// `evals` table, keyed on its [`EvalId`]. The [`eval`](crate::eval) module
 /// docs are its law.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
@@ -39,7 +39,7 @@ impl Eval {
 	}
 }
 
-/// A row of a package's `evals` table, keyed on its id.
+/// A row of a suite's `evals` table, keyed on its id.
 impl TableStoreRow for Eval {
 	fn table_name() -> SmolStr { "evals".into() }
 	fn key(&self) -> TableKey { self.id.as_str().into() }
@@ -47,9 +47,9 @@ impl TableStoreRow for Eval {
 
 text_type!(
 	/// An eval's id, `namespace.slug`, ie `market.competitors-named`: global
-	/// across a workspace, so a rubric in one package cites an eval in another
+	/// across a workspace, so a rubric in one suite cites an eval in another
 	/// by id alone. The namespace groups evals, by the document they anchor in
-	/// for a document package; the slug names one.
+	/// for a document suite; the slug names one.
 	EvalId,
 	|text| match text.split_once('.') {
 		Some((namespace, slug))
@@ -84,7 +84,7 @@ impl EvalId {
 
 	/// Whether `text` is a slug: lowercase letters and digits in runs joined
 	/// by single hyphens, ie `competitors-named`. A namespace, an eval's slug
-	/// and a package's rubric id are slugs.
+	/// and a suite's rubric id are slugs.
 	pub fn is_slug(text: &str) -> bool {
 		!text.is_empty()
 			&& text.split('-').all(|run| {
@@ -100,7 +100,7 @@ text_type!(
 	/// Where a statement comes from, the text a citation carries in square
 	/// brackets without them, ie `ref:sba` for `[ref:sba]` or `A1.3 transcript
 	/// 00:05:26`. A tag's meaning is looked up in the source table of the
-	/// package that owns the source, [`PackageManifest::sources`].
+	/// suite that owns the source, [`SuiteManifest::sources`].
 	SourceTag,
 	|text| match !text.is_empty()
 		&& text.trim() == text.as_str()

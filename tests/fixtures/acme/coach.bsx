@@ -6,7 +6,7 @@ under the mock provider:
     just cli --entry=<a copy of this directory>/coach.bsx --claim=<claim id>
 
 The sitting's thread mounts `coach/{claim}`, stored under the workspace
-package's `assets/threads`, so each claim's sittings continue one thread about
+suite's `assets/threads`, so each claim's sittings continue one thread about
 it. Its seed is the coach's procedure, the actions table, the register and the
 claim held, and it asks a question a turn until the coach writes the claim's
 assignment, which ends it as a pass, the transcript left on the surface.
@@ -14,7 +14,7 @@ A live workspace's entry is this one with `{ModelStreamer{provider:OpenAi}}`
 for the coach and `{UserInput}` for the owner.
 -->
 <CallOnReady {(TuiServer, SweepDescendants)}>
-<Router {(Layout(Template("AppShell")), RequestLogger, HelpHandler, JsonTableStore{path:"packages/acme/assets/threads"})}>
+<Router {(Layout(Template("AppShell")), RequestLogger, HelpHandler, JsonTableStore{path:"suites/acme/assets/threads"})}>
 	<Route path="/" {FixedPage}>
 		<ThreadView {OfThread($sitting)}/>
 		<CreatePostForm {OfThread($sitting)}/>
@@ -24,9 +24,9 @@ for the coach and `{UserInput}` for the owner.
 	<Thread bx:ref="sitting" {(Sequence, RunThread, MountThreadStore{path:"coach/{claim}"})}>
 		<CreateActor id=1 name="System" kind="System">
 			<RoleSeed role="coach"/>
-			<RoutePost path="eval/rows?package=acme_biz&table=actions"/>
-			<RoutePost path="eval/rows?package=acme&table=claims"/>
-			<RoutePost path="eval/rows?package=acme&table=claims&key={claim}"/>
+			<RoutePost path="eval/rows?suite=acme_biz&table=actions"/>
+			<RoutePost path="eval/rows?suite=acme&table=claims"/>
+			<RoutePost path="eval/rows?suite=acme&table=claims&key={claim}"/>
 		</CreateActor>
 		<Fallback>
 			<Sequence>
@@ -35,7 +35,7 @@ for the coach and `{UserInput}` for the owner.
 					<Sequence>
 						<RepeatWhileFunctionCallOutput>
 							<CreateActor id=7 name="Coach" kind="Agent" {MockPostStreamer{script:[
-								Call{tool:"eval/rows", arguments:{package:"acme", table:"claims"}},
+								Call{tool:"eval/rows", arguments:{suite:"acme", table:"claims"}},
 								Call{tool:"eval/put", arguments:{row:{
 									id:"traders-return", claim:"Traders who try a stall come back the next weekend.",
 									block:"product#idea", evidence:0, stakes:"Fatal", status:"Open", test:"", sources:[],
@@ -53,8 +53,8 @@ for the coach and `{UserInput}` for the owner.
 							]}}>
 								<Router>
 									<RouteTool path="eval/rows"/>
-									<RouteTool path="eval/put" params="package=acme&table=claims"/>
-									<Fragment {DirPath("packages/acme/assets")}><StoreToolset/></Fragment>
+									<RouteTool path="eval/put" params="suite=acme&table=claims"/>
+									<Fragment {DirPath("suites/acme/assets")}><StoreToolset/></Fragment>
 								</Router>
 							</CreateActor>
 						</RepeatWhileFunctionCallOutput>

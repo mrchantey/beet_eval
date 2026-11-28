@@ -37,7 +37,7 @@ pub async fn EvalNew(
 	let taglined = workspace
 		.evals
 		.iter()
-		.filter_map(|packaged| packaged.eval.levels.check())
+		.filter_map(|suite_eval| suite_eval.eval.levels.check())
 		.filter(|check| check.route.as_str() == "tagline")
 		.filter_map(|check| {
 			check.params.clone().into_serde::<TaglineCheckParams>().ok()

@@ -13,7 +13,7 @@ pub struct Results {
 	pub checks: Vec<CheckOutcome>,
 	/// The grades merged into the run, absent when no grader has written one.
 	pub grades: Option<GradeSet>,
-	/// Every rubric of every package, read off the checks and the grades.
+	/// Every rubric of every suite, read off the checks and the grades.
 	pub rubrics: Vec<RubricResult>,
 }
 
@@ -29,13 +29,14 @@ impl Results {
 	/// read as met, failing or awaiting.
 	pub fn compute(
 		ran_at: Date,
-		evals: &[PackagedEval],
+		evals: &[SuiteEval],
 		verdicts: &[(EvalId, CheckVerdict)],
 		grades: Vec<Grade>,
 		rubrics: &[(RubricRef, &Rubric)],
 	) -> Self {
-		let eval =
-			|id: &EvalId| evals.iter().find(|packaged| &packaged.eval.id == id);
+		let eval = |id: &EvalId| {
+			evals.iter().find(|suite_eval| &suite_eval.eval.id == id)
+		};
 		let mut checks = verdicts
 			.iter()
 			.map(|(id, verdict)| CheckOutcome {
@@ -47,11 +48,11 @@ impl Results {
 		checks.sort_by(|left, right| left.eval.cmp(&right.eval));
 		let grades = GradeSet::merge(grades, |grade| match eval(&grade.eval) {
 			None => Some(format!("{}: unknown eval", grade.eval)),
-			Some(packaged) if packaged.eval.is_checked() => Some(format!(
+			Some(suite_eval) if suite_eval.eval.is_checked() => Some(format!(
 				"{} is a checked eval; its result comes from the check",
 				grade.eval
 			)),
-			Some(packaged) if !packaged.eval.levels.admits(grade.level) => {
+			Some(suite_eval) if !suite_eval.eval.levels.admits(grade.level) => {
 				Some(format!(
 					"{} is binary and takes 0 or 2, not {}",
 					grade.eval, grade.level
@@ -184,7 +185,7 @@ pub fn ResultsReport(
 			<p>
 				"No grades in "<code>{grades_table.clone()}</code>
 				{format!(": the {} judged evals await a grader. The protocol is the grader's seed, ", judged.len())}
-				<code>"seeds/grader.md"</code>" of the document package, and the worksheet is "
+				<code>"seeds/grader.md"</code>" of the document suite, and the worksheet is "
 				<code>"eval/worksheet"</code>"."
 			</p>
 		}
@@ -383,7 +384,7 @@ pub struct GradeSet {
 /// One rubric as a run reads it.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct RubricResult {
-	/// The rubric, `<package>/<rubric>`.
+	/// The rubric, `<suite>/<rubric>`.
 	pub id: RubricRef,
 	/// Every citation in heading order, with what the run found.
 	pub citations: Vec<CitationResult>,

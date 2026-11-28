@@ -20,18 +20,18 @@ pub async fn EvalWorksheet(
 	let outline = workspace.outline()?;
 	// every judged eval by the address it is anchored at
 	let mut by_anchor = Vec::<(Address, Vec<&Eval>)>::new();
-	for packaged in workspace
+	for suite_eval in workspace
 		.evals
 		.iter()
-		.filter(|packaged| !packaged.eval.is_checked())
+		.filter(|suite_eval| !suite_eval.eval.is_checked())
 	{
-		let anchor = packaged.eval.anchor_or_namespace();
+		let anchor = suite_eval.eval.anchor_or_namespace();
 		match by_anchor
 			.iter_mut()
 			.find(|(existing, _)| *existing == anchor)
 		{
-			Some((_, evals)) => evals.push(&packaged.eval),
-			None => by_anchor.push((anchor, vec![&packaged.eval])),
+			Some((_, evals)) => evals.push(&suite_eval.eval),
+			None => by_anchor.push((anchor, vec![&suite_eval.eval])),
 		}
 	}
 	let mut order = outline

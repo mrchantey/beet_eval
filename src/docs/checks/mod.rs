@@ -31,10 +31,10 @@
 //! request with no unknown key, no unreadable value and no required param
 //! left out.
 //!
-//! A document package's
+//! A document suite's
 //! [`Outline`] generates the
 //! `document`, `sections` and `block` evals of its documents and blocks and
-//! the `frontmatter` and `summary` evals over the set; the package writes the
+//! the `frontmatter` and `summary` evals over the set; the suite writes the
 //! rest as rows. `eval/check` also refuses an anchor, a block's home or a
 //! check's section naming a document or a section the outline does not
 //! declare, so the outline's sections stay the one list of addresses.

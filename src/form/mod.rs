@@ -1,4 +1,4 @@
-//! The renderer: building `docs/` into one of a reader package's forms, the
+//! The renderer: building `docs/` into one of a reader suite's forms, the
 //! reader's own Word file or workbook. The builder, an agent, first writes
 //! the form's answers as markdown, which a person reviews and approves; then
 //! it writes the approved answers into the form's own XML, so the result
@@ -15,28 +15,28 @@
 //!
 //! # The steps
 //!
-//! 1. `eval/project <package>/<rubric>` writes the brief,
-//!    `results/projections/<package>-<rubric>.md`: every heading of the
+//! 1. `eval/project <suite>/<rubric>` writes the brief,
+//!    `results/projections/<suite>-<rubric>.md`: every heading of the
 //!    rubric, the evals it cites, where each is anchored, what is written
 //!    there, and the heading's structural lines. The rubric read through the
 //!    anchors is the mapping, and there is no other.
 //! 2. The builder writes the form's [`AnswerSheet`] to
-//!    `dist/<package>/<rubric>.answers.md`, one `## <cell>` section per cell
-//!    it answers, the cells listed by `eval/cells <package>/<rubric>`, and an
+//!    `dist/<suite>/<rubric>.answers.md`, one `## <cell>` section per cell
+//!    it answers, the cells listed by `eval/cells <suite>/<rubric>`, and an
 //!    `## Edits` list of what the form needs beyond its cells' text.
-//! 3. `eval/answers <package>/<rubric>` refuses a sheet answering a cell the
+//! 3. `eval/answers <suite>/<rubric>` refuses a sheet answering a cell the
 //!    form lacks or leaving one it names empty, and otherwise sets it out for
 //!    review: each answer under its cell's blank text, the empty cells left
 //!    unanswered, the edits, and the rubric's structural lines, each read
 //!    against the sheet. A person reviews it and approves it with
-//!    `eval/approve <package>/<rubric> --by=<who>` ([`AnswerApproval`]),
+//!    `eval/approve <suite>/<rubric> --by=<who>` ([`AnswerApproval`]),
 //!    which no role can call, and which lapses when the sheet changes.
-//! 4. `eval/build <package>/<rubric>`, refused until the sheet is approved as
+//! 4. `eval/build <suite>/<rubric>`, refused until the sheet is approved as
 //!    it stands, unpacks the blank form the [`RenderSpec`] names into
-//!    `dist/<package>/<rubric>/`, one file per part of its package
+//!    `dist/<suite>/<rubric>/`, one file per part of its suite
 //!    ([`FormBuild`]), the first time or with `--fresh`; then zips those
-//!    files into `dist/<package>/<output>`, reads it, and writes its
-//!    [`CellsReport`] to `dist/<package>/<rubric>.cells.md`, which the triage
+//!    files into `dist/<suite>/<output>`, reads it, and writes its
+//!    [`CellsReport`] to `dist/<suite>/<rubric>.cells.md`, which the triage
 //!    reads as built.
 //! 5. The builder writes the approved answers into the unpacked parts with
 //!    the store's text tools, ie `word/document.xml`: a cell's paragraphs in
@@ -47,7 +47,7 @@
 //! 6. `eval/build` again, which refuses parts that no longer read, and the
 //!    cells read against the approved sheet and the rubric's structural lines
 //!    one by one, edits and rebuilds until every line holds.
-//! 7. The file sent is copied as sent into the workspace package's
+//! 7. The file sent is copied as sent into the workspace suite's
 //!    `assets/submissions/`, with the reader's feedback filed beside it when it
 //!    comes.
 //!

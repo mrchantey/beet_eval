@@ -4,7 +4,7 @@ use crate::prelude::*;
 use beet::prelude::*;
 
 /// This crate's types: the rows of every table, the typed documents of every
-/// package and workspace, the check kinds with their params, the verbs, the
+/// suite and workspace, the check kinds with their params, the verbs, the
 /// `<CheckRoutes/>` and `<EvalRoutes/>` mounting them, `<EvalToolset/>`
 /// mounting them as an agent's tools, and the loop's `<NextUnit/>` and
 /// `<RoleSeed/>`, over beet's thread types.
@@ -33,7 +33,7 @@ impl Plugin for EvalPlugin {
 			.register_type::<AnswerApproval>()
 			.register_type::<Results>()
 			.register_type::<NextStep>()
-			.register_type::<PackageManifest>()
+			.register_type::<SuiteManifest>()
 			.register_type::<Workspace>()
 			.register_type::<Outline>()
 			.register_type::<RenderSpec>()

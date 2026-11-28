@@ -2,7 +2,7 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// `eval/drop`: removes one row of a package's table, refused while anything
+/// `eval/drop`: removes one row of a suite's table, refused while anything
 /// still names it, an eval a rubric cites or a rubric a render spec builds.
 /// The twin of `eval/put`: how a person or an agent retires a row, the
 /// citations fixed first.
@@ -10,42 +10,42 @@ use beet::prelude::*;
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
 pub async fn EvalDrop(
-	/// The package whose table holds the row.
+	/// The suite whose table holds the row.
 	#[param]
-	package: SmolStr,
+	suite: SmolStr,
 	/// The table the row is removed from.
 	#[param]
-	table: PackageTable,
+	table: SuiteTable,
 	/// The row's key, its id, ie `market.competitors-named`.
 	#[param]
 	key: SmolStr,
 	cx: ActionContext<Request>,
 ) -> Result<Response> {
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
-	let loaded = workspace.package(&package).ok_or_else(|| {
-		bevyhow!("the workspace names no package {}", package)
-	})?;
-	let at = format!("{}/{}/{}", package, table, key);
+	let loaded = workspace
+		.suite(&suite)
+		.ok_or_else(|| bevyhow!("the workspace names no suite {}", suite))?;
+	let at = format!("{}/{}/{}", suite, table, key);
 	let store = &loaded.store;
 	let key = key.as_str();
 	let exists = match table {
-		PackageTable::Evals => {
+		SuiteTable::Evals => {
 			RowTable::<Eval>::new(store.clone()).exists(key).await?
 		}
-		PackageTable::Rubrics => {
+		SuiteTable::Rubrics => {
 			RowTable::<Rubric>::new(store.clone()).exists(key).await?
 		}
-		PackageTable::Render => {
+		SuiteTable::Render => {
 			RowTable::<RenderSpec>::new(store.clone())
 				.exists(key)
 				.await?
 		}
-		PackageTable::Actions => {
+		SuiteTable::Actions => {
 			RowTable::<CoachAction>::new(store.clone())
 				.exists(key)
 				.await?
 		}
-		PackageTable::Claims => {
+		SuiteTable::Claims => {
 			RowTable::<Claim>::new(store.clone()).exists(key).await?
 		}
 	};
@@ -61,23 +61,23 @@ pub async fn EvalDrop(
 		.xok();
 	}
 	match table {
-		PackageTable::Evals => {
+		SuiteTable::Evals => {
 			RowTable::<Eval>::new(store.clone()).remove(key).await?
 		}
-		PackageTable::Rubrics => {
+		SuiteTable::Rubrics => {
 			RowTable::<Rubric>::new(store.clone()).remove(key).await?
 		}
-		PackageTable::Render => {
+		SuiteTable::Render => {
 			RowTable::<RenderSpec>::new(store.clone())
 				.remove(key)
 				.await?
 		}
-		PackageTable::Actions => {
+		SuiteTable::Actions => {
 			RowTable::<CoachAction>::new(store.clone())
 				.remove(key)
 				.await?
 		}
-		PackageTable::Claims => {
+		SuiteTable::Claims => {
 			RowTable::<Claim>::new(store.clone()).remove(key).await?
 		}
 	}
@@ -92,12 +92,12 @@ impl Drop {
 	/// eval, the render specs building a rubric.
 	fn named_by(
 		workspace: &LoadedWorkspace,
-		package: &LoadedPackage,
-		table: PackageTable,
+		suite: &LoadedSuite,
+		table: SuiteTable,
 		key: &str,
 	) -> Vec<String> {
 		match table {
-			PackageTable::Evals => workspace
+			SuiteTable::Evals => workspace
 				.rubrics()
 				.iter()
 				.filter(|(_, rubric)| {
@@ -107,17 +107,17 @@ impl Drop {
 				})
 				.map(|(reference, _)| reference.to_string())
 				.collect(),
-			PackageTable::Rubrics => package
+			SuiteTable::Rubrics => suite
 				.render
 				.iter()
 				.filter(|spec| spec.rubric.as_str() == key)
 				.map(|spec| {
-					format!("{}/render/{}", package.manifest.name, spec.rubric)
+					format!("{}/render/{}", suite.manifest.name, spec.rubric)
 				})
 				.collect(),
-			PackageTable::Render
-			| PackageTable::Actions
-			| PackageTable::Claims => Vec::new(),
+			SuiteTable::Render | SuiteTable::Actions | SuiteTable::Claims => {
+				Vec::new()
+			}
 		}
 	}
 }
@@ -132,7 +132,7 @@ mod test {
 		let mut fixture = Fixture::new().await;
 		fixture
 			.refused(
-				"eval/drop --package=acme_biz --table=evals --key=product.origin",
+				"eval/drop --suite=acme_biz --table=evals --key=product.origin",
 			)
 			.await
 			.xpect_contains(
@@ -140,7 +140,7 @@ mod test {
 			);
 		fixture
 			.refused(
-				"eval/drop --package=acme_course --table=rubrics --key=01-business-plan",
+				"eval/drop --suite=acme_course --table=rubrics --key=01-business-plan",
 			)
 			.await
 			.xpect_contains(
@@ -148,20 +148,20 @@ mod test {
 			);
 		fixture
 			.refused(
-				"eval/drop --package=acme_biz --table=evals --key=product.nothing",
+				"eval/drop --suite=acme_biz --table=evals --key=product.nothing",
 			)
 			.await
 			.xpect_contains("is no row");
 		// a render spec names nothing, so it goes, and then its rubric may
 		fixture
 			.ok(
-				"eval/drop --package=acme_course --table=render --key=01-business-plan",
+				"eval/drop --suite=acme_course --table=render --key=01-business-plan",
 			)
 			.await
 			.xpect_eq("dropped acme_course/render/01-business-plan\n");
 		fixture
 			.ok(
-				"eval/drop --package=acme_course --table=rubrics --key=01-business-plan",
+				"eval/drop --suite=acme_course --table=rubrics --key=01-business-plan",
 			)
 			.await
 			.xpect_eq("dropped acme_course/rubrics/01-business-plan\n");

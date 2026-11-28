@@ -18,9 +18,9 @@ pub(crate) struct Fixture {
 }
 
 impl Fixture {
-	/// The blank form's path in the reader package.
+	/// The blank form's path in the reader suite.
 	pub const FORM: &str =
-		"packages/acme_course/assets/forms/01-business-plan.docx";
+		"suites/acme_course/assets/forms/01-business-plan.docx";
 
 	/// The business plan's answer sheet in the workspace store.
 	pub const ANSWERS: &str = "dist/acme_course/01-business-plan.answers.md";
@@ -171,7 +171,7 @@ impl Fixture {
 			.unwrap();
 	}
 
-	/// Every thread listed under `dir` of the workspace package's threads in
+	/// Every thread listed under `dir` of the workspace suite's threads in
 	/// `store`, ie `clerk/product` for the clerk's threads about the product,
 	/// with its posts in order, oldest thread first.
 	pub async fn threads(
@@ -180,7 +180,7 @@ impl Fixture {
 	) -> Vec<(Thread, Vec<Post>)> {
 		let records = ThreadStore::new(
 			JsonTableStore::over(
-				store.with_subdir(RelPath::new("packages/acme/assets/threads")),
+				store.with_subdir(RelPath::new("suites/acme/assets/threads")),
 			)
 			.unwrap(),
 			RelPath::new(dir),
@@ -334,7 +334,7 @@ impl FixtureEntry {
 			.world_mut()
 			.get_resource_or_init::<PrescanRegistry>()
 			.clone();
-		let entry = entry_build::resolve_in_repo_store(
+		let entry = entry_build::resolve_in_package_store(
 			store.clone(),
 			&prescans,
 			name.into(),
@@ -342,7 +342,7 @@ impl FixtureEntry {
 		.await
 		.unwrap();
 		let sources = entry_build::read_sources(
-			&entry.repo_store,
+			&entry.package_store,
 			entry.entry_name,
 			entry.prescan,
 		)
@@ -350,7 +350,7 @@ impl FixtureEntry {
 		.unwrap();
 		let root = entry_build::build_root(
 			app.world_mut(),
-			entry.repo_store,
+			entry.package_store,
 			sources,
 			DisableCallOnReady,
 		)

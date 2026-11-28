@@ -1,4 +1,4 @@
-//! Evaluates a subject against packages of evals and rubrics: checks, grades,
+//! Evaluates a subject against suites of evals and rubrics: checks, grades,
 //! results and the next unit of work, with prose documents as the first
 //! subject and Office forms as the renderer. `README.md` fixes the words; the
 //! modules carry the law, in the order a run reads it:
@@ -9,24 +9,24 @@
 //!   evals at levels for one reader, [`Grade`](prelude::Grade) rows carry a
 //!   grader's levels with verbatim evidence, one
 //!   [`Results`](prelude::Results) is read by every rubric, and
-//!   [`NextStep`](prelude::NextStep) names the next unit of work. Packages and
+//!   [`NextStep`](prelude::NextStep) names the next unit of work. Suites and
 //!   workspaces are stores with a
-//!   [`PackageManifest`](prelude::PackageManifest) or a
+//!   [`SuiteManifest`](prelude::SuiteManifest) or a
 //!   [`Workspace`](prelude::Workspace) manifest.
 //! - [`docs`]: the first subject, documents as markdown or Word files with
 //!   frontmatter, sections, csv data blocks and asks, read through beet's
-//!   media parse and laid out by a document package's
+//!   media parse and laid out by a document suite's
 //!   [`Outline`](prelude::Outline), and the params of the check kinds that
 //!   decide their shape.
-//! - [`form`]: the renderer, a reader package's
+//! - [`form`]: the renderer, a reader suite's
 //!   [`RenderSpec`](prelude::RenderSpec), the answers a person approves
 //!   before a build ([`AnswerSheet`](prelude::AnswerSheet)), the form's
 //!   parts a builder edits ([`FormBuild`](prelude::FormBuild)) and its cells
 //!   by place ([`FormCell`](prelude::FormCell)).
-//! - [`ingest`]: reading a package's sources, a deck's
+//! - [`ingest`]: reading a suite's sources, a deck's
 //!   [`DeckTriage`](prelude::DeckTriage) among them.
-//! - [`coach`]: the workspace package's claims register, the document
-//!   package's coach actions, and the end of a coach's sitting.
+//! - [`coach`]: the workspace suite's claims register, the document
+//!   suite's coach actions, and the end of a coach's sitting.
 //! - [`routes`]: the verbs, each a route of `beet-eval`, mounted by
 //!   `<EvalRoutes/>` beside the check kinds' `<CheckRoutes/>`.
 //! - [`toolset`]: the verbs as an agent's tools, `<EvalToolset/>`.
@@ -81,8 +81,8 @@ mod test {
 		let mut shown = Vec::new();
 		for (name, json) in readme_examples() {
 			match name {
-				"PackageManifest" => {
-					stored_form::<PackageManifest>(name, &json).await
+				"SuiteManifest" => {
+					stored_form::<SuiteManifest>(name, &json).await
 				}
 				"Outline" => stored_form::<Outline>(name, &json).await,
 				"Eval" => stored_form::<Eval>(name, &json).await,
@@ -113,10 +113,10 @@ mod test {
 			"Grade",
 			"NextStep",
 			"Outline",
-			"PackageManifest",
 			"RenderSpec",
 			"Results",
 			"Rubric",
+			"SuiteManifest",
 			"Workspace",
 		]);
 	}

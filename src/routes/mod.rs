@@ -161,10 +161,10 @@ mod test {
 			"eval/answers acme_course/01-business-plan",
 			"eval/approve acme_course/01-business-plan --by=ada",
 			"eval/cells acme_course/01-business-plan",
-			"eval/deck packages/acme/assets/week-1.pptx",
-			"eval/rows --package=acme_biz --table=evals --key=product.origin",
-			"eval/put --package=acme_biz --table=evals --from=packages/acme_biz/evals/product.origin --row=",
-			"eval/drop --package=acme_course --table=render --key=01-business-plan",
+			"eval/deck suites/acme/assets/week-1.pptx",
+			"eval/rows --suite=acme_biz --table=evals --key=product.origin",
+			"eval/put --suite=acme_biz --table=evals --from=suites/acme_biz/evals/product.origin --row=",
+			"eval/drop --suite=acme_course --table=render --key=01-business-plan",
 			"check/document --document=brand",
 			"check/frontmatter --keys=created --documents=brand",
 			"check/h1 --document=brand",
@@ -174,7 +174,7 @@ mod test {
 			"check/asks",
 			"check/sections --document=brand --headings=Voice",
 			"check/block --name=price-list --section=product#pricing --columns=line --columns=price_ex_gst:num",
-			"view packages/acme_course/assets/forms/01-business-plan.docx",
+			"view suites/acme_course/assets/forms/01-business-plan.docx",
 		];
 		let mut fixture = Fixture::new().await;
 		let mut reached = Vec::new();

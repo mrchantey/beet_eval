@@ -6,7 +6,7 @@ description = "Evaluates a subject against packages of evals and rubrics: checks
 
 [features]
 default = []
-# This repo's own beet binary: `BeetPlugins` + `EvalPlugin` + `LaunchPlugin`,
+# This package's own beet binary: `BeetPlugins` + `EvalPlugin` + `LaunchPlugin`,
 # so `main.bsx` resolves the types defined here. Off by default so a library
 # consumer never links the runner; the `[[bin]]` below requires it, which is
 # what makes a flagless `cargo run` fail with cargo's own guidance. `launch` is
@@ -29,7 +29,7 @@ cli = [
 ]
 
 [dependencies]
-# The `eval` worktree of beet, where this repo's upstream work happens, the
+# The `eval` worktree of beet, where this package's upstream work happens, the
 # facade rather than the individual crates so `#[action]`/`#[template]`
 # expansions (which emit `beet::` paths) resolve.
 beet = { path = "../worktrees/beet/eval/beet", default-features = false, features = [

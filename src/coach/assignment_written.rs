@@ -128,7 +128,7 @@ mod test {
 
 	/// `eval/put` of [`PER_WEEKEND`], as the clerk raises a claim.
 	fn raise_claim() -> Request {
-		Fixture::request("eval/put --package=acme --table=claims")
+		Fixture::request("eval/put --suite=acme --table=claims")
 			.with_param("row", PER_WEEKEND)
 	}
 
@@ -142,7 +142,7 @@ mod test {
 
 	/// The claim `id` of the register in `store`.
 	async fn claim(store: &BlobStore, id: &str) -> Claim {
-		RowTable::<Claim>::new(store.with_subdir(RelPath::new("packages/acme")))
+		RowTable::<Claim>::new(store.with_subdir(RelPath::new("suites/acme")))
 			.get(id)
 			.await
 			.unwrap()
@@ -227,7 +227,7 @@ mod test {
 			.xpect_contains("names the param `claim`");
 	}
 
-	/// The coach's store is the workspace package's assets: a write under
+	/// The coach's store is the workspace suite's assets: a write under
 	/// `docs/` lands there and never in the documents, and a `..` above the
 	/// scope is dropped by `RelPath`, keeping the write inside it.
 	#[beet::test(timeout_ms = 120000)]
@@ -236,7 +236,7 @@ mod test {
 		entry.start(sit("per-weekend")).unwrap();
 		let fixture = Fixture::over(entry.store.clone());
 		fixture
-			.read("packages/acme/assets/docs/product.md")
+			.read("suites/acme/assets/docs/product.md")
 			.await
 			.xpect_eq("Two traders paid for last weekend.");
 		fixture
@@ -244,7 +244,7 @@ mod test {
 			.await
 			.xpect_contains("TODO(ask decision: monthly or per weekend?)");
 		fixture
-			.read("packages/acme/assets/docs/brand.md")
+			.read("suites/acme/assets/docs/brand.md")
 			.await
 			.xpect_eq("escaped");
 		fixture

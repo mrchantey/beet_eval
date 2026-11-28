@@ -2,9 +2,9 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// `eval/put`: writes one row of a package's table, refused unless it parses
+/// `eval/put`: writes one row of a suite's table, refused unless it parses
 /// as the table's type and keeps the law `eval/check` holds every row to: an
-/// eval's prose, levels, anchors and check params, an id no other package
+/// eval's prose, levels, anchors and check params, an id no other suite
 /// defines, a rubric's citations of known evals at levels they reach, a coach
 /// action's served sections and a claim's slug and block. How a person or an
 /// agent adds or changes an eval, a rubric, a render spec, a coach action or
@@ -15,12 +15,12 @@ use beet::prelude::*;
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
 pub async fn EvalPut(
-	/// The package whose table takes the row.
+	/// The suite whose table takes the row.
 	#[param]
-	package: SmolStr,
+	suite: SmolStr,
 	/// The table the row is written to.
 	#[param]
-	table: PackageTable,
+	table: SuiteTable,
 	/// The row in its stored form, replacing any of the same key.
 	#[param]
 	row: Option<Value>,
@@ -31,9 +31,9 @@ pub async fn EvalPut(
 	cx: ActionContext<Request>,
 ) -> Result<Response> {
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
-	let loaded = workspace.package(&package).ok_or_else(|| {
-		bevyhow!("the workspace names no package {}", package)
-	})?;
+	let loaded = workspace
+		.suite(&suite)
+		.ok_or_else(|| bevyhow!("the workspace names no suite {}", suite))?;
 	let store = &loaded.store;
 	let row = match (row, from) {
 		// a command line's text that is no JSON object, refused as the JSON
@@ -48,16 +48,16 @@ pub async fn EvalPut(
 	};
 	let outline = workspace.outline().ok();
 	let problems = match table {
-		PackageTable::Evals => {
+		SuiteTable::Evals => {
 			let eval = row.into_serde::<Eval>()?;
 			let mut problems = Laws::eval_row(&cx.caller, &eval, outline).await;
 			if let Some(other) = workspace
 				.eval(&eval.id)
-				.filter(|existing| existing.package != loaded.manifest.name)
+				.filter(|existing| existing.suite != loaded.manifest.name)
 			{
 				problems.push(format!(
 					"{} is already defined in {}",
-					eval.id, other.package
+					eval.id, other.suite
 				));
 			}
 			Put::finish(
@@ -66,7 +66,7 @@ pub async fn EvalPut(
 			)
 			.await?
 		}
-		PackageTable::Rubrics => {
+		SuiteTable::Rubrics => {
 			let rubric = row.into_serde::<Rubric>()?;
 			let problems = Laws::rubric(&workspace, &rubric);
 			Put::finish(
@@ -75,7 +75,7 @@ pub async fn EvalPut(
 			)
 			.await?
 		}
-		PackageTable::Render => {
+		SuiteTable::Render => {
 			let spec = row.into_serde::<RenderSpec>()?;
 			let problems = Laws::prose(&spec);
 			Put::finish(
@@ -84,7 +84,7 @@ pub async fn EvalPut(
 			)
 			.await?
 		}
-		PackageTable::Actions => {
+		SuiteTable::Actions => {
 			let action = row.into_serde::<CoachAction>()?;
 			let problems = Laws::action(&action, outline);
 			Put::finish(
@@ -93,7 +93,7 @@ pub async fn EvalPut(
 			)
 			.await?
 		}
-		PackageTable::Claims => {
+		SuiteTable::Claims => {
 			let claim = row.into_serde::<Claim>()?;
 			let problems = Laws::claim(&claim, outline);
 			Put::finish(
@@ -104,7 +104,7 @@ pub async fn EvalPut(
 		}
 	};
 	match problems.is_empty() {
-		true => Response::ok_text(format!("put {}/{}\n", package, table)),
+		true => Response::ok_text(format!("put {}/{}\n", suite, table)),
 		false => refusal(format!("{}\n", problems.join("\n"))),
 	}
 	.xok()
@@ -135,7 +135,7 @@ mod test {
 		let mut fixture = Fixture::new().await;
 		let put = |statement: &str| {
 			Request::from_cli_str("eval/put")
-				.with_param("package", "acme_biz")
+				.with_param("suite", "acme_biz")
 				.with_param("table", "evals")
 				.with_param(
 					"row",
@@ -165,7 +165,7 @@ mod test {
 	async fn puts_a_row_from_the_store() {
 		let mut fixture = Fixture::new().await;
 		let mut eval =
-			fixture.read("packages/acme_biz/evals/product.origin").await;
+			fixture.read("suites/acme_biz/evals/product.origin").await;
 		eval = eval.replace("\"Generic\"", "{\"Binary\": {\"check\": null}}");
 		fixture
 			.store
@@ -174,16 +174,16 @@ mod test {
 			.unwrap();
 		fixture
 			.ok(
-				"eval/put --package=acme_biz --table=evals --from=drafts/origin.json",
+				"eval/put --suite=acme_biz --table=evals --from=drafts/origin.json",
 			)
 			.await
 			.xpect_eq("put acme_biz/evals\n");
 		fixture
-			.read("packages/acme_biz/evals/product.origin")
+			.read("suites/acme_biz/evals/product.origin")
 			.await
 			.xpect_contains("\"Binary\"");
 		fixture
-			.refused("eval/put --package=acme_biz --table=evals")
+			.refused("eval/put --suite=acme_biz --table=evals")
 			.await
 			.xpect_contains("exactly one of `--row` and `--from`");
 	}
@@ -196,15 +196,14 @@ mod test {
 	async fn puts_claims_that_keep_the_law() {
 		let mut fixture = Fixture::new().await;
 		let put = |id: &str, block: &str, evidence: u8| {
-			Fixture::request("eval/put --package=acme --table=claims")
-				.with_param(
-					"row",
-					&format!(
-						r#"{{"id":"{id}","claim":"Traders pay per weekend.",
+			Fixture::request("eval/put --suite=acme --table=claims").with_param(
+				"row",
+				&format!(
+					r#"{{"id":"{id}","claim":"Traders pay per weekend.",
 						"block":"{block}","evidence":{evidence},"stakes":"Fatal",
 						"status":"Open","test":"","sources":[]}}"#
-					),
-				)
+				),
+			)
 		};
 		fixture
 			.answer(put("per-weekend", "product#pricing", 1))
@@ -222,12 +221,12 @@ mod test {
 		ok.xpect_false();
 		text.xpect_contains("evidence 4 is not 0 to 3");
 		fixture
-			.ok("eval/rows --package=acme --table=claims")
+			.ok("eval/rows --suite=acme --table=claims")
 			.await
 			.xpect_contains("1 row")
 			.xpect_contains("### per-weekend");
 		fixture
-			.ok("eval/drop --package=acme --table=claims --key=per-weekend")
+			.ok("eval/drop --suite=acme --table=claims --key=per-weekend")
 			.await
 			.xpect_eq("dropped acme/claims/per-weekend\n");
 	}

@@ -166,10 +166,10 @@ impl Laws {
 		workspace: &LoadedWorkspace,
 		citation: &Citation,
 	) -> Option<String> {
-		let Some(packaged) = workspace.eval(&citation.eval) else {
+		let Some(suite_eval) = workspace.eval(&citation.eval) else {
 			return Some(format!("unknown eval {}", citation.eval));
 		};
-		match (citation.level.get(), &packaged.eval.levels) {
+		match (citation.level.get(), &suite_eval.eval.levels) {
 			(0, _) => Some(format!("{}: level must be 1 to 3", citation.eval)),
 			(level, Levels::Binary { .. }) if level != 2 => Some(format!(
 				"{} is binary and can only be cited at level 2",

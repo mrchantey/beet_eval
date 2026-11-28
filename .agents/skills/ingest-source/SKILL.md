@@ -1,16 +1,16 @@
 ---
 name: ingest-source
 description: >
-  Bring a source file into a package's assets as markdown: a Word file, a slide deck or a
+  Bring a source file into a suite's assets as markdown: a Word file, a slide deck or a
   PDF dumped mechanically, through `just eval view` for Office files and poppler for a PDF,
   rendered to images where the page carries what text cannot, then written up by hand in the
-  house style. Use when a .docx, .pptx or .pdf arrives in a package's assets, when asked to
+  house style. Use when a .docx, .pptx or .pdf arrives in a suite's assets, when asked to
   "extract", "convert" or "markdown" one, or when an asset has no markdown twin.
 ---
 
 # ingest-source
 
-Every source becomes markdown in passes: a mechanical dump, which gets the wording, the tables and the notes exactly right; for a deck or a PDF a render of every page, the only thing that shows what a reader saw; then a write-up by hand in the house style, and a spot check. The dump is the authority on wording, the render on layout and highlighting. A package that keeps its own conventions, where a write-up goes, what a source is checked against, what its sources are like, says so in its README or its own copy of this skill, and that wins.
+Every source becomes markdown in passes: a mechanical dump, which gets the wording, the tables and the notes exactly right; for a deck or a PDF a render of every page, the only thing that shows what a reader saw; then a write-up by hand in the house style, and a spot check. The dump is the authority on wording, the render on layout and highlighting. A suite that keeps its own conventions, where a write-up goes, what a source is checked against, what its sources are like, says so in its README or its own copy of this skill, and that wins.
 
 ## The tools
 
@@ -52,7 +52,7 @@ Every source becomes markdown in passes: a mechanical dump, which gets the wordi
 14. Read every rendered slide, not only the flagged ones. The dump cannot say that a cell is highlighted, which of two columns a bullet belongs to, or what a picture shows. Where a screenshot is too small, compare its native size with the render: bigger, pull the part; smaller, upscale what you have, `magick <png> -filter Lanczos -resize 300% /tmp/<slug>/big.png`. Cropping usually matters more than resolution: three cards across one strip are legible one at a time, `magick <png> -crop 33%x100% +repage /tmp/<slug>/card.png`, minding that the crop's offset is in pixels even when its size is a percentage.
 15. Pull a picture too when pictures overlap, when the render clips one at a slide edge, and whenever a short string sits neatly inside a form field on a screenshot: a deck can fake a filled-in cell with a text box over an empty form, and the picture underneath is the only way to tell. A slide can also be that composite on purpose; read both and describe what the audience saw.
 16. Write the deck up. One `##` per slide, numbered as the deck numbers them, with the slide's own title (`## Slide 7: Live Training Schedule`); a slide with two titles takes the running one and adds the heading when that is what tells two slides apart; an untitled slide gets a short one in square brackets; a run of slides sharing one title gets what distinguishes each. Bullets stay bullets in the slide's order. Speaker notes go last on their slide under `### Speaker notes`, as written; where they contradict the slide keep both and say which is which; two slides sharing notes verbatim is said once. A two-column term-and-definition table with no header row becomes a list of bold terms; a table whose cells hold bullet lists becomes lists under bold headings, since GFM cannot nest a list in a cell; a merged header spanning two columns of bullets dumps as a phantom empty column, and the render says the reading order. A deck with no diagram, process or table says so rather than inventing one.
-17. Check a screenshot against its source when the package holds it: it settles a cell you could not read and catches a screenshot cropped mid-sentence. Expect the source to have moved, a deck screenshotting an older revision of a form, and say which revision the slide shows. Where a slide and a markdown twin disagree, check the original file before believing either.
+17. Check a screenshot against its source when the suite holds it: it settles a cell you could not read and catches a screenshot cropped mid-sentence. Expect the source to have moved, a deck screenshotting an older revision of a form, and say which revision the slide shows. Where a slide and a markdown twin disagree, check the original file before believing either.
 18. Spot-check: the `##` count against the triage's slide count, every slide the triage flags `picture` carrying a table, a diagram or a real description, a distinctive phrase from each slide of the dump found in the write-up, and numbers transcribed from a screenshot adding up where the sheet shows a total, recomputed at full precision rather than off the sheet's displayed rounding, and agreeing across slides.
 
 ### What the deck's mechanical pass gets wrong
@@ -74,4 +74,4 @@ Every source becomes markdown in passes: a mechanical dump, which gets the wordi
 
 ## Where it goes
 
-23. The write-up sits beside the original in the package's assets, `<name>.md`, unless the package says otherwise; the dump, the renders and every pulled picture are scratch under `/tmp/<slug>/`. Then add the write-up to whatever index the package keeps of its assets.
+23. The write-up sits beside the original in the suite's assets, `<name>.md`, unless the suite says otherwise; the dump, the renders and every pulled picture are scratch under `/tmp/<slug>/`. Then add the write-up to whatever index the suite keeps of its assets.

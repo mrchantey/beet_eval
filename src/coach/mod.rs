@@ -1,6 +1,6 @@
-//! The coach's material and its sitting: the workspace package's claims
+//! The coach's material and its sitting: the workspace suite's claims
 //! register, the claims the subject's plan rests on with how far each has been
-//! tested on the [`Evidence`] ladder, and the document package's coach
+//! tested on the [`Evidence`] ladder, and the document suite's coach
 //! actions, the moves a sitting makes against them.
 //!
 //! A sitting is a conversation with the owner, held by `RunThread` in a

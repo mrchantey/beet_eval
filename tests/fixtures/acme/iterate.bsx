@@ -22,7 +22,7 @@ for each mock and `{UserInput}` for the owner, under a server with a surface
 to type into.
 -->
 <CliServer {CallOnReady}>
-<Router {(RequestLogger, HelpHandler, JsonTableStore{path:"packages/acme/assets/threads"})}>
+<Router {(RequestLogger, HelpHandler, JsonTableStore{path:"suites/acme/assets/threads"})}>
 	<Route path="eval"><EvalRoutes/></Route>
 	<Route path="check"><CheckRoutes/></Route>
 	<!-- the roles: each request a thread of its own for the unit it names -->

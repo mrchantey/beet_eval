@@ -3,7 +3,7 @@ use crate::prelude::*;
 use beet::prelude::*;
 
 /// `eval/deck <path>`: the [`DeckTriage`] of the slide deck at `path` in the
-/// store, ie a package's `assets/week-1.pptx`, read before transcribing it
+/// store, ie a suite's `assets/week-1.pptx`, read before transcribing it
 /// beside `view <path>`'s dump: the [`DeckTriageReport`] for a markup
 /// `Accept` and the triage for a serde one.
 #[action(route = "deck/*file")]
@@ -54,15 +54,15 @@ mod test {
 		fixture
 			.store
 			.insert(
-				&RelPath::new("packages/acme/assets/week-1.pptx"),
+				&RelPath::new("suites/acme/assets/week-1.pptx"),
 				deck.bytes().to_vec(),
 			)
 			.await
 			.unwrap();
 		fixture
-			.ok("eval/deck packages/acme/assets/week-1.pptx")
+			.ok("eval/deck suites/acme/assets/week-1.pptx")
 			.await
-			.xpect_contains("# Triage of packages/acme/assets/week-1.pptx\n")
+			.xpect_contains("# Triage of suites/acme/assets/week-1.pptx\n")
 			.xpect_contains("1 slides, counted from 0")
 			.xpect_contains("| 0 | Week 1 |  | 3 |  | 0% |  | 2 | picture |");
 		fixture

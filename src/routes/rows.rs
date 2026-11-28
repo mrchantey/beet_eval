@@ -1,7 +1,7 @@
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// `eval/rows --package --table [--key]`: a table's rows, or one row by its
+/// `eval/rows --suite --table [--key]`: a table's rows, or one row by its
 /// key, each with its fields, the [`RowsReport`] for a markup `Accept` and
 /// the rows in their stored form for a serde one: how a person or an agent
 /// reads a register or a table without opening its files, and what a coach
@@ -10,29 +10,29 @@ use beet::prelude::*;
 #[derive(Default, Component, Reflect)]
 #[reflect(Component, Default)]
 pub async fn EvalRows(
-	/// The package whose table is read.
+	/// The suite whose table is read.
 	#[param]
-	package: SmolStr,
+	suite: SmolStr,
 	/// The table read.
 	#[param]
-	table: PackageTable,
+	table: SuiteTable,
 	/// One row's key, its id, every row when absent.
 	#[param]
 	key: Option<SmolStr>,
 	cx: ActionContext<Request>,
 ) -> Result<DataPage<Vec<Value>>> {
 	let workspace = LoadedWorkspace::of(&cx.caller).await?;
-	let loaded = workspace.package(&package).ok_or_else(|| {
-		bevyhow!("the workspace names no package {}", package)
-	})?;
+	let loaded = workspace
+		.suite(&suite)
+		.ok_or_else(|| bevyhow!("the workspace names no suite {}", suite))?;
 	let mut rows = match table {
-		PackageTable::Evals => TableRow::all(&loaded.evals),
-		PackageTable::Rubrics => TableRow::all(&loaded.rubrics),
-		PackageTable::Render => TableRow::all(&loaded.render),
-		PackageTable::Actions => TableRow::all(&loaded.actions),
-		PackageTable::Claims => TableRow::all(&loaded.claims),
+		SuiteTable::Evals => TableRow::all(&loaded.evals),
+		SuiteTable::Rubrics => TableRow::all(&loaded.rubrics),
+		SuiteTable::Render => TableRow::all(&loaded.render),
+		SuiteTable::Actions => TableRow::all(&loaded.actions),
+		SuiteTable::Claims => TableRow::all(&loaded.claims),
 	}?;
-	let title = format!("{package}/{table}");
+	let title = format!("{suite}/{table}");
 	if let Some(key) = &key {
 		rows.retain(|row| &row.key == key);
 		if rows.is_empty() {
@@ -155,28 +155,26 @@ mod test {
 	async fn lists_a_tables_rows() {
 		let mut fixture = Fixture::new().await;
 		fixture
-			.ok("eval/rows --package=acme_biz --table=evals")
+			.ok("eval/rows --suite=acme_biz --table=evals")
 			.await
 			.xpect_starts_with("## acme_biz/evals\n\n10 rows\n")
 			.xpect_contains("### product.origin");
 		fixture
-			.ok(
-				"eval/rows --package=acme_biz --table=evals --key=product.origin",
-			)
+			.ok("eval/rows --suite=acme_biz --table=evals --key=product.origin")
 			.await
 			.xpect_contains("1 row")
 			.xpect_contains("- **anchor**: product#idea")
 			.xnot()
 			.xpect_contains("### brand.voice-defined");
 		fixture
-			.refused("eval/rows --package=acme_biz --table=evals --key=nothing")
+			.refused("eval/rows --suite=acme_biz --table=evals --key=nothing")
 			.await
 			.xpect_contains("acme_biz/evals/nothing is no row");
 		let rows = MediaType::Json
 			.deserialize::<Vec<Eval>>(
 				fixture
 					.ok(
-						"eval/rows --package=acme_biz --table=evals --accept=application/json",
+						"eval/rows --suite=acme_biz --table=evals --accept=application/json",
 					)
 					.await
 					.as_bytes(),

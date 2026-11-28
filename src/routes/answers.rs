@@ -2,8 +2,8 @@ use super::*;
 use crate::prelude::*;
 use beet::prelude::*;
 
-/// `eval/answers <package>/<rubric>`: reviews the form's [`AnswerSheet`],
-/// `<package>/<rubric>.answers.md` in the build directory, which the builder
+/// `eval/answers <suite>/<rubric>`: reviews the form's [`AnswerSheet`],
+/// `<suite>/<rubric>.answers.md` in the build directory, which the builder
 /// writes before it edits any of the form's XML. Refused when a section
 /// names a cell the blank form lacks or holds no answer; otherwise answers
 /// where the sheet stands, each answer under the blank form's text in its
@@ -14,7 +14,7 @@ use beet::prelude::*;
 #[reflect(Component, Default)]
 pub async fn EvalAnswers(
 	/// The reader rubric whose form's answers are reviewed,
-	/// `<package>/<rubric>`, the path after `answers`.
+	/// `<suite>/<rubric>`, the path after `answers`.
 	#[param]
 	rubric: RubricRef,
 	cx: ActionContext<Request>,
@@ -42,7 +42,7 @@ pub async fn EvalAnswers(
 	.xok()
 }
 
-/// `eval/approve <package>/<rubric> --by=<who>`: records the form's
+/// `eval/approve <suite>/<rubric> --by=<who>`: records the form's
 /// [`AnswerSheet`] as approved as it stands ([`AnswerApproval`]), refused
 /// as `eval/answers` refuses it. Only the person who reviewed the sheet
 /// approves it, so no role's toolset carries this verb, and an approval
@@ -52,7 +52,7 @@ pub async fn EvalAnswers(
 #[reflect(Component, Default)]
 pub async fn EvalApprove(
 	/// The reader rubric whose form's answers are approved,
-	/// `<package>/<rubric>`, the path after `approve`.
+	/// `<suite>/<rubric>`, the path after `approve`.
 	#[param]
 	rubric: RubricRef,
 	/// Who approves them, the person who reviewed them.
@@ -104,7 +104,7 @@ impl CheckedSheet {
 		reference: &RubricRef,
 	) -> Result<Result<Self, Response>> {
 		workspace.require_clean()?;
-		let (package, spec) = FormSource::of(workspace, reference)?;
+		let (suite, spec) = FormSource::of(workspace, reference)?;
 		let dist = workspace.dist();
 		let path = FormBuild::answers_path(reference);
 		let shown = format!("{}/{path}", workspace.manifest.dist);
@@ -121,7 +121,7 @@ impl CheckedSheet {
 				return Err(refusal(format!("{shown}: {err}\n"))).xok();
 			}
 		};
-		let blank = package.store.blob(spec.form.clone()).get_media().await?;
+		let blank = suite.store.blob(spec.form.clone()).get_media().await?;
 		let cells = parsed_with(caller, blank, |world, root| {
 			FormCell::listing(world, root).xok()
 		})

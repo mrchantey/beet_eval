@@ -2,21 +2,21 @@ use crate::prelude::*;
 use beet::prelude::*;
 
 /// `<RoleSeed role="clerk"/>`: the seed post holding a role's procedure, the
-/// file `seeds/<role>.md` of the workspace's document package, read by the
-/// entry creating the thread, so the procedure has one source, every package
+/// file `seeds/<role>.md` of the workspace's document suite, read by the
+/// entry creating the thread, so the procedure has one source, every suite
 /// ships its own, and an edited procedure reaches a new thread only.
 ///
 /// Each `{param}` of the procedure is filled from the request entering, ie
 /// the coach's `{claim}`, and `{{` and `}}` spell a literal brace
 /// ([`ThreadEntry::fill`]).
 ///
-/// The package is the one the workspace manifest names, wherever it lives,
+/// The suite is the one the workspace manifest names, wherever it lives,
 /// beside the workspace or in a bucket, so an entry names a role and never a
 /// path.
 ///
 /// ## Errors
 ///
-/// Errors when the package has no seed for the role, and on a param the
+/// Errors when the suite has no seed for the role, and on a param the
 /// request lacks.
 #[template]
 pub fn RoleSeed(
@@ -29,12 +29,12 @@ pub fn RoleSeed(
 		Action::new_async(
 			async move |cx: ActionContext<ThreadEntry>| -> Result<String> {
 				let workspace = LoadedWorkspace::of(&cx.caller).await?;
-				let package = workspace.document_package()?;
+				let suite = workspace.document_suite()?;
 				let path = RelPath::new(format!("seeds/{role}.md"));
-				let bytes = package.store.get(&path).await.map_err(|err| {
+				let bytes = suite.store.get(&path).await.map_err(|err| {
 					bevyhow!(
-						"the document package {} has no seed for the {role}: {err}",
-						package.manifest.name
+						"the document suite {} has no seed for the {role}: {err}",
+						suite.manifest.name
 					)
 				})?;
 				cx.input.fill(&String::from_utf8(bytes.to_vec())?)
@@ -58,7 +58,7 @@ mod test {
 		Fixture::sittings(store, dir).await
 	}
 
-	/// The clerk's turn: its seed is its procedure from the document package
+	/// The clerk's turn: its seed is its procedure from the document suite
 	/// and the unit `next` requested of its route, it reads the results, edits the document,
 	/// hears the owner, and leaves `next` on the next unit. One unit a turn:
 	/// no other role ran.

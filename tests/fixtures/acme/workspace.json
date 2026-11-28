@@ -1,10 +1,10 @@
 {
   "dist": "dist",
   "docs": "docs",
-  "packages": [
-    { "Local": "packages/acme" },
-    { "Local": "packages/acme_biz" },
-    { "Local": "packages/acme_course" }
+  "suites": [
+    { "Local": "suites/acme" },
+    { "Local": "suites/acme_biz" },
+    { "Local": "suites/acme_course" }
   ],
   "results": "results"
 }

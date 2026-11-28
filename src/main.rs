@@ -1,4 +1,4 @@
-//! This repo's beet binary: the stock runner plus [`EvalPlugin`].
+//! This package's beet binary: the stock runner plus [`EvalPlugin`].
 //!
 //! The stock `beet` binary serves any entry whose tags it can resolve, which is
 //! every type beet itself registers. A tag defined in THIS crate is one no beet

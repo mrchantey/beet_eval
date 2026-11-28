@@ -2,7 +2,7 @@ use crate::prelude::*;
 use beet::prelude::*;
 
 /// One thing the subject's plan rests on that might be false: a row of the
-/// workspace package's `claims` register, keyed on its id.
+/// workspace suite's `claims` register, keyed on its id.
 #[derive(Debug, Clone, PartialEq, Reflect, Serialize, Deserialize)]
 pub struct Claim {
 	/// A slug unique in the register, ie `buyers-pay-monthly`, one path
@@ -71,7 +71,7 @@ impl Claim {
 	}
 }
 
-/// A row of the workspace package's `claims` register, keyed on its id.
+/// A row of the workspace suite's `claims` register, keyed on its id.
 impl TableStoreRow for Claim {
 	fn table_name() -> SmolStr { "claims".into() }
 	fn key(&self) -> TableKey { self.id.as_str().into() }

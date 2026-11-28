@@ -28,8 +28,8 @@ impl Run {
 		)
 		.await?;
 		let mut verdicts = Vec::new();
-		for packaged in &workspace.evals {
-			let Some(check) = packaged.eval.levels.check() else {
+		for suite_eval in &workspace.evals {
+			let Some(check) = suite_eval.eval.levels.check() else {
 				continue;
 			};
 			let verdict = check.call(caller).await.unwrap_or_else(|err| {
@@ -38,7 +38,7 @@ impl Run {
 					Vec::<SmolStr>::new(),
 				)
 			});
-			verdicts.push((packaged.eval.id.clone(), verdict));
+			verdicts.push((suite_eval.eval.id.clone(), verdict));
 		}
 		let (grades, unreadable) =
 			RowTable::<Grade>::new(workspace.results()).all().await?;
